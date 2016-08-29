@@ -148,14 +148,13 @@
     <ClCompile Include="src\Conexion.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Servidor.cpp" />
-    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="src\stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Cliente.h" />
     <ClInclude Include="src\Conexion.h" />
     <ClInclude Include="src\Servidor.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="targetver.h" />
+    <ClInclude Include="src\stdafx.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

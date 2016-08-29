@@ -1,12 +1,7 @@
 #ifndef CLIENTE_H
 #define CLIENTE_H
 
-#include "winsock2.h"
-#include "ws2tcpip.h"
-
-#include <string>
-#include <iostream>
-
+#include "stdafx.h"
 #include "Conexion.h"
 
 class Cliente

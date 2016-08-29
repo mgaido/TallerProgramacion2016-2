@@ -1,10 +1,13 @@
-#include "../stdafx.h"
-#include "servidor.h"
-#include "cliente.h"
-#include <iostream>
+#include "Servidor.h"
+#include "Cliente.h"
 
 int main(int argc, char *argv[])
 {
+
+#ifdef _WIN32
+	WSADATA wsa;
+	WSAStartup(MAKEWORD(2, 2), &wsa);
+#endif
 
 	bool server = true;
 	std::string host;
@@ -48,7 +51,6 @@ int main(int argc, char *argv[])
 				cliente.desconectar();
 		}
 	}
-
 
 	return 0;
 }

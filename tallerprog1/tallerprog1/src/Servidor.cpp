@@ -1,5 +1,4 @@
-#include "../stdafx.h"
-#include "servidor.h"
+#include "Servidor.h"
 
 Servidor::Servidor() {
 	stop = false;
@@ -8,10 +7,7 @@ Servidor::Servidor() {
 void Servidor::iniciar(int port) {
 	int response = -1;
 
-	WSADATA wsa;
-	WSAStartup(MAKEWORD(2, 2), &wsa);
-
-	std::string fase = "socket";
+    std::string fase = "socket";
 	socketD = socket(AF_INET, SOCK_STREAM, 0);
 
 	if (socketD != INVALID_SOCKET) {
@@ -32,7 +28,7 @@ void Servidor::iniciar(int port) {
 					struct sockaddr_in clientAddress;
 					int clientAddressLength = sizeof(clientAddress);
 
-					SOCKET newSocketD = accept(socketD, (struct sockaddr*) &clientAddress, &clientAddressLength);
+                    SOCKET newSocketD = accept(socketD, (struct sockaddr*) &clientAddress, (socklen_t*) &clientAddressLength);
 					if (newSocketD != INVALID_SOCKET)
 						this->handleClient(newSocketD, clientAddress);
 					else {
@@ -40,12 +36,17 @@ void Servidor::iniciar(int port) {
 						stop = true;
 					}
 				}
+            #ifdef __linux__
+                shutdown(socketD, 2);
+            #elif _WIN32
+                closesocket(socketD);
+            #endif
 			}
 		}
 	}
 
 	if (response < 0) {
-		std::cerr << "Error at " << fase << " " << WSAGetLastError() << std::endl;
+        std::cerr << "Error at " << fase << " " << getLastError() << std::endl;
 	}
 
 }
@@ -57,12 +58,14 @@ void Servidor::detener() {
 void Servidor::handleClient(SOCKET newSocketD, sockaddr_in clientAddress) {
 	char ip[INET_ADDRSTRLEN];
 	inet_ntop(AF_INET, &(clientAddress.sin_addr), ip, INET_ADDRSTRLEN);
-	std::cout << "Accepted connection from " << ip << std::endl;
 
 	Conexion con(newSocketD);
 	std::string text = con.recibir();
-	std::cout << text << std::endl;
+    std::cout << "El cliente " << ip << " envió " << text << std::endl;
+    std::cout << "Escribir respuesta: ";
 
-	con.enviar("ack");
+    std::string msg;
+    std::getline(std::cin, msg);
+    con.enviar(msg);
 	detener();
 }

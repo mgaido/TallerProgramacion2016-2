@@ -1,11 +1,7 @@
-#pragma once
+#ifndef CONEXION_H
+#define CONEXION_H
 
-#include "winsock2.h"
-#include "ws2tcpip.h"
-
-#include <string>
-#include <iostream>
-#include <vector>
+#include "stdafx.h"
 
 using bytes = std::vector<char>;
 
@@ -19,4 +15,7 @@ public:
 private:
 	SOCKET socketD;
 };
+
+#endif // CONEXION_H
+
 

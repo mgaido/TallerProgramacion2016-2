@@ -1,5 +1,4 @@
-#include "../stdafx.h"
-#include "cliente.h"
+#include "Cliente.h"
 
 Cliente::Cliente()
 {
@@ -7,9 +6,6 @@ Cliente::Cliente()
 
 
 void Cliente::conectar(std::string host, int puerto) {
-	WSADATA wsa;
-	WSAStartup(MAKEWORD(2, 2), &wsa);
-
 	std::string fase = "socket";
 	int response = -1;
 	socketD = socket(AF_INET, SOCK_STREAM, 0);
@@ -27,8 +23,7 @@ void Cliente::conectar(std::string host, int puerto) {
 			response = connect(socketD, (struct sockaddr *) &serverAddress, sizeof(serverAddress));
 			if (response == 0) {
 				connected = true;
-				std::cout << "Connected to " << host << ":" << puerto << std::endl;
-				std::cout << "Escribir mensaje: ";
+                std::cout << "Conectado a " << host << ":" << puerto << ". Escribir mensaje: ";
 
 				std::string msg;
 				std::getline(std::cin, msg);
@@ -37,13 +32,13 @@ void Cliente::conectar(std::string host, int puerto) {
 				con.enviar(msg);
 
 				std::string resp = con.recibir();
-				std::cout << resp << std::endl;
+                std::cout << "El servidor respondío: " << resp << std::endl;
 			}
 		}
 	}
 
 	if (response < 0) {
-		std::cerr << "Error at " << fase << " " << WSAGetLastError() << std::endl;
+        std::cerr << "Error at " << fase << " " << getLastError() << std::endl;
 	}
 }
 
@@ -55,6 +50,10 @@ bool Cliente::estaConectado()
 void Cliente::desconectar()
 {
 	if (connected)
-		closesocket(socketD);
+    #ifdef __linux__
+        shutdown(socketD, 2);
+    #elif _WIN32
+        closesocket(socketD);
+    #endif
 	connected = false;
 }
