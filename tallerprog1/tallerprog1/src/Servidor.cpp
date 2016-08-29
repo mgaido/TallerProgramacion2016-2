@@ -7,7 +7,7 @@ Servidor::Servidor() {
 void Servidor::iniciar(int port) {
 	int response = -1;
 
-    std::string fase = "socket";
+	std::string fase = "socket";
 	socketD = socket(AF_INET, SOCK_STREAM, 0);
 
 	if (socketD != INVALID_SOCKET) {
@@ -28,7 +28,7 @@ void Servidor::iniciar(int port) {
 					struct sockaddr_in clientAddress;
 					int clientAddressLength = sizeof(clientAddress);
 
-                    SOCKET newSocketD = accept(socketD, (struct sockaddr*) &clientAddress, (socklen_t*) &clientAddressLength);
+					SOCKET newSocketD = accept(socketD, (struct sockaddr*) &clientAddress, (socklen_t*)&clientAddressLength);
 					if (newSocketD != INVALID_SOCKET)
 						this->handleClient(newSocketD, clientAddress);
 					else {
@@ -36,17 +36,17 @@ void Servidor::iniciar(int port) {
 						stop = true;
 					}
 				}
-            #ifdef __linux__
-                shutdown(socketD, 2);
-            #elif _WIN32
-                closesocket(socketD);
-            #endif
+#ifdef __linux__
+				shutdown(socketD, 2);
+#elif _WIN32
+				closesocket(socketD);
+#endif
 			}
 		}
 	}
 
 	if (response < 0) {
-        std::cerr << "Error at " << fase << " " << getLastError() << std::endl;
+		std::cerr << "Error at " << fase << " " << getLastError() << std::endl;
 	}
 
 }
@@ -61,11 +61,11 @@ void Servidor::handleClient(SOCKET newSocketD, sockaddr_in clientAddress) {
 
 	Conexion con(newSocketD);
 	std::string text = con.recibir();
-    std::cout << "El cliente " << ip << " envió " << text << std::endl;
-    std::cout << "Escribir respuesta: ";
+	std::cout << "El cliente " << ip << " envió " << text << std::endl;
+	std::cout << "Escribir respuesta: ";
 
-    std::string msg;
-    std::getline(std::cin, msg);
-    con.enviar(msg);
+	std::string msg;
+	std::getline(std::cin, msg);
+	con.enviar(msg);
 	detener();
 }

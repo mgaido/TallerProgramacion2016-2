@@ -23,7 +23,7 @@ void Cliente::conectar(std::string host, int puerto) {
 			response = connect(socketD, (struct sockaddr *) &serverAddress, sizeof(serverAddress));
 			if (response == 0) {
 				connected = true;
-                std::cout << "Conectado a " << host << ":" << puerto << ". Escribir mensaje: ";
+				std::cout << "Conectado a " << host << ":" << puerto << ". Escribir mensaje: ";
 
 				std::string msg;
 				std::getline(std::cin, msg);
@@ -32,13 +32,13 @@ void Cliente::conectar(std::string host, int puerto) {
 				con.enviar(msg);
 
 				std::string resp = con.recibir();
-                std::cout << "El servidor respondío: " << resp << std::endl;
+				std::cout << "El servidor respondío: " << resp << std::endl;
 			}
 		}
 	}
 
 	if (response < 0) {
-        std::cerr << "Error at " << fase << " " << getLastError() << std::endl;
+		std::cerr << "Error at " << fase << " " << getLastError() << std::endl;
 	}
 }
 
@@ -50,10 +50,10 @@ bool Cliente::estaConectado()
 void Cliente::desconectar()
 {
 	if (connected)
-    #ifdef __linux__
-        shutdown(socketD, 2);
-    #elif _WIN32
-        closesocket(socketD);
-    #endif
+#ifdef __linux__
+		shutdown(socketD, 2);
+#elif _WIN32
+		closesocket(socketD);
+#endif
 	connected = false;
 }
