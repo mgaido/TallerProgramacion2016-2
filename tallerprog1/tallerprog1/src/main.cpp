@@ -1,8 +1,7 @@
 #include "Servidor.h"
 #include "Cliente.h"
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
 
 #ifdef _WIN32
 	WSADATA wsa;
@@ -25,25 +24,26 @@ int main(int argc, char *argv[])
 					break;
 				case 'p':
 					if (i + 1 < argc) {
-						auto sPuerto = std::string(argv[++i]);
+						std::string sPuerto = std::string(argv[++i]);
 						puerto = std::stoi(sPuerto);
 					}
 					break;
-				default: break;
+				default:
+					break;
 				}
 			}
 		}
 	}
 
-	std::cout << (server ? "Servidor" : "Cliente") << " puerto " << puerto << std::endl;
+	std::cout << (server ? "Servidor" : "Cliente") << " puerto " << puerto
+			<< std::endl;
 	if (puerto < 0)
 		return -1;
 
 	if (server) {
 		Servidor servidor;
 		servidor.iniciar(puerto);
-	}
-	else {
+	} else {
 		if (host.length() > 0) {
 			Cliente cliente;
 			cliente.conectar(host, puerto);

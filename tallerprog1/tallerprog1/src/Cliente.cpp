@@ -1,7 +1,8 @@
 #include "Cliente.h"
 
-Cliente::Cliente()
-{
+Cliente::Cliente() {
+	connected = false;
+	socketD = INVALID_SOCKET;
 }
 
 
@@ -32,7 +33,7 @@ void Cliente::conectar(std::string host, int puerto) {
 				con.enviar(msg);
 
 				std::string resp = con.recibir();
-				std::cout << "El servidor respondío: " << resp << std::endl;
+				std::cout << "El servidor respondió: " << resp << std::endl;
 			}
 		}
 	}

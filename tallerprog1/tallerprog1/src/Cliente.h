@@ -4,8 +4,7 @@
 #include "stdafx.h"
 #include "Conexion.h"
 
-class Cliente
-{
+class Cliente {
 public:
 	Cliente();
 	void conectar(std::string host, int puerto);

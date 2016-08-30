@@ -4,17 +4,24 @@
 #include "stdafx.h"
 #include "Conexion.h"
 
+#include <thread>
+
 class Servidor {
 
 public:
 	Servidor();
+	~Servidor();
 
 	void iniciar(int puerto);
 	void detener();
 private:
 	SOCKET socketD;
 	bool stop;
-	void handleClient(SOCKET newSocketD, sockaddr_in clientAddress);
+	std::thread listenThread;
+	std::vector<std::thread> handlers;
+
+	void listenLoop(int port);
+	void handleClient(SOCKET newSocketD, std::string clientIp);
 };
 
 #endif // SERVIDOR_H

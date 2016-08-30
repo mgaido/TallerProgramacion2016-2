@@ -5,8 +5,7 @@
 
 using bytes = std::vector<char>;
 
-class Conexion
-{
+class Conexion {
 public:
 	Conexion(SOCKET socketD);
 
@@ -17,5 +16,4 @@ private:
 };
 
 #endif // CONEXION_H
-
 

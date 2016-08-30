@@ -1,15 +1,13 @@
 #include "Conexion.h"
 
-Conexion::Conexion(SOCKET socketD)
-{
+Conexion::Conexion(SOCKET socketD) {
 	this->socketD = socketD;
 }
 
-void Conexion::enviar(std::string mensaje)
-{
+void Conexion::enviar(std::string mensaje) {
 	int size = mensaje.size();
 	bool ok = false;
-	if (send(socketD, (char*)&size, sizeof(size), 0) != SOCKET_ERROR) {
+	if (send(socketD, (char*) &size, sizeof(size), 0) != SOCKET_ERROR) {
 		ok = send(socketD, mensaje.data(), size, 0) != SOCKET_ERROR;
 	}
 
@@ -18,13 +16,12 @@ void Conexion::enviar(std::string mensaje)
 	}
 }
 
-std::string Conexion::recibir()
-{
+std::string Conexion::recibir() {
 	int size;
 	std::string mensaje;
 
 	bool ok = false;
-	if (recv(socketD, (char*)&size, sizeof(size), 0) != SOCKET_ERROR) {
+	if (recv(socketD, (char*) &size, sizeof(size), 0) != SOCKET_ERROR) {
 		char* c = new char[size];
 		int read = 0;
 		while (read < size) {
