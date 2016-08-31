@@ -64,11 +64,7 @@ void Servidor::listenLoop(int port) {
 					if (response < 0)
 						stop = true;
 				}
-#ifdef __linux__
 				shutdown(socketD, 2);
-#elif _WIN32
-				closesocket(socketD);
-#endif
 			}
 		}
 	}

@@ -4,8 +4,6 @@
 #include "stdafx.h"
 #include "Conexion.h"
 
-#include <thread>
-
 class Servidor {
 
 public:
