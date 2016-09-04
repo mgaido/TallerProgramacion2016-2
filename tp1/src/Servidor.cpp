@@ -3,10 +3,53 @@
 Servidor::Servidor() {
 	socketD = INVALID_SOCKET;
 	stop = false;
+	leerUsuarios();
+
+	auto ite = usuarios.begin();
+	while (ite != usuarios.end()) {
+		std::cout << ite->getNombre() << "    " << ite->password << std::endl;
+		ite++;
+
+	}
+
 }
 
 Servidor::~Servidor() {
 	detener();
+}
+
+void Servidor::leerUsuarios() {
+	std::ifstream fileUsuario("arch.txt");
+	std::string linea;
+	std::string clave[2];
+	while (fileUsuario.good() && getline(fileUsuario, linea)) {
+		bool invalido = false;
+		for (int i = 0; i < 2 && !invalido; i++) {
+			if (linea.find(',') != std::string::npos || i == 1) {
+				clave[i] = linea.substr(0, linea.find(','));
+				linea = linea.substr(linea.find(',') + 1, linea.length() - 1);
+			}
+			else {
+				invalido = true;
+				std::cout << "Error" << std::endl;
+			}
+		}
+
+		bool repetido = false;
+		auto ite = usuarios.begin();
+		while (ite != usuarios.end() && !repetido) {
+			if (clave[0] == ite->getNombre()) {
+				repetido = true;
+			}
+			ite++;
+		}
+
+		if (!invalido && clave[0] != "" && clave[1] != "" && !repetido) {
+			Usuario usuario(clave[0], clave[1]);
+			usuarios.push_back(usuario);
+			//std::cout << "Usuario: " << clave[0] << "Clave: " << clave[1] << std::endl;
+		}
+	}
 }
 
 void Servidor::iniciar(int port) {
@@ -32,7 +75,7 @@ void Servidor::listenLoop(int port) {
 
 		fase = "bind";
 		response = bind(socketD, (struct sockaddr*) &serverAddress,
-				sizeof(serverAddress));
+			sizeof(serverAddress));
 		if (response == 0) {
 			fase = "listen";
 			response = listen(socketD, 4);
@@ -50,16 +93,16 @@ void Servidor::listenLoop(int port) {
 
 						fase = "poll";
 						SOCKET newSocketD = accept(socketD,
-								(struct sockaddr*) &clientAddress,
-								(socklen_t*) &clientAddressLength);
+							(struct sockaddr*) &clientAddress,
+							(socklen_t*)&clientAddressLength);
 
 						char ip[INET_ADDRSTRLEN];
 						inet_ntop(AF_INET, &(clientAddress.sin_addr), ip,
-								INET_ADDRSTRLEN);
+							INET_ADDRSTRLEN);
 
 						handlers.push_back(
-								std::thread(&Servidor::handleClient, this,
-										newSocketD, std::string(ip)));
+							std::thread(&Servidor::handleClient, this,
+								newSocketD, std::string(ip)));
 					}
 					if (response < 0)
 						stop = true;
@@ -75,7 +118,7 @@ void Servidor::listenLoop(int port) {
 }
 
 void Servidor::detener() {
-	if (! stop) {
+	if (!stop) {
 		stop = true;
 
 		auto it = handlers.begin();
@@ -88,11 +131,50 @@ void Servidor::detener() {
 	}
 }
 
+
+bool Servidor::autentificar(std::string msj) {
+	bool correcto = false;
+	if (msj.find(',') != std::string::npos) {
+		std::string usuario = msj.substr(0, msj.find(','));
+		std::string clave = msj.substr(msj.find(',')+1, msj.length()-1);
+		auto ite = usuarios.begin();
+		while (ite != usuarios.end()) {
+			if (usuario == ite->getNombre()) {
+				if (ite->verificarPassword(clave)) {
+					correcto = true;
+				}
+			}
+			ite++;
+		}
+	}
+	return correcto;
+	
+}
+
 void Servidor::handleClient(SOCKET newSocketD, std::string clientIp) {
 	if (newSocketD != INVALID_SOCKET) {
 		Conexion con(newSocketD);
-		std::string text = con.recibir();
-		std::cout << "El cliente " << clientIp << " envió " << text << std::endl;
-		con.enviar("Recibido: \"" + text + "\"");
+		bool logueado = false;
+		bool seguir = true;
+		while (seguir) {
+			if (logueado) {
+				std::string text = con.recibir();
+				std::cout << "El cliente " << clientIp << " envió " << text << std::endl;
+				con.enviar("Recibido: \"" + text + "\"");
+			}
+			else {
+				std::string text = con.recibir();
+				std::cout << "El cliente " << clientIp << " envió " << text << std::endl;
+				bool correcto = autentificar(text);
+				if (correcto) {
+					con.enviar("Logueo Exitoso.");
+					logueado = true;
+				}
+				else {
+					con.enviar("Error - Usuario o Clave Incorrecto");
+					seguir = false;
+				}
+			}
+		}
 	}
 }

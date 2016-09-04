@@ -13,6 +13,8 @@ public:
 private:
 	SOCKET socketD;
 	bool connected;
+	bool logueado;
+	void loguear();
 };
 
 #endif // CLIENTE_H

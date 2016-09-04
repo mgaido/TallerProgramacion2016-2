@@ -21,10 +21,11 @@ public:
 
 	bool operator==(Usuario &otro);
 	bool operator!=(Usuario &otro);
+	std::string password;
 
 private:
 	std::string nombre;
-	std::string password;
+	
 };
 
 #endif /* USUARIO_H_ */

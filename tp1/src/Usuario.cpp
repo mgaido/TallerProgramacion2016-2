@@ -19,7 +19,7 @@ Usuario::~Usuario() {
 }
 
 std::string Usuario::getNombre() {
-	return password;
+	return nombre;
 }
 
 bool Usuario::verificarPassword(std::string pass) {

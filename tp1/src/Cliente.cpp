@@ -2,9 +2,24 @@
 
 Cliente::Cliente() {
 	connected = false;
+	logueado = false;
 	socketD = INVALID_SOCKET;
 }
 
+void Cliente::loguear() {
+	std::cout << "Ingrese Usuario: ";
+	std::string usuario;
+	std::getline(std::cin, usuario);
+	std::cout << "Ingrese Clave: ";
+	std::string clave;
+	std::getline(std::cin, clave);
+
+	Conexion con(socketD);
+	con.enviar(usuario+","+clave);
+
+	std::string resp = con.recibir();
+	std::cout << "El servidor respondió: " << resp << std::endl;
+}
 
 void Cliente::conectar(std::string host, int puerto) {
 	std::string fase = "socket";
@@ -24,16 +39,23 @@ void Cliente::conectar(std::string host, int puerto) {
 			response = connect(socketD, (struct sockaddr *) &serverAddress, sizeof(serverAddress));
 			if (response == 0) {
 				connected = true;
-				std::cout << "Conectado a " << host << ":" << puerto << ". Escribir mensaje: ";
+				std::cout << "Conectado a " << host << ":" << puerto << std::endl;
+				if (logueado) {
+					std::cout << "Conectado a " << host << ":" << puerto << ". Escribir mensaje: ";
 
-				std::string msg;
-				std::getline(std::cin, msg);
+					std::string msg;
+					std::getline(std::cin, msg);
 
-				Conexion con(socketD);
-				con.enviar(msg);
+					Conexion con(socketD);
+					con.enviar(msg);
 
-				std::string resp = con.recibir();
-				std::cout << "El servidor respondió: " << resp << std::endl;
+					std::string resp = con.recibir();
+					std::cout << "El servidor respondió: " << resp << std::endl;
+				}
+				else {
+					loguear();
+				}
+				
 			}
 		}
 	}

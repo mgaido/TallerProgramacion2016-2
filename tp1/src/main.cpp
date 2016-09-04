@@ -10,7 +10,7 @@ int main(int argc, char *argv[]) {
 
 	bool server = true;
 	std::string host;
-	int puerto = -1;
+	int puerto = 1000;
 
 	for (int i = 1; i < argc; ++i) {
 		auto param = std::string(argv[i]);
