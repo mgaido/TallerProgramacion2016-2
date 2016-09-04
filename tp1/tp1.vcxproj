@@ -113,12 +113,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Cliente.cpp" />
-    <ClCompile Include="src\ColaBloqueante.cpp" />
     <ClCompile Include="src\Conexion.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Servidor.cpp" />
     <ClCompile Include="src\stdafx.cpp" />
-    <ClCompile Include="src\TestColaBloqueante.cpp" />
+    <ClCompile Include="src\test\TestColaBloqueante.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Cliente.h" />
@@ -126,7 +125,7 @@
     <ClInclude Include="src\Conexion.h" />
     <ClInclude Include="src\Servidor.h" />
     <ClInclude Include="src\stdafx.h" />
-    <ClInclude Include="src\TestColaBloqueante.h" />
+    <ClInclude Include="src\test\TestColaBloqueante.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
