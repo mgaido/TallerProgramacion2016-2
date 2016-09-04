@@ -116,6 +116,7 @@
     <ClCompile Include="src\Conexion.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Mensaje.cpp" />
+    <ClCompile Include="src\Mensajeria.cpp" />
     <ClCompile Include="src\Servidor.cpp" />
     <ClCompile Include="src\stdafx.cpp" />
     <ClCompile Include="src\test\TestColaBloqueante.cpp" />
@@ -126,6 +127,7 @@
     <ClInclude Include="src\ColaBloqueante.h" />
     <ClInclude Include="src\Conexion.h" />
     <ClInclude Include="src\Mensaje.h" />
+    <ClInclude Include="src\Mensajeria.h" />
     <ClInclude Include="src\Servidor.h" />
     <ClInclude Include="src\stdafx.h" />
     <ClInclude Include="src\test\TestColaBloqueante.h" />

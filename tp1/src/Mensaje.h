@@ -17,13 +17,13 @@ public:
 	Mensaje();
 	virtual ~Mensaje();
 
-	const Usuario& getDestinatario() const;
-	void setDestinatario(const Usuario& destinatario);
+	Usuario& getDestinatario();
+	void setDestinatario(Usuario& destinatario);
 
-	const Usuario& getRemitente() const;
-	void setRemitente(const Usuario& remitente);
+	Usuario& getRemitente();
+	void setRemitente(Usuario& remitente);
 
-	std::string getTexto() const;
+	std::string getTexto();
 	void setTexto(std::string texto);
 
 private:

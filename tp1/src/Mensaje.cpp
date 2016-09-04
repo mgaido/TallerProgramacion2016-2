@@ -13,23 +13,23 @@ Mensaje::Mensaje() {
 Mensaje::~Mensaje() {
 }
 
-const Usuario& Mensaje::getDestinatario() const {
+Usuario& Mensaje::getDestinatario() {
 	return destinatario;
 }
 
-void Mensaje::setDestinatario(const Usuario& destinatario) {
+void Mensaje::setDestinatario(Usuario& destinatario) {
 	this->destinatario = destinatario;
 }
 
-const Usuario& Mensaje::getRemitente() const {
+Usuario& Mensaje::getRemitente() {
 	return remitente;
 }
 
-void Mensaje::setRemitente(const Usuario& remitente) {
+void Mensaje::setRemitente(Usuario& remitente) {
 	this->remitente = remitente;
 }
 
-std::string Mensaje::getTexto() const {
+std::string Mensaje::getTexto() {
 	return texto;
 }
 
