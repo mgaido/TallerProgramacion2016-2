@@ -82,6 +82,7 @@
 									<listOptionValue builtIn="false" value="&quot;C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\atlmfc\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Program Files (x86)\Windows Kits\10\Include\10.0.10150.0\ucrt&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Program Files (x86)\Windows Kits\8.1\Include\um&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Program Files (x86)\Windows Kits\8.1\Include\shared&quot;"/>
 								</option>
@@ -93,6 +94,7 @@
 									<listOptionValue builtIn="false" value="&quot;C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\atlmfc\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Program Files (x86)\Windows Kits\10\Include\10.0.10150.0\ucrt&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Program Files (x86)\Windows Kits\8.1\Include\um&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Program Files (x86)\Windows Kits\8.1\Include\shared&quot;"/>
 								</option>
@@ -109,6 +111,7 @@
 									<listOptionValue builtIn="false" value="&quot;C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\lib&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\atlmfc\lib&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Program Files (x86)\Windows Kits\10\lib\10.0.10240.0\ucrt\x86&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\Program Files (x86)\Windows Kits\10\Lib\10.0.10150.0\ucrt\x86&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Program Files (x86)\Windows Kits\8.1\lib\winv6.3\um\x86&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\Lib\um\x86&quot;"/>
 								</option>
