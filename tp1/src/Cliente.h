@@ -14,7 +14,10 @@ private:
 	SOCKET socketD;
 	bool connected;
 	bool logueado;
-	void loguear();
+	char imprimirMenu();
+	void loguear(Conexion con);
+	void parseoUsuario(std::string textoUsuarios);
+	std::vector<std::string> usuarios;
 };
 
 #endif // CLIENTE_H

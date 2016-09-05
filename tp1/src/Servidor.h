@@ -21,6 +21,7 @@ private:
 	std::vector<std::thread> handlers;
 	//std::vector <Mensaje> mensajes;
 	std::vector <Usuario> usuarios;
+	std::string textoUsuarios;
 
 	void Servidor::leerUsuarios();
 	void listenLoop(int port);

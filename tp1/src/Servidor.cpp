@@ -8,10 +8,11 @@ Servidor::Servidor() {
 	auto ite = usuarios.begin();
 	while (ite != usuarios.end()) {
 		std::cout << ite->getNombre() << "    " << ite->password << std::endl;
+		textoUsuarios = textoUsuarios + ite->getNombre() + ",";
 		ite++;
-
 	}
-
+	textoUsuarios = textoUsuarios.substr(0, textoUsuarios.length() - 1);
+	std::cout << textoUsuarios << std::endl;
 }
 
 Servidor::~Servidor() {
@@ -159,20 +160,18 @@ void Servidor::handleClient(SOCKET newSocketD, std::string clientIp) {
 		while (seguir) {
 			if (logueado) {
 				std::string text = con.recibir();
-				std::cout << "El cliente " << clientIp << " envió " << text << std::endl;
+				std::cout << "El cliente " << clientIp << " envio " << text << std::endl;
 				con.enviar("Recibido: \"" + text + "\"");
-			}
-			else {
+			} else {
 				std::string text = con.recibir();
-				std::cout << "El cliente " << clientIp << " envió " << text << std::endl;
+				std::cout << "El cliente " << clientIp << " envio " << text << std::endl;
 				bool correcto = autentificar(text);
 				if (correcto) {
-					con.enviar("1-Logueo Exitoso.");
+					con.enviar("1-" + textoUsuarios);
 					logueado = true;
-				}
-				else {
-					con.enviar("0-Error - Usuario o Clave Incorrecto");
-					seguir = false;
+				} else {
+					con.enviar("0-Error");
+					//seguir = false;
 				}
 			}
 		}

@@ -6,7 +6,20 @@ Cliente::Cliente() {
 	socketD = INVALID_SOCKET;
 }
 
-void Cliente::loguear() {
+void Cliente::parseoUsuario(std::string textoUsuarios) {
+	textoUsuarios = textoUsuarios + ",";
+	while (textoUsuarios.find(',') != std::string::npos) {
+		usuarios.push_back(textoUsuarios.substr(0, textoUsuarios.find(',')));
+		textoUsuarios = textoUsuarios.substr(textoUsuarios.find(',') + 1, textoUsuarios.length()-1);
+	}
+	//for (std::vector<std::string>::const_iterator i = usuarios.begin(); i != usuarios.end(); ++i) {
+	//	// process i
+	//	std::cout << *i << " "; // this will print all the contents of *features*
+	//}
+
+}
+
+void Cliente::loguear(Conexion con) {
 	std::cout << "Ingrese Usuario: ";
 	std::string usuario;
 	std::getline(std::cin, usuario);
@@ -14,13 +27,41 @@ void Cliente::loguear() {
 	std::string clave;
 	std::getline(std::cin, clave);
 
-	Conexion con(socketD);
+
 	con.enviar(usuario + "," + clave);
 
 	std::string resp = con.recibir();
-	if (resp.substr(0, resp.find('-')) == "1")
+	if (resp.substr(0, resp.find('-')) == "1") {
 		logueado = true;
-	std::cout << "El servidor respondió: " << resp << std::endl;
+		std::cout << "logueo correcto" << std::endl;
+		parseoUsuario(resp.substr(resp.find('-')+1, resp.length()));
+	}
+	std::cout << "El servidor respondio: " << resp << std::endl;
+}
+
+char Cliente::imprimirMenu() {
+	std::string opcion;
+	char opcionChar;
+	bool correcto = false;
+	while (!correcto) {
+		std::cout << "1. Conectar" << std::endl;
+		std::cout << "2. Desconectar" << std::endl;
+		std::cout << "3. Salir" << std::endl;
+		std::cout << "4. Enviar" << std::endl;
+		std::cout << "5. Recibir" << std::endl;
+		std::cout << "6. Lorem Ipsum" << std::endl;
+		std::cout << "Seleccione una opcion: ";
+		std::getline(std::cin, opcion);
+		
+		if (opcion.length() == 1) {
+			opcionChar = opcion[0];
+			correcto = true;
+		}
+		else {
+			std::cout << "Opcion Incorrecta" << std::endl;
+		}
+	}
+	return opcionChar;
 }
 
 void Cliente::conectar(std::string host, int puerto) {
@@ -42,22 +83,41 @@ void Cliente::conectar(std::string host, int puerto) {
 			if (response == 0) {
 				connected = true;
 				std::cout << "Conectado a " << host << ":" << puerto << std::endl;
-				while (!logueado) {
-					loguear();
-				}
+				Conexion con(socketD);
 
-				std::cout << "Conectado a " << host << ":" << puerto << ". Escribir mensaje: ";
 
 				std::string msg;
-				std::getline(std::cin, msg);
+				std::string resp;
 
-				Conexion con(socketD);
-				con.enviar(msg);
+				while (true) {
+					char opcion = imprimirMenu();
+					switch (opcion) {
+					case '1':
+						while (!logueado) {
+							loguear(con);
+						}
+						std::cout << "Conectado a " << host << ":" << puerto << std::endl;
+						break;
+					case '2':
+						logueado = false;
+						break;
+					case '3':
 
-				std::string resp = con.recibir();
-				std::cout << "El servidor respondió: " << resp << std::endl;
+						break;
+					case '4':
+						std::cout << "Escribir mensaje: ";
+						std::getline(std::cin, msg);
+						con.enviar(msg);
+						
+						resp = con.recibir();
+						std::cout << "El servidor respondio: " << resp << std::endl;
+						break;
+					default:
+						std::cout << "Incorrecto" << std::endl;
+						break;
+					}
 
-
+				}
 			}
 		}
 	}
