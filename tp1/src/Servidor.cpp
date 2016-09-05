@@ -167,11 +167,11 @@ void Servidor::handleClient(SOCKET newSocketD, std::string clientIp) {
 				std::cout << "El cliente " << clientIp << " envió " << text << std::endl;
 				bool correcto = autentificar(text);
 				if (correcto) {
-					con.enviar("Logueo Exitoso.");
+					con.enviar("1-Logueo Exitoso.");
 					logueado = true;
 				}
 				else {
-					con.enviar("Error - Usuario o Clave Incorrecto");
+					con.enviar("0-Error - Usuario o Clave Incorrecto");
 					seguir = false;
 				}
 			}

@@ -15,9 +15,11 @@ void Cliente::loguear() {
 	std::getline(std::cin, clave);
 
 	Conexion con(socketD);
-	con.enviar(usuario+","+clave);
+	con.enviar(usuario + "," + clave);
 
 	std::string resp = con.recibir();
+	if (resp.substr(0, resp.find('-')) == "1")
+		logueado = true;
 	std::cout << "El servidor respondió: " << resp << std::endl;
 }
 
@@ -40,25 +42,26 @@ void Cliente::conectar(std::string host, int puerto) {
 			if (response == 0) {
 				connected = true;
 				std::cout << "Conectado a " << host << ":" << puerto << std::endl;
-				if (logueado) {
-					std::cout << "Conectado a " << host << ":" << puerto << ". Escribir mensaje: ";
-
-					std::string msg;
-					std::getline(std::cin, msg);
-
-					Conexion con(socketD);
-					con.enviar(msg);
-
-					std::string resp = con.recibir();
-					std::cout << "El servidor respondió: " << resp << std::endl;
-				}
-				else {
+				while (!logueado) {
 					loguear();
 				}
-				
+
+				std::cout << "Conectado a " << host << ":" << puerto << ". Escribir mensaje: ";
+
+				std::string msg;
+				std::getline(std::cin, msg);
+
+				Conexion con(socketD);
+				con.enviar(msg);
+
+				std::string resp = con.recibir();
+				std::cout << "El servidor respondió: " << resp << std::endl;
+
+
 			}
 		}
 	}
+
 
 	if (response < 0) {
 		std::cerr << "Error at " << fase << " " << getLastError() << std::endl;
