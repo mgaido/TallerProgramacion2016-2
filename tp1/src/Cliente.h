@@ -8,11 +8,14 @@ class Cliente {
 public:
 	Cliente();
 	void conectar(std::string host, int puerto);
-	bool estaConectado();
 	void desconectar();
 private:
+	void leerComando();
+
+	std::string host;
+	int puerto;
 	SOCKET socketD;
-	bool connected;
+	bool conectado;
 	bool logueado;
 	char imprimirMenu();
 	void loguear(Conexion con);
