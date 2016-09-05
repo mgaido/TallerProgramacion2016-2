@@ -14,7 +14,6 @@ class Usuario {
 public:
 	Usuario();
 	Usuario(std::string &nombre, std::string &password);
-	virtual ~Usuario();
 
 	std::string getNombre();
 	bool verificarPassword(std::string pass);
@@ -25,7 +24,6 @@ public:
 
 private:
 	std::string nombre;
-	
 };
 
 #endif /* USUARIO_H_ */

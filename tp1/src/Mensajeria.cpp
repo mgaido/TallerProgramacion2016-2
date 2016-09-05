@@ -1,10 +1,7 @@
 #include "Mensajeria.h"
 
-Mensajeria::Mensajeria() {
-}
-
-Mensajeria::~Mensajeria() {
-}
+std::vector<Mensaje> Mensajeria::mensajes;
+std::mutex Mensajeria::lock;
 
 void Mensajeria::enviarMensaje(std::string & texto, Usuario & remitente, Usuario & destinatario) {
 	Mensaje mensaje;

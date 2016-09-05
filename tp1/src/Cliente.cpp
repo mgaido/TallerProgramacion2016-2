@@ -128,18 +128,11 @@ void Cliente::conectar(std::string host, int puerto) {
 	}
 }
 
-bool Cliente::estaConectado()
-{
+bool Cliente::estaConectado() {
 	return connected;
 }
 
-void Cliente::desconectar()
-{
+void Cliente::desconectar() {
 	if (connected)
-#ifdef __linux__
 		shutdown(socketD, 2);
-#elif _WIN32
-		closesocket(socketD);
-#endif
-	connected = false;
 }

@@ -15,9 +15,6 @@ Usuario::Usuario(std::string& nombre, std::string& password) {
 	this->password = password;
 }
 
-Usuario::~Usuario() {
-}
-
 std::string Usuario::getNombre() {
 	return nombre;
 }

@@ -10,15 +10,12 @@
 class Mensajeria
 {
 public:
-	Mensajeria();
-	~Mensajeria();
-
-	void enviarMensaje(std::string &texto, Usuario &remitente, Usuario &destinatario);
-	std::vector<Mensaje> getMensajesParaUsuario(Usuario &usuario);
-	void insertarMensajes(std::vector<Mensaje> &msgs);
+	static void enviarMensaje(std::string &texto, Usuario &remitente, Usuario &destinatario);
+	static std::vector<Mensaje> getMensajesParaUsuario(Usuario &usuario);
+	static void insertarMensajes(std::vector<Mensaje> &msgs);
 	
 private:
-	std::vector<Mensaje> mensajes;
-	std::mutex lock;
+	static std::vector<Mensaje> mensajes;
+	static std::mutex lock;
 };
 

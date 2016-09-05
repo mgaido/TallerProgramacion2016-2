@@ -2,6 +2,7 @@
 #define CONEXION_H
 
 #include "stdafx.h"
+#include "SocketException.h"
 
 using bytes = std::vector<char>;
 
@@ -9,8 +10,8 @@ class Conexion {
 public:
 	Conexion(SOCKET socketD);
 
-	void enviar(std::string mensaje);
-	std::string recibir();
+	void enviar(std::string mensaje) throw(SocketException);
+	std::string recibir() throw(SocketException);
 private:
 	SOCKET socketD;
 };

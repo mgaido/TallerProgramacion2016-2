@@ -9,8 +9,9 @@ int main(int argc, char *argv[]) {
 #endif
 
 	bool server = true;
-	std::string host;
-	int puerto = 1000;
+	std::string host = "127.0.0.1";
+	std::string archivo = "usuarios.txt";
+	int puerto = 10000;
 
 	for (int i = 1; i < argc; ++i) {
 		auto param = std::string(argv[i]);
@@ -28,6 +29,14 @@ int main(int argc, char *argv[]) {
 						puerto = std::stoi(sPuerto);
 					}
 					break;
+				case 'u':
+					if (i + 1 < argc) {
+						archivo = std::string(argv[++i]);
+					}
+					break;
+				case 'c':
+					server = false;
+					break;
 				default:
 					break;
 				}
@@ -35,21 +44,14 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	std::cout << (server ? "Servidor" : "Cliente") << " puerto " << puerto
-			<< std::endl;
-	if (puerto < 0)
-		return -1;
-
 	if (server) {
-		Servidor servidor;
+		std::cout << "Iniciado servidor en puerto " << puerto << " y leyendo usuarios de " << archivo << std::endl;
+		Servidor servidor(archivo);
 		servidor.iniciar(puerto);
 	} else {
-		if (host.length() > 0) {
-			Cliente cliente;
-			cliente.conectar(host, puerto);
-			if (cliente.estaConectado())
-				cliente.desconectar();
-		}
+		std::cout << "Iniciando cliente y conectando a " << host << ':' << puerto << std::endl;
+		Cliente cliente;
+		cliente.conectar(host, puerto);
 	}
 
 	return 0;

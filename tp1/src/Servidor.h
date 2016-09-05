@@ -2,31 +2,25 @@
 #define SERVIDOR_H
 
 #include "stdafx.h"
-#include "Conexion.h"
-#include "Mensaje.h"
-#include "Usuario.h"
+#include "Sesion.h"
+#include "Mensajeria.h"
+#include "Usuarios.h"
 
 class Servidor {
 
 public:
-	Servidor();
+	Servidor(std::string &archivo);
 	~Servidor();
 
 	void iniciar(int puerto);
 	void detener();
 private:
 	SOCKET socketD;
-	bool stop;
-	std::thread listenThread;
-	std::vector<std::thread> handlers;
-	//std::vector <Mensaje> mensajes;
-	std::vector <Usuario> usuarios;
-	std::string textoUsuarios;
+	bool detenido;
+	std::thread thread;
+	std::vector<Sesion> sesiones;
 
-	void Servidor::leerUsuarios();
-	void listenLoop(int port);
-	void handleClient(SOCKET newSocketD, std::string clientIp);
-	bool autentificar(std::string msj);
+	void aceptarConexiones(int port);
 };
 
 #endif // SERVIDOR_H

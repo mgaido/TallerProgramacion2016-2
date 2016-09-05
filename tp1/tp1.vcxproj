@@ -118,9 +118,12 @@
     <ClCompile Include="src\Mensaje.cpp" />
     <ClCompile Include="src\Mensajeria.cpp" />
     <ClCompile Include="src\Servidor.cpp" />
+    <ClCompile Include="src\Sesion.cpp" />
+    <ClCompile Include="src\SocketException.cpp" />
     <ClCompile Include="src\stdafx.cpp" />
     <ClCompile Include="src\test\TestColaBloqueante.cpp" />
     <ClCompile Include="src\Usuario.cpp" />
+    <ClCompile Include="src\Usuarios.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Cliente.h" />
@@ -129,9 +132,12 @@
     <ClInclude Include="src\Mensaje.h" />
     <ClInclude Include="src\Mensajeria.h" />
     <ClInclude Include="src\Servidor.h" />
+    <ClInclude Include="src\Sesion.h" />
+    <ClInclude Include="src\SocketException.h" />
     <ClInclude Include="src\stdafx.h" />
     <ClInclude Include="src\test\TestColaBloqueante.h" />
     <ClInclude Include="src\Usuario.h" />
+    <ClInclude Include="src\Usuarios.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
