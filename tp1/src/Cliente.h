@@ -16,7 +16,7 @@ private:
 	void enviarMensaje();
 	void recibirMensajes();
 	void loremIpsum();
-	void loguear(Conexion con);
+	void loguear();
 	void parseoUsuario(std::string textoUsuarios);
 	char imprimirMenu();
 

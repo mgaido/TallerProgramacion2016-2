@@ -11,6 +11,7 @@ Sesion::Sesion(SOCKET socketD, std::string ip) {
 	this->socketD = socketD;
 	this->ip = ip;
 	this->detenido=false;
+	this->logueado = false;
 	this->thread = std::thread(&Sesion::atenderCliente, this);
 }
 

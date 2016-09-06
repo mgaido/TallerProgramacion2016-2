@@ -51,20 +51,19 @@ void Cliente::leerComando() {
 
 	std::string msg;
 	std::string resp;
-
-	while (true) {
-		char opcion = imprimirMenu();
+	char opcion = '0';
+	while (opcion != '3') {
+		opcion = imprimirMenu();
 		switch (opcion) {
 		case '1':
 			if (!conectado)
 				conectar();
-
 			while (conectado && !logueado) {
-				loguear(con);
+				loguear();
 			}
 			break;
 		case '2':
-			logueado = false;
+			desconectar();
 			break;
 		case '3':
 			desconectar();
@@ -110,7 +109,7 @@ char Cliente::imprimirMenu() {
 	return opcionChar;
 }
 
-void Cliente::loguear(Conexion con) {
+void Cliente::loguear() {
 	std::cout << "Ingrese Usuario: ";
 	std::string usuario;
 	std::getline(std::cin, usuario);
