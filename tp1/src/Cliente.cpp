@@ -62,13 +62,13 @@ void Cliente::leerComando() {
 			desconectar();
 			break;
 		case '4':
-			enviarMensaje(con);
+			enviarMensaje();
 			break;
 		case '5':
-			recibirMensaje(con);
+			recibirMensajes();
 			break;
 		case '6':
-			loremIpsum(con);
+			loremIpsum();
 			break;
 		default:
 			std::cout << "Incorrecto" << std::endl;
@@ -149,7 +149,7 @@ void Cliente::desconectar() {
 
 }
 
-void Cliente::enviarMensaje(Conexion con){
+void Cliente::enviarMensaje(){
 	CodificadorDeMensajes codificadorDeMensajes(socketD);
 	std::cout << "Ingrese destinatario: ";
 	std::string destinatario;
@@ -169,10 +169,20 @@ void Cliente::enviarMensaje(Conexion con){
 	}
 }
 
-void Cliente::recibirMensaje(Conexion con) {
-
+void Cliente::recibirMensajes() {
+	CodificadorDeMensajes codificadorDeMensajes(socketD);
+	try {
+		codificadorDeMensajes.recibirMensajes();
+	}
+	catch (SocketException e) {
+		if (conectado) {
+			//Logger::error(std:string(e.what()));
+			std::cout << "Conexión con " << host << " cerrada." << std::endl;
+			conectado = false;
+		}
+	}
 }
 
-void Cliente::loremIpsum(Conexion con) {
-
+void Cliente::loremIpsum() {
+	
 }
