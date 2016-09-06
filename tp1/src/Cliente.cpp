@@ -58,9 +58,7 @@ void Cliente::leerComando() {
 		case '1':
 			if (!conectado)
 				conectar();
-			while (conectado && !logueado) {
-				loguear();
-			}
+			loguear();
 			break;
 		case '2':
 			desconectar();
@@ -110,29 +108,38 @@ char Cliente::imprimirMenu() {
 }
 
 void Cliente::loguear() {
-	std::cout << "Ingrese Usuario: ";
-	std::string usuario;
-	std::getline(std::cin, usuario);
-	std::cout << "Ingrese Clave: ";
-	std::string clave;
-	std::getline(std::cin, clave);
+	if (!logueado) {
+		while (conectado && !logueado) {
 
-	try {
-		con.enviar(usuario + "," + clave);
-		std::string resp = con.recibir();
+			std::cout << "Ingrese Usuario: ";
+			std::string usuario;
+			std::getline(std::cin, usuario);
+			std::cout << "Ingrese Clave: ";
+			std::string clave;
+			std::getline(std::cin, clave);
 
-		if (resp.substr(0, resp.find('-')) == "1") {
-			logueado = true;
-			std::cout << "logueo correcto" << std::endl;
-			parseoUsuario(resp.substr(resp.find('-')+1, resp.length()));
+			try {
+				con.enviar(usuario + "," + clave);
+				std::string resp = con.recibir();
+
+				if (resp.substr(0, resp.find('-')) == "1") {
+					logueado = true;
+					std::cout << "logueo correcto" << std::endl;
+					parseoUsuario(resp.substr(resp.find('-') + 1, resp.length()));
+				}
+				std::cout << "El servidor respondio: " << resp << std::endl;
+			}
+			catch (SocketException e) {
+				if (conectado) {
+					//Logger::error(std:string(e.what()));
+					std::cout << "Conexión con " << host << " cerrada." << std::endl;
+					conectado = false;
+				}
+			}
 		}
-		std::cout << "El servidor respondio: " << resp << std::endl;
-	} catch (SocketException e) {
-		if (conectado) {
-			//Logger::error(std:string(e.what()));
-			std::cout << "Conexión con " << host << " cerrada."<< std::endl;
-			conectado = false;
-		}
+	}
+	else {
+		std::cout << "Ya existe una conexion con el Servidor" << std::endl;
 	}
 }
 
