@@ -27,7 +27,7 @@ void Cliente::conectar() {
 			respuesta = connect(socketD, (struct sockaddr *) &serverAddress, sizeof(serverAddress));
 
 			if (respuesta == 0) {
-				std::cout << "Conectado a " << host << ":" << puerto << std::endl;
+				//std::cout << "Conectado a " << host << ":" << puerto << std::endl;
 				conectado = true;
 				Conexion conAux(socketD);
 				con = conAux;
@@ -42,13 +42,15 @@ void Cliente::conectar() {
 
 }
 
+void Cliente::clrScrn() {
+	//system("cls");
+}
+
 void Cliente::iniciar() {
 	leerComando();
 }
 
 void Cliente::leerComando() {
-	
-
 	std::string msg;
 	std::string resp;
 	char opcion = '0';
@@ -110,21 +112,20 @@ char Cliente::imprimirMenu() {
 void Cliente::loguear() {
 	if (!logueado) {
 		while (conectado && !logueado) {
-
 			std::cout << "Ingrese Usuario: ";
 			std::string usuario;
 			std::getline(std::cin, usuario);
 			std::cout << "Ingrese Clave: ";
 			std::string clave;
 			std::getline(std::cin, clave);
-
 			try {
 				con.enviar(usuario + "," + clave);
 				std::string resp = con.recibir();
 
 				if (resp.substr(0, resp.find('-')) == "1") {
 					logueado = true;
-					std::cout << "logueo correcto" << std::endl;
+					clrScrn();
+					std::cout << "Conexion Exitosa." << std::endl;
 					parseoUsuario(resp.substr(resp.find('-') + 1, resp.length()));
 				}
 				std::cout << "El servidor respondio: " << resp << std::endl;
@@ -139,6 +140,7 @@ void Cliente::loguear() {
 		}
 	}
 	else {
+		clrScrn();
 		std::cout << "Ya existe una conexion con el Servidor" << std::endl;
 	}
 }
@@ -159,6 +161,12 @@ void Cliente::desconectar() {
 	if (conectado) {
 		conectado = false;
 		shutdown(socketD, 2);
+		clrScrn();
+		std::cout << "Desconexion Exitosa." << std::endl;
+	}
+	else {
+		clrScrn();
+		std::cout << "No existe conexion." << std::endl;
 	}
 	logueado = false;
 
