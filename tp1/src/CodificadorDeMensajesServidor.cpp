@@ -12,12 +12,10 @@ void CodificadorDeMensajesServidor::interpretarComando(std::string text) {
 	int codeNumber = hashCode(text);
 	switch (codeNumber) {
 	case SND_MESSAGE: {
-		con->enviar("1- Exitoso");
-		enviarMensaje();
+		preparacionEnviarMensaje();
 	}
 	case RCV_MESSAGES: {
-		con->enviar("1- Exitoso");
-		devolverMensaje();
+		preparacionDevolverMensaje();
 	}
 
 	default:
@@ -29,14 +27,21 @@ int CodificadorDeMensajesServidor::hashCode(std::string text) {
 	return text.length();
 }
 
-void CodificadorDeMensajesServidor::enviarMensaje() {
+void CodificadorDeMensajesServidor::preparacionEnviarMensaje() {
+	Mensaje nuevoMensaje;
+	con->enviar("1- Exitoso");
 	std::string resp = con->recibir();
 	int codeNumber = hashCode(resp);
 	if(codeNumber == SND_DESTINATARIO){
 		con->enviar("1- Exitoso");
 		resp = con->recibir();
+		agregarDestinatarioAMensaje(nuevoMensaje, resp);
+		resp = con->recibir();
 		codeNumber = hashCode(resp);
 		if (codeNumber == SND_TEXT) {
+			resp = con->recibir();
+			agregarTextoAMensaje(nuevoMensaje, resp);
+			enviarMensaje(nuevoMensaje);
 			con->enviar("1- Mensaje enviado");
 			
 		} else {
@@ -48,7 +53,9 @@ void CodificadorDeMensajesServidor::enviarMensaje() {
 	}
 }
 
-void CodificadorDeMensajesServidor::devolverMensaje() {
+void CodificadorDeMensajesServidor::preparacionDevolverMensaje() {
+	int cantidadDeMensajesADevolver;
+	con->enviar("1-"+cantidadDeMensajesADevolver);
 	std::string resp = con->recibir();
 	int codeNumber = hashCode(resp);
 	if (codeNumber == DOWNLOAD_MESSAGES) {
@@ -58,3 +65,18 @@ void CodificadorDeMensajesServidor::devolverMensaje() {
 	}
 }
 
+void CodificadorDeMensajesServidor::agregarDestinatarioAMensaje(Mensaje &nuevoMensaje, std::string &destinatario) {
+
+}
+
+void CodificadorDeMensajesServidor::agregarTextoAMensaje(Mensaje &nuevoMensaje, std::string &texto) {
+
+}
+
+void CodificadorDeMensajesServidor::enviarMensaje(Mensaje &nuevoMensaje) {
+
+}
+
+void CodificadorDeMensajesServidor::devolverMensaje() {
+
+}
