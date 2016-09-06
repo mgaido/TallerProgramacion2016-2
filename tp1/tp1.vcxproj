@@ -113,9 +113,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Cliente.cpp" />
-    <ClCompile Include="src\CodificadorDeMensajesCliente.cpp" />
-    <ClCompile Include="src\CodificadorDeMensajesServidor.cpp" />
+    <ClCompile Include="src\CodificadorDeMensajes.cpp" />
     <ClCompile Include="src\Conexion.cpp" />
+    <ClCompile Include="src\Logger.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Mensaje.cpp" />
     <ClCompile Include="src\Mensajeria.cpp" />
@@ -129,10 +129,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Cliente.h" />
-    <ClInclude Include="src\CodificadorDeMensajesCliente.h" />
-    <ClInclude Include="src\CodificadorDeMensajesServidor.h" />
+    <ClInclude Include="src\CodificadorDeMensajes.h" />
     <ClInclude Include="src\ColaBloqueante.h" />
     <ClInclude Include="src\Conexion.h" />
+    <ClCompile Include="src\Logger.h" />
     <ClInclude Include="src\Mensaje.h" />
     <ClInclude Include="src\Mensajeria.h" />
     <ClInclude Include="src\Servidor.h" />

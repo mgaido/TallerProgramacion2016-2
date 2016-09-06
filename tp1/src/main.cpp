@@ -1,3 +1,5 @@
+#include "Logger.h"
+
 #include "Servidor.h"
 #include "Cliente.h"
 
@@ -7,6 +9,8 @@ int main(int argc, char *argv[]) {
 	WSADATA wsa;
 	WSAStartup(MAKEWORD(2, 2), &wsa);
 #endif
+
+	Logger* logger = new Logger();
 
 	bool server = true;
 	std::string host = "127.0.0.1";
@@ -45,14 +49,16 @@ int main(int argc, char *argv[]) {
 	}
 
 	if (server) {
-		std::cout << "Iniciado servidor en puerto " << puerto << " y leyendo usuarios de " << archivo << std::endl;
+		logger->info("Iniciado servidor en puerto " + std::to_string(puerto) + " y leyendo usuarios de " + archivo);
 		Servidor servidor(archivo);
 		servidor.iniciar(puerto);
 	} else {
-		std::cout << "Iniciando cliente y conectando a " << host << ':' << puerto << std::endl;
+		logger->info("Iniciando cliente y conectando a " + host + ':' + std::to_string(puerto));
 		Cliente cliente(host, puerto);
 		cliente.iniciar();
 	}
+
+	delete logger;
 
 	return 0;
 }

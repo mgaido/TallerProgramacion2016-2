@@ -15,11 +15,14 @@
 #include "ws2tcpip.h"
 #endif
 
+#include "Logger.h"
+
 #include <string>
 #include <iostream>
 #include <fstream>
-#include <vector>
 #include <thread>
+#include <vector>
+
 
 #ifdef __linux__
 

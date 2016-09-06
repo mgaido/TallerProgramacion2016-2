@@ -245,4 +245,6 @@ ModelManifest.xml
 .fake/
 /.metadata
 /tp1/Windows
+/tp1/Linux
+/tp1/Release
 /RemoteSystemsTempFiles
