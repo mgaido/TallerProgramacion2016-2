@@ -3,7 +3,11 @@
 
 #include "stdafx.h"
 #include "Conexion.h"
-
+#define SND_MESSAGE 11
+#define SND_DESTINATARIO 16
+#define SND_TEXT 8
+#define RCV_MESSAGES 12
+#define DOWNLOAD_MESSAGES 17
 class CodificadorDeMensajesServidor {
 public:
 	CodificadorDeMensajesServidor(SOCKET socketD);
@@ -12,6 +16,9 @@ public:
 
 private:
 	Conexion *con;
+	int hashCode(std::string text);
+	void enviarMensaje();
+	void devolverMensaje();
 };
 
 #endif
