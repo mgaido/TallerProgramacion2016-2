@@ -78,6 +78,7 @@ void Cliente::leerComando() {
 			loremIpsum();
 			break;
 		default:
+			clrScrn();
 			std::cout << "Incorrecto" << std::endl;
 			break;
 		}
@@ -103,6 +104,7 @@ char Cliente::imprimirMenu() {
 			correcto = true;
 		}
 		else {
+			clrScrn();
 			std::cout << "Opcion Incorrecta" << std::endl;
 		}
 	}

@@ -64,7 +64,11 @@ bool Sesion::autentificar(std::string msj) {
 		if (usuario != nullptr && usuario->verificarPassword(clave)) {
 			this->usuario = usuario;
 		}
+		else {
+			this->usuario = nullptr;
+		}
 	}
+	std::cout << (usuario != nullptr) << std::endl;
 	return usuario != nullptr;
 
 }
