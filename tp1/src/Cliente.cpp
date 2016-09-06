@@ -43,7 +43,7 @@ void Cliente::conectar() {
 }
 
 void Cliente::clrScrn() {
-	//system("cls");
+	system("cls");
 }
 
 void Cliente::iniciar() {
