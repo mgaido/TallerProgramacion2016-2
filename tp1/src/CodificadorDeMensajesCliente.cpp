@@ -1,14 +1,14 @@
-#include "CodificadorDeMensajes.h"
+#include "CodificadorDeMensajesCliente.h"
 
-CodificadorDeMensajes::CodificadorDeMensajes(SOCKET socketD) {
+CodificadorDeMensajesCliente::CodificadorDeMensajesCliente(SOCKET socketD) {
 	con = new Conexion(socketD);
 }
 
-CodificadorDeMensajes::~CodificadorDeMensajes() {
+CodificadorDeMensajesCliente::~CodificadorDeMensajesCliente() {
 	delete con;
 }
 
-void CodificadorDeMensajes::enviarMensajeFormateado(std::string destinatario, std::string texto) {
+void CodificadorDeMensajesCliente::enviarMensajeFormateado(std::string destinatario, std::string texto) {
 	con->enviar("SND_MESSAGE");
 	std::string resp = con->recibir();
 	if (resp.substr(0, resp.find('-')) == "1") {
@@ -33,7 +33,7 @@ void CodificadorDeMensajes::enviarMensajeFormateado(std::string destinatario, st
 
 }
 
-void CodificadorDeMensajes::recibirMensajes() {
+void CodificadorDeMensajesCliente::recibirMensajes() {
 	con->enviar("RCV_MESSAGES");
 	std::string resp = con->recibir();
 	if (resp.substr(0, resp.find('-')) == "1") {

@@ -13,6 +13,7 @@
 #include "Mensajeria.h"
 #include "Mensaje.h"
 #include "Conexion.h"
+#include "CodificadorDeMensajesServidor.h"
 
 class Sesion {
 public:

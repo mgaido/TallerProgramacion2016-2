@@ -25,12 +25,12 @@ void Sesion::detener() {
 
 void Sesion::atenderCliente() {
 	Conexion con(socketD);
+	CodificadorDeMensajesServidor codificadorDeMensajes(socketD);
 	while (! detenido) {
 		try {
 			if (logueado) {
 				std::string text = con.recibir();
-				std::cout << "El cliente " << ip << " envio " << text << std::endl;
-				con.enviar("Recibido: \"" + text + "\"");
+				codificadorDeMensajes.interpretarComando(text);
 			} else {
 				std::string text = con.recibir();
 				bool correcto = autentificar(text);

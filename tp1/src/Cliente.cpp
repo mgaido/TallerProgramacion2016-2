@@ -158,7 +158,7 @@ void Cliente::desconectar() {
 }
 
 void Cliente::enviarMensaje(){
-	CodificadorDeMensajes codificadorDeMensajes(socketD);
+	CodificadorDeMensajesCliente codificadorDeMensajes(socketD);
 	std::cout << "Ingrese destinatario: ";
 	std::string destinatario;
 	std::getline(std::cin, destinatario);
@@ -178,7 +178,7 @@ void Cliente::enviarMensaje(){
 }
 
 void Cliente::recibirMensajes() {
-	CodificadorDeMensajes codificadorDeMensajes(socketD);
+	CodificadorDeMensajesCliente codificadorDeMensajes(socketD);
 	try {
 		codificadorDeMensajes.recibirMensajes();
 	}
