@@ -13,9 +13,9 @@ public:
 	void iniciar();
 private:
 	void leerComando();
-	void enviarMensaje(Conexion con);
-	void recibirMensaje(Conexion con);
-	void loremIpsum(Conexion con);
+	void enviarMensaje();
+	void recibirMensajes();
+	void loremIpsum();
 	void loguear(Conexion con);
 	void parseoUsuario(std::string textoUsuarios);
 	char imprimirMenu();

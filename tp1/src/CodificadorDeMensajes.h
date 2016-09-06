@@ -9,6 +9,7 @@ public:
 	CodificadorDeMensajes(SOCKET socketD);
 	~CodificadorDeMensajes();
 	void enviarMensajeFormateado(std::string destinatario, std::string texto);
+	void recibirMensajes();
 
 private:
 	Conexion *con;
