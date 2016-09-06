@@ -43,13 +43,9 @@ void CodificadorDeMensajes::recibirMensajes() {
 			resp = con->recibir();
 			if (resp.substr(0, resp.find('-')) == "1") {
 				resp = resp.substr(resp.find('-'));
-				parsearMensaje(resp);
+				std::cout << resp << std::endl << std::endl << std::endl << std::endl;
 				cantidadDeMensajes--;
 			}
 		}
 	}
-}
-
-void CodificadorDeMensajes::parsearMensaje(std::string mensaje) {
-
 }
