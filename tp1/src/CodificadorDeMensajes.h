@@ -13,6 +13,7 @@ public:
 
 private:
 	Conexion *con;
+	void parsearMensaje(std::string mensaje);
 
 };
 
