@@ -54,7 +54,7 @@ void CodificadorDeMensajesServidor::preparacionEnviarMensaje() {
 }
 
 void CodificadorDeMensajesServidor::preparacionDevolverMensaje() {
-	int cantidadDeMensajesADevolver;
+	int cantidadDeMensajesADevolver=0;
 	con->enviar("1-"+cantidadDeMensajesADevolver);
 	std::string resp = con->recibir();
 	int codeNumber = hashCode(resp);
