@@ -51,6 +51,12 @@
     <ClCompile Include="src\Usuarios.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Logger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Logger.h">
+      <Filter>Header Files</Filter>
+    </ClCompile>
     <ClCompile Include="src\CodificadorDeMensajesCliente.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
