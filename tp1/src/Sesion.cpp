@@ -26,7 +26,7 @@ void Sesion::detener() {
 
 void Sesion::atenderCliente() {
 	Conexion con(socketD);
-	CodificadorDeMensajesServidor codificadorDeMensajes(socketD);
+	CodificadorDeMensajesServidor codificadorDeMensajes(socketD, usuario);
 	while (! detenido) {
 		try {
 			if (logueado) {

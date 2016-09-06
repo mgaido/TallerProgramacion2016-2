@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "Conexion.h"
 #include "Mensaje.h"
+#include "Mensajeria.h"
 
 #define SND_MESSAGE 11
 #define SND_DESTINATARIO 16
@@ -13,15 +14,16 @@
 
 class CodificadorDeMensajesServidor {
 public:
-	CodificadorDeMensajesServidor(SOCKET socketD);
+	CodificadorDeMensajesServidor(SOCKET socketD, Usuario *usuario);
 	~CodificadorDeMensajesServidor();
 	void interpretarComando(std::string);
 
 private:
 	Conexion *con;
+	Usuario *usuario;
 	int hashCode(std::string text);
 	void enviarMensaje(Mensaje &nuevoMensaje);
-	void devolverMensaje();
+	std::string formatearMensaje(std::string destinatario, std::string remitente, std::string texto);
 	void preparacionEnviarMensaje();
 	void preparacionDevolverMensaje();
 	void agregarDestinatarioAMensaje(Mensaje &nuevoMensaje, std::string &destinatario);

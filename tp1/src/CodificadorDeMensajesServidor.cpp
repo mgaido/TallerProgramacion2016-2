@@ -1,6 +1,6 @@
 #include "CodificadorDeMensajesServidor.h"
 
-CodificadorDeMensajesServidor::CodificadorDeMensajesServidor(SOCKET socketD) {
+CodificadorDeMensajesServidor::CodificadorDeMensajesServidor(SOCKET socketD, Usuario *usuario) {
 	con = new Conexion(socketD);
 }
 
@@ -43,7 +43,6 @@ void CodificadorDeMensajesServidor::preparacionEnviarMensaje() {
 			agregarTextoAMensaje(nuevoMensaje, resp);
 			enviarMensaje(nuevoMensaje);
 			con->enviar("1- Mensaje enviado");
-			
 		} else {
 			con->enviar("0- Comando Invalido");
 		}
@@ -54,14 +53,23 @@ void CodificadorDeMensajesServidor::preparacionEnviarMensaje() {
 }
 
 void CodificadorDeMensajesServidor::preparacionDevolverMensaje() {
-	int cantidadDeMensajesADevolver=0;
+	Mensajeria mensajeria;
+	std::vector<Mensaje> mensajesADevolver = mensajeria.getMensajesParaUsuario(*usuario);
+	int cantidadDeMensajesADevolver= mensajesADevolver.size();
+
 	con->enviar("1-"+cantidadDeMensajesADevolver);
-	std::string resp = con->recibir();
-	int codeNumber = hashCode(resp);
-	if (codeNumber == DOWNLOAD_MESSAGES) {
-		
-	} else {
-		con->enviar("0- Comando Invalido");
+	
+	auto iterador = mensajesADevolver.begin();
+	while (iterador != mensajesADevolver.end()) {
+		std::string resp = con->recibir();
+	
+		int codeNumber = hashCode(resp);
+		if (codeNumber == DOWNLOAD_MESSAGES) {
+			con->enviar("1-" + formatearMensaje(iterador->getDestinatario().getNombre(), iterador->getRemitente().getNombre(), iterador->getTexto()));
+			iterador++;
+		} else {
+			con->enviar("0- Comando Invalido");
+		}
 	}
 }
 
@@ -77,6 +85,12 @@ void CodificadorDeMensajesServidor::enviarMensaje(Mensaje &nuevoMensaje) {
 
 }
 
-void CodificadorDeMensajesServidor::devolverMensaje() {
+std::string CodificadorDeMensajesServidor::formatearMensaje(std::string destinatario, std::string remitente, std::string texto) {
+	std::string mensajeFormateado = "";
+	std::string const CRLF = "\r\n";
+	mensajeFormateado += destinatario + CRLF;
+	mensajeFormateado += remitente + CRLF;
+	mensajeFormateado += texto + CRLF;
 
+	return mensajeFormateado;
 }
