@@ -1,14 +1,14 @@
 #include "Cliente.h"
 
-Cliente::Cliente() {
+Cliente::Cliente(std::string cHost,int cPuerto) {
 	conectado = false;
 	logueado = false;
 	socketD = INVALID_SOCKET;
+	puerto = cPuerto;
+	host = cHost;
 }
 
-void Cliente::conectar(std::string host, int puerto) {
-	this->host = host;
-	this->puerto = puerto;
+void Cliente::conectar() {
 
 	struct sockaddr_in serverAddress;
 	serverAddress.sin_family = AF_INET;
@@ -29,7 +29,8 @@ void Cliente::conectar(std::string host, int puerto) {
 			if (respuesta == 0) {
 				std::cout << "Conectado a " << host << ":" << puerto << std::endl;
 				conectado = true;
-				leerComando();
+				Conexion conAux(socketD);
+				con = conAux;
 			}
 		}
 	}
@@ -41,16 +42,23 @@ void Cliente::conectar(std::string host, int puerto) {
 
 }
 
+void Cliente::iniciar() {
+	leerComando();
+}
+
 void Cliente::leerComando() {
-	Conexion con(socketD);
+	
 
 	std::string msg;
 	std::string resp;
 
-	while (conectado) {
+	while (true) {
 		char opcion = imprimirMenu();
 		switch (opcion) {
 		case '1':
+			if (!conectado)
+				conectar();
+
 			while (conectado && !logueado) {
 				loguear(con);
 			}
@@ -146,6 +154,7 @@ void Cliente::desconectar() {
 		conectado = false;
 		shutdown(socketD, 2);
 	}
+	logueado = false;
 
 }
 

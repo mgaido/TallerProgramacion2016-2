@@ -50,8 +50,8 @@ int main(int argc, char *argv[]) {
 		servidor.iniciar(puerto);
 	} else {
 		std::cout << "Iniciando cliente y conectando a " << host << ':' << puerto << std::endl;
-		Cliente cliente;
-		cliente.conectar(host, puerto);
+		Cliente cliente(host, puerto);
+		cliente.iniciar();
 	}
 
 	return 0;

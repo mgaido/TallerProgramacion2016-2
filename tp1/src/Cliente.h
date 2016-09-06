@@ -7,9 +7,10 @@
 
 class Cliente {
 public:
-	Cliente();
-	void conectar(std::string host, int puerto);
+	Cliente(std::string host,int puerto);
+	void conectar();
 	void desconectar();
+	void iniciar();
 private:
 	void leerComando();
 	void enviarMensaje(Conexion con);
@@ -22,6 +23,7 @@ private:
 	std::string host;
 	int puerto;
 	SOCKET socketD;
+	Conexion con;
 	bool conectado;
 	bool logueado;
 	std::vector<std::string> usuarios;

@@ -9,6 +9,7 @@ using bytes = std::vector<char>;
 class Conexion {
 public:
 	Conexion(SOCKET socketD);
+	Conexion();
 
 	void enviar(std::string mensaje) throw(SocketException);
 	std::string recibir() throw(SocketException);

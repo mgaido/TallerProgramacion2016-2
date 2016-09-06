@@ -4,6 +4,10 @@ Conexion::Conexion(SOCKET socketD) {
 	this->socketD = socketD;
 }
 
+Conexion::Conexion() {
+	
+}
+
 void Conexion::enviar(std::string mensaje) throw(SocketException) {
 	int size = mensaje.size();
 	if (send(socketD, (char*) &size, sizeof(size), 0) != SOCKET_ERROR) {
