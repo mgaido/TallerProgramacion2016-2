@@ -1,6 +1,6 @@
 #include "Cliente.h"
 
-Cliente::Cliente(std::string cHost,int cPuerto) {
+Cliente::Cliente(std::string cHost, int cPuerto) {
 	conectado = false;
 	logueado = false;
 	socketD = INVALID_SOCKET;
@@ -15,7 +15,7 @@ void Cliente::conectar() {
 	serverAddress.sin_port = htons(puerto);
 
 	std::string funcion = "inet_pton";
-	int respuesta = inet_pton(AF_INET, host.c_str(), &(serverAddress.sin_addr.s_addr)) -1;
+	int respuesta = inet_pton(AF_INET, host.c_str(), &(serverAddress.sin_addr.s_addr)) - 1;
 
 	if (respuesta >= 0) {
 		funcion = "socket";
@@ -47,7 +47,7 @@ void Cliente::iniciar() {
 }
 
 void Cliente::leerComando() {
-	
+
 
 	std::string msg;
 	std::string resp;
@@ -58,9 +58,7 @@ void Cliente::leerComando() {
 		case '1':
 			if (!conectado)
 				conectar();
-			while (conectado && !logueado) {
-				loguear();
-			}
+			loguear();
 			break;
 		case '2':
 			desconectar();
@@ -110,29 +108,37 @@ char Cliente::imprimirMenu() {
 }
 
 void Cliente::loguear() {
-	std::cout << "Ingrese Usuario: ";
-	std::string usuario;
-	std::getline(std::cin, usuario);
-	std::cout << "Ingrese Clave: ";
-	std::string clave;
-	std::getline(std::cin, clave);
+	if (!logueado) {
+		while (conectado && !logueado) {
 
-	try {
-		con.enviar(usuario + "," + clave);
-		std::string resp = con.recibir();
+			std::cout << "Ingrese Usuario: ";
+			std::string usuario;
+			std::getline(std::cin, usuario);
+			std::cout << "Ingrese Clave: ";
+			std::string clave;
+			std::getline(std::cin, clave);
 
-		if (resp.substr(0, resp.find('-')) == "1") {
-			logueado = true;
-			std::cout << "logueo correcto" << std::endl;
-			parseoUsuario(resp.substr(resp.find('-')+1, resp.length()));
+			try {
+				con.enviar(usuario + "," + clave);
+				std::string resp = con.recibir();
+
+				if (resp.substr(0, resp.find('-')) == "1") {
+					logueado = true;
+					std::cout << "logueo correcto" << std::endl;
+					parseoUsuario(resp.substr(resp.find('-') + 1, resp.length()));
+				}
+				std::cout << "El servidor respondio: " << resp << std::endl;
+			}
+			catch (SocketException e) {
+				if (conectado) {
+					//Logger::error(std:string(e.what()));
+					std::cout << "Conexión con " << host << " cerrada." << std::endl;
+					conectado = false;
+				}
+			}
 		}
-		std::cout << "El servidor respondio: " << resp << std::endl;
-	} catch (SocketException e) {
-		if (conectado) {
-			//Logger::error(std:string(e.what()));
-			std::cout << "Conexión con " << host << " cerrada."<< std::endl;
-			conectado = false;
-		}
+	} else {
+		std::cout << "Ya existe una conexion con el Servidor" << std::endl;
 	}
 }
 
@@ -140,7 +146,7 @@ void Cliente::parseoUsuario(std::string textoUsuarios) {
 	textoUsuarios = textoUsuarios + ",";
 	while (textoUsuarios.find(',') != std::string::npos) {
 		usuarios.push_back(textoUsuarios.substr(0, textoUsuarios.find(',')));
-		textoUsuarios = textoUsuarios.substr(textoUsuarios.find(',') + 1, textoUsuarios.length()-1);
+		textoUsuarios = textoUsuarios.substr(textoUsuarios.find(',') + 1, textoUsuarios.length() - 1);
 	}
 	//for (std::vector<std::string>::const_iterator i = usuarios.begin(); i != usuarios.end(); ++i) {
 	//	// process i
@@ -157,7 +163,7 @@ void Cliente::desconectar() {
 
 }
 
-void Cliente::enviarMensaje(){
+void Cliente::enviarMensaje() {
 	CodificadorDeMensajes codificadorDeMensajes(socketD);
 	std::cout << "Ingrese destinatario: ";
 	std::string destinatario;
@@ -192,5 +198,5 @@ void Cliente::recibirMensajes() {
 }
 
 void Cliente::loremIpsum() {
-	
+
 }

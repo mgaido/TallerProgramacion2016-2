@@ -50,6 +50,7 @@ void Servidor::aceptarConexiones(int port) {
 
 						if (newSocketD != INVALID_SOCKET) {
 							inet_ntop(AF_INET, &(clientAddress.sin_addr), ip, INET_ADDRSTRLEN);
+							std::cout << "Cliente " << ip << " conectado. Esperando autentificacion." << std::endl;
 							sesiones.push_back(Sesion(newSocketD, ip));
 						} else if (! detenido)
 							response = -1;
