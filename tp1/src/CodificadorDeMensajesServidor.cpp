@@ -12,10 +12,10 @@ void CodificadorDeMensajesServidor::interpretarComando(std::string text) {
 	int codeNumber = hashCode(text);
 	switch (codeNumber) {
 	case SND_MESSAGE: {
-		preparacionEnviarMensaje();
+		enviarMensaje();
 	}
 	case RCV_MESSAGES: {
-		preparacionDevolverMensaje();
+		devolverMensaje();
 	}
 
 	default:
@@ -27,21 +27,23 @@ int CodificadorDeMensajesServidor::hashCode(std::string text) {
 	return text.length();
 }
 
-void CodificadorDeMensajesServidor::preparacionEnviarMensaje() {
+void CodificadorDeMensajesServidor::enviarMensaje() {
 	Mensaje nuevoMensaje;
+	Mensajeria mensajeria;
 	con->enviar("1- Exitoso");
 	std::string resp = con->recibir();
 	int codeNumber = hashCode(resp);
 	if(codeNumber == SND_DESTINATARIO){
 		con->enviar("1- Exitoso");
 		resp = con->recibir();
-		agregarDestinatarioAMensaje(nuevoMensaje, resp);
+		nuevoMensaje.setDestinatario(*Usuarios::getUsuario(resp));
+		nuevoMensaje.setRemitente(*usuario);
 		resp = con->recibir();
 		codeNumber = hashCode(resp);
 		if (codeNumber == SND_TEXT) {
 			resp = con->recibir();
-			agregarTextoAMensaje(nuevoMensaje, resp);
-			enviarMensaje(nuevoMensaje);
+			nuevoMensaje.setTexto(resp);
+			mensajeria.enviarMensaje(nuevoMensaje.getTexto(), nuevoMensaje.getRemitente(), nuevoMensaje.getDestinatario());
 			con->enviar("1- Mensaje enviado");
 		} else {
 			con->enviar("0- Comando Invalido");
@@ -52,7 +54,7 @@ void CodificadorDeMensajesServidor::preparacionEnviarMensaje() {
 	}
 }
 
-void CodificadorDeMensajesServidor::preparacionDevolverMensaje() {
+void CodificadorDeMensajesServidor::devolverMensaje() {
 	Mensajeria mensajeria;
 	std::vector<Mensaje> mensajesADevolver = mensajeria.getMensajesParaUsuario(*usuario);
 	int cantidadDeMensajesADevolver= mensajesADevolver.size();
@@ -71,18 +73,6 @@ void CodificadorDeMensajesServidor::preparacionDevolverMensaje() {
 			con->enviar("0- Comando Invalido");
 		}
 	}
-}
-
-void CodificadorDeMensajesServidor::agregarDestinatarioAMensaje(Mensaje &nuevoMensaje, std::string &destinatario) {
-
-}
-
-void CodificadorDeMensajesServidor::agregarTextoAMensaje(Mensaje &nuevoMensaje, std::string &texto) {
-
-}
-
-void CodificadorDeMensajesServidor::enviarMensaje(Mensaje &nuevoMensaje) {
-
 }
 
 std::string CodificadorDeMensajesServidor::formatearMensaje(std::string destinatario, std::string remitente, std::string texto) {
