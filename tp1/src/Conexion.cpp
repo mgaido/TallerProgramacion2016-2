@@ -42,4 +42,3 @@ std::string Conexion::recibir() throw(SocketException) {
 
 	return mensaje;
 }
-

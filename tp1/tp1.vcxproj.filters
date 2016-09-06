@@ -51,7 +51,7 @@
     <ClCompile Include="src\Usuarios.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CodificadorDeMensajes.cpp">
+    <ClCompile Include="src\CodificadorDeMensajes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -92,7 +92,7 @@
     <ClInclude Include="src\Usuarios.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CodificadorDeMensajes.h">
+    <ClInclude Include="src\CodificadorDeMensajes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

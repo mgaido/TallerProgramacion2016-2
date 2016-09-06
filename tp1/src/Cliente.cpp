@@ -150,7 +150,7 @@ void Cliente::desconectar() {
 }
 
 void Cliente::enviarMensaje(Conexion con){
-	CodificadorDeMensajes codificadorDeMensajes(con);
+	CodificadorDeMensajes codificadorDeMensajes(socketD);
 	std::cout << "Ingrese destinatario: ";
 	std::string destinatario;
 	std::getline(std::cin, destinatario);

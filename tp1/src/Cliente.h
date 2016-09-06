@@ -1,7 +1,7 @@
 #ifndef CLIENTE_H
 #define CLIENTE_H
 
-#include "CodificadorDeMensajes"
+#include "CodificadorDeMensajes.h"
 #include "stdafx.h"
 #include "Conexion.h"
 
