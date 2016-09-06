@@ -33,14 +33,14 @@ void Sesion::atenderCliente() {
 				con.enviar("Recibido: \"" + text + "\"");
 			} else {
 				std::string text = con.recibir();
-				std::cout << "El cliente " << ip << " envio " << text << std::endl;
 				bool correcto = autentificar(text);
 				if (correcto) {
 					con.enviar("1-" + Usuarios::getNombres());
 					logueado = true;
+					std::cout << "El cliente " << this->ip << " inicio sesion correctamente: " << text << std::endl;
 				} else {
 					con.enviar("0-Error");
-					//seguir = false;
+					std::cout << "El cliente " << this->ip << " inicio sesion  incorrectamente: " << text << std::endl;
 				}
 			}
 		} catch (SocketException &e) {
