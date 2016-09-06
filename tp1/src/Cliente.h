@@ -1,6 +1,7 @@
 #ifndef CLIENTE_H
 #define CLIENTE_H
 
+#include "CodificadorDeMensajes"
 #include "stdafx.h"
 #include "Conexion.h"
 
@@ -11,15 +12,18 @@ public:
 	void desconectar();
 private:
 	void leerComando();
+	void enviarMensaje(Conexion con);
+	void recibirMensaje(Conexion con);
+	void loremIpsum(Conexion con);
+	void loguear(Conexion con);
+	void parseoUsuario(std::string textoUsuarios);
+	char imprimirMenu();
 
 	std::string host;
 	int puerto;
 	SOCKET socketD;
 	bool conectado;
 	bool logueado;
-	char imprimirMenu();
-	void loguear(Conexion con);
-	void parseoUsuario(std::string textoUsuarios);
 	std::vector<std::string> usuarios;
 };
 

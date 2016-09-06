@@ -112,6 +112,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CodificadorDeMensajes.cpp" />
     <ClCompile Include="src\Cliente.cpp" />
     <ClCompile Include="src\Conexion.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -126,6 +127,7 @@
     <ClCompile Include="src\Usuarios.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CodificadorDeMensajes.h" />
     <ClInclude Include="src\Cliente.h" />
     <ClInclude Include="src\ColaBloqueante.h" />
     <ClInclude Include="src\Conexion.h" />
