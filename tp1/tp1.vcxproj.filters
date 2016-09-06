@@ -51,7 +51,10 @@
     <ClCompile Include="src\Usuarios.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\CodificadorDeMensajes.cpp">
+    <ClCompile Include="src\CodificadorDeMensajesCliente.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CodificadorDeMensajesServidor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -92,7 +95,10 @@
     <ClInclude Include="src\Usuarios.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\CodificadorDeMensajes.h">
+    <ClInclude Include="src\CodificadorDeMensajesCliente.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CodificadorDeMensajesServidor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -19,7 +19,7 @@ template<typename T>
 class ColaBloqueante {
 public:
 	ColaBloqueante();
-	virtual ~ColaBloqueante();
+	~ColaBloqueante();
 
 	void cerrar();
 	bool cerrada();

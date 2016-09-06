@@ -12,7 +12,6 @@ Sesion::Sesion(SOCKET socketD, std::string ip) {
 	this->ip = ip;
 	this->detenido=false;
 	this->logueado = false;
-	this->usuario = nullptr;
 	this->thread = std::thread(&Sesion::atenderCliente, this);
 }
 
@@ -26,23 +25,22 @@ void Sesion::detener() {
 
 void Sesion::atenderCliente() {
 	Conexion con(socketD);
-	while (!detenido) {
+	CodificadorDeMensajesServidor codificadorDeMensajes(socketD);
+	while (! detenido) {
 		try {
 			if (logueado) {
 				std::string text = con.recibir();
-				std::cout << "El cliente " << ip << " envio " << text << std::endl;
-				con.enviar("Recibido: \"" + text + "\"");
+				codificadorDeMensajes.interpretarComando(text);
 			} else {
 				std::string text = con.recibir();
-				bool correcto = false;
-				correcto = autentificar(text);
+				bool correcto = autentificar(text);
 				if (correcto) {
 					con.enviar("1-" + Usuarios::getNombres());
 					logueado = true;
-					std::cout << "Cliente " << this->ip << " autentificado correctamente: " << text << std::endl;
+					std::cout << "El cliente " << this->ip << " inicio sesion correctamente: " << text << std::endl;
 				} else {
 					con.enviar("0-Error");
-					std::cout << "Cliente " << this->ip << " autentificado  incorrectamente: " << text << std::endl;
+					std::cout << "El cliente " << this->ip << " inicio sesion  incorrectamente: " << text << std::endl;
 				}
 			}
 		} catch (SocketException &e) {
