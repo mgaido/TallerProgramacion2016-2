@@ -1,11 +1,10 @@
 #include "CodificadorDeMensajesServidor.h"
 
-CodificadorDeMensajesServidor::CodificadorDeMensajesServidor(SOCKET socketD, Usuario *usuario) {
+CodificadorDeMensajesServidor::CodificadorDeMensajesServidor(SOCKET socketD) {
 	con = new Conexion(socketD);
 }
 
 CodificadorDeMensajesServidor::~CodificadorDeMensajesServidor() {
-	delete con;
 }
 
 void CodificadorDeMensajesServidor::interpretarComando(std::string text) {
@@ -36,7 +35,7 @@ void CodificadorDeMensajesServidor::enviarMensaje() {
 	if(codeNumber == SND_DESTINATARIO){
 		con->enviar("1- Exitoso");
 		resp = con->recibir();
-		nuevoMensaje.setDestinatario(*Usuarios::getUsuario(resp));
+		nuevoMensaje.setDestinatario(*(Usuarios::getUsuario(resp)));
 		nuevoMensaje.setRemitente(*usuario);
 		resp = con->recibir();
 		codeNumber = hashCode(resp);
@@ -83,4 +82,8 @@ std::string CodificadorDeMensajesServidor::formatearMensaje(std::string destinat
 	mensajeFormateado += texto + CRLF;
 
 	return mensajeFormateado;
+}
+
+void CodificadorDeMensajesServidor::setUsuario(Usuario *unUsuario) {
+	usuario = usuario;
 }

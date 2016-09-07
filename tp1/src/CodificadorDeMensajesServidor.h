@@ -15,9 +15,10 @@
 
 class CodificadorDeMensajesServidor {
 public:
-	CodificadorDeMensajesServidor(SOCKET socketD, Usuario *usuario);
+	CodificadorDeMensajesServidor(SOCKET socketD);
 	~CodificadorDeMensajesServidor();
 	void interpretarComando(std::string);
+	void setUsuario(Usuario *unUsuario);
 
 private:
 	Conexion *con;

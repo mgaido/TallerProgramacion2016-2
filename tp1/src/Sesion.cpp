@@ -26,7 +26,7 @@ void Sesion::detener() {
 
 void Sesion::atenderCliente() {
 	Conexion con(socketD);
-	CodificadorDeMensajesServidor codificadorDeMensajes(socketD, usuario);
+	CodificadorDeMensajesServidor codificadorDeMensajes(socketD);
 	while (! detenido) {
 		try {
 			if (logueado) {
@@ -42,6 +42,7 @@ void Sesion::atenderCliente() {
 				} else {
 					con.enviar("0-Error");
 					std::cout << "El cliente " << this->ip << " inicio sesion  incorrectamente: " << text << std::endl;
+					codificadorDeMensajes.setUsuario(usuario);
 				}
 			}
 		} catch (SocketException &e) {
