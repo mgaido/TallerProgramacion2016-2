@@ -43,7 +43,9 @@ void Cliente::conectar() {
 }
 
 void Cliente::clrScrn() {
+	#ifdef _WIN32
 	system("cls");
+	#endif
 }
 
 void Cliente::iniciar() {
@@ -54,7 +56,7 @@ void Cliente::leerComando() {
 	std::string msg;
 	std::string resp;
 	char opcion = '0';
-	while (opcion != '3') {
+	while (opcion != '6') {
 		opcion = imprimirMenu();
 		switch (opcion) {
 		case '1':
@@ -66,17 +68,18 @@ void Cliente::leerComando() {
 			desconectar();
 			break;
 		case '3':
-			desconectar();
-			break;
-		case '4':
 			enviarMensaje();
 			break;
-		case '5':
+		case '4':
 			recibirMensajes();
 			break;
-		case '6':
+		case '5':
 			loremIpsum();
 			break;
+		case '6':
+			desconectar();
+			break;
+
 		default:
 			clrScrn();
 			std::cout << "Incorrecto" << std::endl;
@@ -90,12 +93,15 @@ char Cliente::imprimirMenu() {
 	char opcionChar;
 	bool correcto = false;
 	while (!correcto) {
-		std::cout << "1. Conectar" << std::endl;
-		std::cout << "2. Desconectar" << std::endl;
-		std::cout << "3. Salir" << std::endl;
-		std::cout << "4. Enviar" << std::endl;
-		std::cout << "5. Recibir" << std::endl;
-		std::cout << "6. Lorem Ipsum" << std::endl;
+		if (! logueado) {
+			std::cout << "1. Conectar" << std::endl;
+		} else {
+			std::cout << "2. Desconectar" << std::endl;
+			std::cout << "3. Enviar" << std::endl;
+			std::cout << "4. Recibir" << std::endl;
+			std::cout << "5. Lorem Ipsum" << std::endl;
+		}
+		std::cout << "6. Salir" << std::endl;
 		std::cout << "Seleccione una opcion: ";
 		std::getline(std::cin, opcion);
 
@@ -176,10 +182,32 @@ void Cliente::desconectar() {
 }
 
 void Cliente::enviarMensaje(){
+	int index = 1;
+	auto it = usuarios.begin();
+	while (it < usuarios.end()){
+		std::cout << index << ". " << *it << std::endl;
+		it++;
+		index++;
+	}
+	std::cout << index << ". " << "Todos" << std::endl;
+	std::cout << std::endl;
+
 	CodificadorDeMensajesCliente codificadorDeMensajes(socketD);
 	std::cout << "Ingrese destinatario: ";
 	std::string destinatario;
 	std::getline(std::cin, destinatario);
+
+	index = -1;
+	try {
+		index = std::stoi(destinatario)-1;
+	} catch (std::invalid_argument){}
+
+	if (index < 0 || index > usuarios.size()){
+		std::cout << "Opción inválida: " << destinatario << std::endl;
+		return;
+	}
+
+
 	std::cout << "Ingrese Mensaje: ";
 	std::string texto;
 	std::getline(std::cin, texto);

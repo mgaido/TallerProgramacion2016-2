@@ -30,28 +30,44 @@ int CodificadorDeMensajesServidor::hashCode(std::string text) {
 }
 
 void CodificadorDeMensajesServidor::enviarMensaje() {
-	Mensaje nuevoMensaje;
 	con.enviar("1- Exitoso SND_MESSAGE");
 	std::string resp = con.recibir();
 	int codeNumber = hashCode(resp);
 	if(codeNumber == SND_DESTINATARIO){
 		con.enviar("1- Exitoso SND_DESTINTARIO");
 		resp = con.recibir();
-		Usuario* dest = Usuarios::getUsuario(resp);
-		if (!dest) {
+
+		int index = -1;
+		try {
+			index = std::stoi(resp)-1;
+		} catch (std::invalid_argument){}
+
+		std::vector<Usuario> usuarios = Usuarios::getUsuarios();
+		if (index < 0 || index > usuarios.size()){
 			con.enviar("0- Usuario Invalido");
 			return;
 		}
-		nuevoMensaje.setDestinatario(*dest);
-		nuevoMensaje.setRemitente(*usuario);
+
+		std::vector<Usuario> dest;
+		if (index == usuarios.size()){
+			dest.insert(dest.begin(), usuarios.begin(), usuarios.end());
+		} else {
+			dest.push_back(usuarios[index]);
+		}
+
 		con.enviar("1- Destinatario recibido");
 		resp = con.recibir();
+
 		codeNumber = hashCode(resp);
 		if (codeNumber == SND_TEXT) {
 			con.enviar("1- SND_TEXT");
 			resp = con.recibir();
-			nuevoMensaje.setTexto(resp);
-			Mensajeria::enviarMensaje(nuevoMensaje.getTexto(), nuevoMensaje.getRemitente(), nuevoMensaje.getDestinatario());
+
+			auto it = dest.begin();
+			while( it != dest.end()) {
+				Mensajeria::enviarMensaje(resp, *usuario, *it);
+				it++;
+			}
 			con.enviar("1- Mensaje enviado");
 		} else {
 			con.enviar("0- Comando Invalido");
