@@ -20,6 +20,7 @@ private:
 	void parseoUsuario(std::string textoUsuarios);
 	char imprimirMenu();
 	void clrScrn();
+	std::string getMensajeLoremIpsum(std::ifstream &archivo, int longitudMensaje);
 
 	std::string host;
 	int puerto;

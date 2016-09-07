@@ -1,6 +1,6 @@
 #include "Cliente.h"
 
-Cliente::Cliente(std::string cHost,int cPuerto) {
+Cliente::Cliente(std::string cHost, int cPuerto) {
 	conectado = false;
 	logueado = false;
 	socketD = INVALID_SOCKET;
@@ -15,7 +15,7 @@ void Cliente::conectar() {
 	serverAddress.sin_port = htons(puerto);
 
 	std::string funcion = "inet_pton";
-	int respuesta = inet_pton(AF_INET, host.c_str(), &(serverAddress.sin_addr.s_addr)) -1;
+	int respuesta = inet_pton(AF_INET, host.c_str(), &(serverAddress.sin_addr.s_addr)) - 1;
 
 	if (respuesta >= 0) {
 		funcion = "socket";
@@ -152,7 +152,7 @@ void Cliente::parseoUsuario(std::string textoUsuarios) {
 	textoUsuarios = textoUsuarios + ",";
 	while (textoUsuarios.find(',') != std::string::npos) {
 		usuarios.push_back(textoUsuarios.substr(0, textoUsuarios.find(',')));
-		textoUsuarios = textoUsuarios.substr(textoUsuarios.find(',') + 1, textoUsuarios.length()-1);
+		textoUsuarios = textoUsuarios.substr(textoUsuarios.find(',') + 1, textoUsuarios.length() - 1);
 	}
 	//for (std::vector<std::string>::const_iterator i = usuarios.begin(); i != usuarios.end(); ++i) {
 	//	// process i
@@ -175,7 +175,7 @@ void Cliente::desconectar() {
 
 }
 
-void Cliente::enviarMensaje(){
+void Cliente::enviarMensaje() {
 	CodificadorDeMensajesCliente codificadorDeMensajes(socketD);
 	std::cout << "Ingrese destinatario: ";
 	std::string destinatario;
@@ -210,5 +210,51 @@ void Cliente::recibirMensajes() {
 }
 
 void Cliente::loremIpsum() {
-	
+	std::string pathFileLoremImpsum = "loremIpsum.txt";
+	int frecuenciaDeEnvio;
+	int cantidadDeEnvios;
+	CodificadorDeMensajesCliente codificadorDeMensajes(socketD);
+	std::ifstream archivoLoremIpsum(pathFileLoremImpsum);
+
+	std::cout << "Ingrese frecuencia de envio en segundos: ";
+	std::string entradaUsuario;
+	std::getline(std::cin, entradaUsuario);
+	frecuenciaDeEnvio = std::stoi(entradaUsuario);					//falta chequeo de tipo de dato int
+	std::cout << "Ingrese cantidad de envios maximos: ";
+	std::getline(std::cin, entradaUsuario);
+	cantidadDeEnvios = std::stoi(entradaUsuario);				//falta chequeo de tipo de dato int
+
+	while (cantidadDeEnvios > 0) {
+		Sleep(frecuenciaDeEnvio * 1000);
+		int longitudMensajeAleatoria, destinatarioAleatorio;
+		std::string destinatario;
+		std::string texto;
+		srand(time(NULL));
+		destinatarioAleatorio = rand() % usuarios.size();
+		destinatario = usuarios.at(destinatarioAleatorio);
+		srand(time(NULL));
+		longitudMensajeAleatoria = rand() % 500 + 1;
+		texto = getMensajeLoremIpsum(archivoLoremIpsum, longitudMensajeAleatoria);
+		try {
+			codificadorDeMensajes.enviarMensajeFormateado(destinatario, texto);
+			cantidadDeEnvios--;
+		}
+		catch (SocketException e) {
+			if (conectado) {
+				//Logger::error(std:string(e.what()));
+				std::cout << "Conexión con " << host << " cerrada." << std::endl;
+				conectado = false;
+			}
+		}
+	}
+}
+
+std::string Cliente::getMensajeLoremIpsum(std::ifstream &archivo, int longitudMensaje) {
+	char *nuevoMensaje = new char[longitudMensaje];
+	std::string nuevoMensajeString;
+	archivo.read(nuevoMensaje, longitudMensaje - 1);
+	nuevoMensajeString.assign(nuevoMensaje);
+	delete nuevoMensaje;
+	nuevoMensaje = NULL;
+	return nuevoMensajeString;
 }
