@@ -23,8 +23,8 @@ public:
 	Usuario& getRemitente();
 	void setRemitente(Usuario& remitente);
 
-	std::string getTexto();
-	void setTexto(std::string texto);
+	std::string& getTexto();
+	void setTexto(std::string& texto);
 
 private:
 	Usuario remitente;

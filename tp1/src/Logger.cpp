@@ -7,19 +7,20 @@
 
 #include "Logger.h"
 
-Nivel DEBUG = 1;
-Nivel INFO = 2;
-Nivel WARN = 3;
-Nivel ERROR = 4;
+std::string nombres[] = {"DEBUG", "INFO", "WARN", "ERROR"};
 
 /* Log */
 
-Log::Log(Nivel nivel, std::string& texto) {
+Log::Log(Nivel nivel, std::string& texto, std::string& funcion, std::string& fuente) {
 	this->nivel = nivel;
 	this->texto = texto;
+	this->funcion = funcion;
+	this->fuente = fuente;
+	this->fecha = __DATE__;
+	this->hora = __TIME__;
 }
 
-std::string Log::getTexto() {
+std::string& Log::getTexto() {
 	return texto;
 }
 
@@ -27,10 +28,30 @@ Nivel Log::getNivel() {
 	return nivel;
 }
 
+std::string& Log::getNombreNivel() {
+	return nombres[nivel-1];
+}
+
+std::string& Log::getFecha() {
+	return fecha;
+}
+
+std::string& Log::getFuente() {
+	return fuente;
+}
+
+std::string& Log::getFuncion() {
+	return funcion;
+}
+
+std::string& Log::getHora() {
+	return hora;
+}
+
 /* Logger */
 
 Logger::Logger() {
-	ciclo = std::thread(&Logger::loguear, this);
+	ciclo = std::thread(&Logger::desencolar, this);
 }
 
 Logger::~Logger() {
@@ -38,41 +59,34 @@ Logger::~Logger() {
 	ciclo.join();
 }
 
-void Logger::encolar(Nivel nivel, std::string texto) {
-	Log log(nivel, texto);
+void Logger::encolar(Nivel nivel, std::string texto, std::string funcion, std::string fuente) {
+	Log log(nivel, texto, funcion, fuente);
+	if (! logs.cerrada())
+		logs.encolar(log);
+	else
+		loguear(log);
+}
+
+void Logger::encolar(Nivel nivel, std::string texto, std::exception& e, std::string funcion, std::string fuente) {
+	texto = texto + " " + e.what();
+	Log log(nivel, texto, funcion, fuente);
 	logs.encolar(log);
 }
 
-void Logger::loguear() {
+void Logger::desencolar() {
 	while (true) {
 		try {
 			Log log = logs.desencolar();
-
-			std::cout << log.getTexto() << std::endl;
+			loguear(log);
 		} catch (ColaCerrada) {
 			break;
 		}
 	}
+	info("Cerrando Log");
 }
 
-void Logger::debug(std::string texto) {
-	encolar(DEBUG, texto);
-}
-
-void Logger::info(std::string texto) {
-	encolar(INFO, texto);
-}
-
-void Logger::warn(std::string texto) {
-	encolar(WARN, texto);
-}
-
-void Logger::error(std::string texto) {
-	encolar(ERROR, texto);
-}
-
-void Logger::error(std::string texto, std::exception& e) {
-	std::string msg = texto + " Causado por: " + e.what();
-	encolar(ERROR, texto);
+void Logger::loguear(Log& log) {
+	std::cout << log.getFecha() << " " << log.getHora() << " " << log.getNombreNivel() << " ["
+			<< log.getFuente() << " " << log.getFuncion() << "]: " << log.getTexto() << std::endl;
 }
 

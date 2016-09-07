@@ -29,11 +29,11 @@ std::string Usuarios::getNombres(){
 	return nombres;
 }
 
-void Usuarios::leerUsuarios(std::string archivo) {
+bool Usuarios::leerUsuarios(std::string archivo) {
 	std::ifstream fileUsuario(archivo);
 	if (! fileUsuario.good()){
-		std::cerr << "Error leyendo el archivo " << archivo << std::endl;
-		return;
+		error("Error leyendo el archivo " + archivo);
+		return false;
 	}
 
 	std::string linea;
@@ -47,7 +47,7 @@ void Usuarios::leerUsuarios(std::string archivo) {
 			}
 			else {
 				invalido = true;
-				std::cout << "Error" << std::endl;
+				warn("Usuario invalido: [" + linea + "]");
 			}
 		}
 
@@ -56,6 +56,7 @@ void Usuarios::leerUsuarios(std::string archivo) {
 		while (ite != usuarios.end() && !repetido) {
 			if (clave[0] == ite->getNombre()) {
 				repetido = true;
+				warn("Usuario repetido: [" + clave[0] + "]");
 			}
 			ite++;
 		}
@@ -66,10 +67,17 @@ void Usuarios::leerUsuarios(std::string archivo) {
 			if (nombres.length() > 0)
 				nombres = nombres.append(",");
 			nombres = nombres.append(clave[0]);
-		}
+			info("Usuario encontrado: [" + clave[0] + "]");
+
+		} else
+			warn("Usuario invalido: [" + linea + "]");
 	}
 
-	std::cout << "Usuarios leídos: " << nombres << std::endl;
+	if (usuarios.size() == 0) {
+		error("No se encontraron usuarios en " + archivo);
+		return false;
+	} else
+		return true;
 }
 
 

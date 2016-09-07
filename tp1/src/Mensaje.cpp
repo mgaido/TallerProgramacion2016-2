@@ -29,10 +29,10 @@ void Mensaje::setRemitente(Usuario& remitente) {
 	this->remitente = remitente;
 }
 
-std::string Mensaje::getTexto() {
+std::string& Mensaje::getTexto() {
 	return texto;
 }
 
-void Mensaje::setTexto(std::string texto) {
+void Mensaje::setTexto(std::string& texto) {
 	this->texto = texto;
 }

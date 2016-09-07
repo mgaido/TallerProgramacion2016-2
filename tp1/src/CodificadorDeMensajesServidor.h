@@ -21,7 +21,7 @@ public:
 	void setUsuario(Usuario *unUsuario);
 
 private:
-	Conexion *con;
+	Conexion con;
 	Usuario *usuario;
 	int hashCode(std::string text);
 	void enviarMensaje();

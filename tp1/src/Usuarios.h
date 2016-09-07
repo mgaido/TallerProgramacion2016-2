@@ -15,7 +15,7 @@
 
 class Usuarios {
 public:
-	static void leerUsuarios(std::string archivo);
+	static bool leerUsuarios(std::string archivo);
 	static Usuario* getUsuario(std::string nombre);
 	static std::vector<Usuario> getUsuarios();
 	static std::string getNombres();

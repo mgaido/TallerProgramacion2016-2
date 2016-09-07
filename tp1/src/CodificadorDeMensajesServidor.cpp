@@ -1,7 +1,7 @@
 #include "CodificadorDeMensajesServidor.h"
 
 CodificadorDeMensajesServidor::CodificadorDeMensajesServidor(SOCKET socketD) {
-	con = new Conexion(socketD);
+	con = Conexion(socketD);
 }
 
 CodificadorDeMensajesServidor::~CodificadorDeMensajesServidor() {
@@ -20,7 +20,7 @@ void CodificadorDeMensajesServidor::interpretarComando(std::string text) {
 	}
 
 	default:
-		con->enviar("0- Comando Invalido");
+		con.enviar("0- Comando Invalido");
 		break;
 	}
 }
@@ -30,55 +30,69 @@ int CodificadorDeMensajesServidor::hashCode(std::string text) {
 }
 
 void CodificadorDeMensajesServidor::enviarMensaje() {
-	Mensaje nuevoMensaje;
-	Mensajeria mensajeria;
-	con->enviar("1- Exitoso SND_MESSAGE");
-	std::string resp = con->recibir();
+	con.enviar("1- Exitoso SND_MESSAGE");
+	std::string resp = con.recibir();
 	int codeNumber = hashCode(resp);
 	if(codeNumber == SND_DESTINATARIO){
-		con->enviar("1- Exitoso SND_DESTINTARIO");
-		resp = con->recibir();
-		Usuario* dest = Usuarios::getUsuario(resp);
-		if (!dest) {
-			con->enviar("0- Usuario Invalido");
+		con.enviar("1- Exitoso SND_DESTINTARIO");
+		resp = con.recibir();
+
+		int index = -1;
+		try {
+			index = std::stoi(resp)-1;
+		} catch (std::invalid_argument){}
+
+		std::vector<Usuario> usuarios = Usuarios::getUsuarios();
+		if (index < 0 || index > usuarios.size()){
+			con.enviar("0- Usuario Invalido");
 			return;
 		}
-		nuevoMensaje.setDestinatario(*dest);
-		nuevoMensaje.setRemitente(*usuario);
-		con->enviar("1- Destinatario recibido");
-		resp = con->recibir();
+
+		std::vector<Usuario> dest;
+		if (index == usuarios.size()){
+			dest.insert(dest.begin(), usuarios.begin(), usuarios.end());
+		} else {
+			dest.push_back(usuarios[index]);
+		}
+
+		con.enviar("1- Destinatario recibido");
+		resp = con.recibir();
+
 		codeNumber = hashCode(resp);
 		if (codeNumber == SND_TEXT) {
-			con->enviar("1- SND_TEXT");
-			resp = con->recibir();
-			nuevoMensaje.setTexto(resp);
-			mensajeria.enviarMensaje(nuevoMensaje.getTexto(), nuevoMensaje.getRemitente(), nuevoMensaje.getDestinatario());
-			con->enviar("1- Mensaje enviado");
+			con.enviar("1- SND_TEXT");
+			resp = con.recibir();
+
+			auto it = dest.begin();
+			while( it != dest.end()) {
+				Mensajeria::enviarMensaje(resp, *usuario, *it);
+				it++;
+			}
+			con.enviar("1- Mensaje enviado");
 		} else {
-			con->enviar("0- Comando Invalido");
+			con.enviar("0- Comando Invalido");
 		}
 
 	} else {
-		con->enviar("0- Comando Invalido");
+		con.enviar("0- Comando Invalido");
 	}
 }
 
 void CodificadorDeMensajesServidor::devolverMensaje() {
-	Mensajeria mensajeria;
-	std::vector<Mensaje> mensajesADevolver = mensajeria.getMensajesParaUsuario(*usuario);
+	std::vector<Mensaje> mensajesADevolver = Mensajeria::getMensajesParaUsuario(*usuario);
 	int cantidadDeMensajesADevolver= mensajesADevolver.size();
-	con->enviar("1-" + std::to_string(cantidadDeMensajesADevolver));
+	con.enviar("1-" + std::to_string(cantidadDeMensajesADevolver));
 	
 	auto iterador = mensajesADevolver.begin();
 	while (iterador != mensajesADevolver.end()) {
-		std::string resp = con->recibir();
+		std::string resp = con.recibir();
 	
 		int codeNumber = hashCode(resp);
 		if (codeNumber == DOWNLOAD_MESSAGES) {
-			con->enviar("1-" + formatearMensaje(iterador->getDestinatario().getNombre(), iterador->getRemitente().getNombre(), iterador->getTexto()));
+			con.enviar("1-" + formatearMensaje(iterador->getDestinatario().getNombre(), iterador->getRemitente().getNombre(), iterador->getTexto()));
 			iterador++;
 		} else {
-			con->enviar("0- Comando Invalido");
+			con.enviar("0- Comando Invalido");
 			//iterador++;
 		}
 	}

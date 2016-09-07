@@ -25,7 +25,7 @@ void Sesion::detener() {
 }
 
 void Sesion::atenderCliente() {
-	std::cout << "Cliente " << ip << " conectado. Esperando autentificacion." << std::endl;
+	info("Cliente " + ip + " conectado. Esperando autentificacion.");
 
 	Conexion con(socketD);
 	CodificadorDeMensajesServidor codificadorDeMensajes(socketD);
@@ -41,18 +41,18 @@ void Sesion::atenderCliente() {
 					con.enviar("1-" + Usuarios::getNombres());
 					logueado = true;
 					codificadorDeMensajes.setUsuario(this->usuario);
-					std::cout << "El cliente " << this->ip << " inicio sesion correctamente: " << text << std::endl;
+					info("El cliente " + this->ip + " inicio sesion correctamente: " + usuario->getNombre());
 				} else {
 					con.enviar("0-Error");
-					std::cout << "El cliente " << this->ip << " inicio sesion  incorrectamente: " << text << std::endl;
+					warn("El cliente " + this->ip + " inicio sesion incorrectamente: " + text);
 				}
 			}
 		} catch (SocketException &e) {
 			if (! detenido) {
-				//Logger::error(std:string(e.what()));
-				std::cout << "Cliente " << ip << " desconectado."<< std::endl;
+				error("Error de conexión con " + ip, e);
 				detenido = true;
 			}
+			info("Cliente " + ip + " desconectado.");
 		}
 	}
 }

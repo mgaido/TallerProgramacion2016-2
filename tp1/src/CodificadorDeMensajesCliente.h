@@ -12,7 +12,7 @@ public:
 	void recibirMensajes();
 
 private:
-	Conexion *con;
+	Conexion con;
 };
 
 #endif
