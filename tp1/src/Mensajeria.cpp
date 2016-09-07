@@ -21,9 +21,10 @@ std::vector<Mensaje> Mensajeria::getMensajesParaUsuario(Usuario &usuario) {
 	while (it != mensajes.end()) {
 		if (it->getDestinatario() == usuario) {
 			msgs.push_back(*it);
-			//it = mensajes.erase(it);
+			it = mensajes.erase(it);
+		} else {
+			it++;
 		}
-		it++;
 	}
 	lock.unlock();
 	return msgs;

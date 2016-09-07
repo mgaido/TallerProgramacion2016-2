@@ -67,7 +67,6 @@ void CodificadorDeMensajesServidor::devolverMensaje() {
 	Mensajeria mensajeria;
 	std::vector<Mensaje> mensajesADevolver = mensajeria.getMensajesParaUsuario(*usuario);
 	int cantidadDeMensajesADevolver= mensajesADevolver.size();
-	
 	con->enviar("1-" + std::to_string(cantidadDeMensajesADevolver));
 	
 	auto iterador = mensajesADevolver.begin();
@@ -80,6 +79,7 @@ void CodificadorDeMensajesServidor::devolverMensaje() {
 			iterador++;
 		} else {
 			con->enviar("0- Comando Invalido");
+			//iterador++;
 		}
 	}
 }
