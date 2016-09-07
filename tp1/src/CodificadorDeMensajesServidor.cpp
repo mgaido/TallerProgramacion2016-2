@@ -12,13 +12,16 @@ void CodificadorDeMensajesServidor::interpretarComando(std::string text) {
 	switch (codeNumber) {
 	case SND_MESSAGE: {
 		enviarMensaje();
+		break;
 	}
 	case RCV_MESSAGES: {
 		devolverMensaje();
+		break;
 	}
 
 	default:
 		con->enviar("0- Comando Invalido");
+		break;
 	}
 }
 
@@ -29,17 +32,19 @@ int CodificadorDeMensajesServidor::hashCode(std::string text) {
 void CodificadorDeMensajesServidor::enviarMensaje() {
 	Mensaje nuevoMensaje;
 	Mensajeria mensajeria;
-	con->enviar("1- Exitoso");
+	con->enviar("1- Exitoso SND_MESSAGE");
 	std::string resp = con->recibir();
 	int codeNumber = hashCode(resp);
 	if(codeNumber == SND_DESTINATARIO){
-		con->enviar("1- Exitoso");
+		con->enviar("1- SND_DESTINTARIO");
 		resp = con->recibir();
 		nuevoMensaje.setDestinatario(*(Usuarios::getUsuario(resp)));
 		nuevoMensaje.setRemitente(*usuario);
+		con->enviar("1- Destinatario recibido");
 		resp = con->recibir();
 		codeNumber = hashCode(resp);
 		if (codeNumber == SND_TEXT) {
+			con->enviar("1- SND_TEXT");
 			resp = con->recibir();
 			nuevoMensaje.setTexto(resp);
 			mensajeria.enviarMensaje(nuevoMensaje.getTexto(), nuevoMensaje.getRemitente(), nuevoMensaje.getDestinatario());
@@ -57,8 +62,8 @@ void CodificadorDeMensajesServidor::devolverMensaje() {
 	Mensajeria mensajeria;
 	std::vector<Mensaje> mensajesADevolver = mensajeria.getMensajesParaUsuario(*usuario);
 	int cantidadDeMensajesADevolver= mensajesADevolver.size();
-
-	con->enviar("1-"+cantidadDeMensajesADevolver);
+	
+	con->enviar("1-" + std::to_string(cantidadDeMensajesADevolver));
 	
 	auto iterador = mensajesADevolver.begin();
 	while (iterador != mensajesADevolver.end()) {
@@ -85,5 +90,5 @@ std::string CodificadorDeMensajesServidor::formatearMensaje(std::string destinat
 }
 
 void CodificadorDeMensajesServidor::setUsuario(Usuario *unUsuario) {
-	usuario = usuario;
+	usuario = unUsuario;
 }

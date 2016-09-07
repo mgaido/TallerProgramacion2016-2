@@ -38,11 +38,11 @@ void Sesion::atenderCliente() {
 				if (correcto) {
 					con.enviar("1-" + Usuarios::getNombres());
 					logueado = true;
+					codificadorDeMensajes.setUsuario(this->usuario);
 					std::cout << "El cliente " << this->ip << " inicio sesion correctamente: " << text << std::endl;
 				} else {
 					con.enviar("0-Error");
 					std::cout << "El cliente " << this->ip << " inicio sesion  incorrectamente: " << text << std::endl;
-					codificadorDeMensajes.setUsuario(usuario);
 				}
 			}
 		} catch (SocketException &e) {
