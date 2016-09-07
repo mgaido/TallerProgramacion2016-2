@@ -12,7 +12,7 @@ Servidor::~Servidor() {
 
 void Servidor::iniciar(int port) {
 	thread = std::thread(&Servidor::aceptarConexiones, this, port);
-	std::cout << "Preciona enter para terminar..." << std::endl;
+	std::cout << "Presiona enter para terminar..." << std::endl;
 	std::string msg;
 	std::getline(std::cin, msg);
 	detener();
@@ -50,7 +50,6 @@ void Servidor::aceptarConexiones(int port) {
 
 						if (newSocketD != INVALID_SOCKET) {
 							inet_ntop(AF_INET, &(clientAddress.sin_addr), ip, INET_ADDRSTRLEN);
-							std::cout << "Cliente " << ip << " conectado. Esperando autentificacion." << std::endl;
 							sesiones.push_back(Sesion(newSocketD, ip));
 						} else if (! detenido)
 							response = -1;
@@ -74,7 +73,9 @@ void Servidor::aceptarConexiones(int port) {
 void Servidor::detener() {
 	if (!detenido) {
 		detenido = true;
-		shutdown(socketD, 2);
+		closesocket(socketD);
+
+		std::cout << "Socket cerrado" << std::endl;
 
 		auto it = sesiones.begin();
 		while (it != sesiones.end()) {
@@ -82,7 +83,12 @@ void Servidor::detener() {
 			it++;
 		}
 		sesiones.clear();
+
+		std::cout << "Esperando que termine thread aceptarConexiones" << std::endl;
+
 		thread.join();
+
+		std::cout << "Thread aceptarConexiones termino" << std::endl;
 	}
 }
 

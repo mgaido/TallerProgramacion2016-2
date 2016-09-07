@@ -5,7 +5,6 @@
 #ifdef __linux__
 #include "sys/socket.h"
 #include "sys/types.h"
-#include "sys/poll.h"
 #include "netinet/in.h"
 #include "arpa/inet.h"
 #include "errno.h"
@@ -35,14 +34,15 @@ inline int getLastError() {
 	return errno;
 }
 
+
+inline int closesocket(SOCKET socketD) {
+	return shutdown(socketD, 2);
+}
+
 #elif _WIN32
 
 inline int getLastError() {
 	return WSAGetLastError();
-}
-
-inline int poll(pollfd* fd, int nfd, long timeout) {
-	return WSAPoll(fd, nfd, timeout);
 }
 
 #endif

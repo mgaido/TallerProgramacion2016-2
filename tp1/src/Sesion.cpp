@@ -25,6 +25,8 @@ void Sesion::detener() {
 }
 
 void Sesion::atenderCliente() {
+	std::cout << "Cliente " << ip << " conectado. Esperando autentificacion." << std::endl;
+
 	Conexion con(socketD);
 	CodificadorDeMensajesServidor codificadorDeMensajes(socketD);
 	while (! detenido) {
