@@ -4,6 +4,7 @@
 #include "CodificadorDeMensajesCliente.h"
 #include "stdafx.h"
 #include "Conexion.h"
+#define RANGO_LONGITUD_MENSAJE_LOREM_IPSUM 500
 
 class Cliente {
 public:

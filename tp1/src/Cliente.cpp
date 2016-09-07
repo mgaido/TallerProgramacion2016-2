@@ -233,11 +233,12 @@ void Cliente::loremIpsum() {
 		destinatarioAleatorio = rand() % usuarios.size();
 		destinatario = usuarios.at(destinatarioAleatorio);
 		srand(time(NULL));
-		longitudMensajeAleatoria = rand() % 500 + 1;
+		longitudMensajeAleatoria = rand() % RANGO_LONGITUD_MENSAJE_LOREM_IPSUM + 1;
 		texto = getMensajeLoremIpsum(archivoLoremIpsum, longitudMensajeAleatoria);
 		try {
 			codificadorDeMensajes.enviarMensajeFormateado(destinatario, texto);
 			cantidadDeEnvios--;
+			clrScrn();
 		}
 		catch (SocketException e) {
 			if (conectado) {
@@ -252,6 +253,10 @@ void Cliente::loremIpsum() {
 std::string Cliente::getMensajeLoremIpsum(std::ifstream &archivo, int longitudMensaje) {
 	char *nuevoMensaje = new char[longitudMensaje];
 	std::string nuevoMensajeString;
+	if (archivo.eof()) {
+		archivo.clear();
+		archivo.seekg(0, std::ios::beg);
+	}
 	archivo.read(nuevoMensaje, longitudMensaje - 1);
 	nuevoMensajeString.assign(nuevoMensaje);
 	delete nuevoMensaje;
