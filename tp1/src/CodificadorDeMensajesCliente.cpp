@@ -46,7 +46,7 @@ void CodificadorDeMensajesCliente::recibirMensajes() {
 			con->enviar("DOWNLOAD_MESSAGES");
 			resp = con->recibir();
 			if (resp.substr(0, resp.find('-')) == "1") {
-				resp = resp.substr(resp.find('-'));
+				resp = resp.substr(resp.find('-')+1);
 				std::cout << resp << std::endl << std::endl << std::endl << std::endl;
 				cantidadDeMensajes--;
 			}
