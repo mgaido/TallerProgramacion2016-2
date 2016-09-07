@@ -36,7 +36,7 @@ void CodificadorDeMensajesServidor::enviarMensaje() {
 	std::string resp = con->recibir();
 	int codeNumber = hashCode(resp);
 	if(codeNumber == SND_DESTINATARIO){
-		con->enviar("1- SND_DESTINTARIO");
+		con->enviar("1- Exitoso SND_DESTINTARIO");
 		resp = con->recibir();
 		Usuario* dest = Usuarios::getUsuario(resp);
 		if (!dest) {
