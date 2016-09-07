@@ -77,8 +77,8 @@ void CodificadorDeMensajesServidor::devolverMensaje() {
 std::string CodificadorDeMensajesServidor::formatearMensaje(std::string destinatario, std::string remitente, std::string texto) {
 	std::string mensajeFormateado = "";
 	std::string const CRLF = "\r\n";
-	mensajeFormateado += destinatario + CRLF;
-	mensajeFormateado += remitente + CRLF;
+	mensajeFormateado += "Destinatario:" + destinatario + CRLF;
+	mensajeFormateado += "Remitente: " + remitente + CRLF;
 	mensajeFormateado += texto + CRLF;
 
 	return mensajeFormateado;
