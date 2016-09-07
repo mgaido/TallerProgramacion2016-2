@@ -137,6 +137,7 @@ void Cliente::loguear() {
 					//Logger::error(std:string(e.what()));
 					std::cout << "Conexión con " << host << " cerrada." << std::endl;
 					conectado = false;
+					logueado = false;
 				}
 			}
 		}
