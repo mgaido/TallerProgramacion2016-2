@@ -38,7 +38,12 @@ void CodificadorDeMensajesServidor::enviarMensaje() {
 	if(codeNumber == SND_DESTINATARIO){
 		con->enviar("1- SND_DESTINTARIO");
 		resp = con->recibir();
-		nuevoMensaje.setDestinatario(*(Usuarios::getUsuario(resp)));
+		Usuario* dest = Usuarios::getUsuario(resp);
+		if (!dest) {
+			con->enviar("0- Usuario Invalido");
+			return;
+		}
+		nuevoMensaje.setDestinatario(*dest);
 		nuevoMensaje.setRemitente(*usuario);
 		con->enviar("1- Destinatario recibido");
 		resp = con->recibir();
