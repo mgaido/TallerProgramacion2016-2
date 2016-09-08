@@ -81,19 +81,23 @@ void CodificadorDeMensajesServidor::enviarMensaje() {
 void CodificadorDeMensajesServidor::devolverMensaje() {
 	std::vector<Mensaje> mensajesADevolver = Mensajeria::getMensajesParaUsuario(*usuario);
 	int cantidadDeMensajesADevolver= mensajesADevolver.size();
-	con.enviar("1-" + std::to_string(cantidadDeMensajesADevolver));
-	
-	auto iterador = mensajesADevolver.begin();
-	while (iterador != mensajesADevolver.end()) {
-		std::string resp = con.recibir();
-	
-		int codeNumber = hashCode(resp);
-		if (codeNumber == DOWNLOAD_MESSAGES) {
-			con.enviar("1-" + formatearMensaje(iterador->getDestinatario().getNombre(), iterador->getRemitente().getNombre(), iterador->getTexto()));
-			iterador++;
-		} else {
-			con.enviar("0- Comando Invalido");
-			//iterador++;
+	if (cantidadDeMensajesADevolver == 0) {
+		con.enviar("0- Comando Invalido");		
+	}
+	else {
+		con.enviar("1-" + std::to_string(cantidadDeMensajesADevolver));
+		auto iterador = mensajesADevolver.begin();
+		while (iterador != mensajesADevolver.end()) {
+			std::string resp = con.recibir();
+			int codeNumber = hashCode(resp);
+			if (codeNumber == DOWNLOAD_MESSAGES) {
+				con.enviar("1-" + formatearMensaje(iterador->getDestinatario().getNombre(), iterador->getRemitente().getNombre(), iterador->getTexto()));
+				iterador++;
+			}
+			else {
+				con.enviar("0- Comando Invalido");
+				//iterador++;
+			}
 		}
 	}
 }
