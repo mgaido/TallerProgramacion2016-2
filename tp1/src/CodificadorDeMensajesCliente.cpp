@@ -40,7 +40,7 @@ void CodificadorDeMensajesCliente::recibirMensajes() {
 	con.enviar("RCV_MESSAGES");
 	std::string resp = con.recibir();
 	if (resp.substr(0, resp.find('-')) == "1") {
-		int cantidadDeMensajes = std::stoi(resp.substr(resp.find("1-"), std::string::npos));
+		int cantidadDeMensajes = std::stoi(resp.substr(resp.find("1-")+2, std::string::npos));
 		while (cantidadDeMensajes > 0) {
 			con.enviar("DOWNLOAD_MESSAGES");
 			resp = con.recibir();
