@@ -16,13 +16,14 @@
 #include <fstream>
 #include <thread>
 
+#ifndef NIVEL
+#define _DEBUG 1
+#define _INFO 2
+#define _WARN 3
+#define _ERROR 4
 
-#define DEBUG 1
-#define INFO 2
-#define WARN 3
-#define ERROR 4
-
-#define NIVEL DEBUG
+#define NIVEL _DEBUG
+#endif
 
 using Nivel = int;
 
@@ -63,10 +64,10 @@ private:
 
 extern Logger* logger;
 
-#define debug(...) if (NIVEL <= 1) logger->encolar(1, __VA_ARGS__, __func__, __FILE__)
-#define info(...) if (NIVEL <= 2) logger->encolar(2, __VA_ARGS__, __func__, __FILE__)
-#define warn(...) if (NIVEL <= 3) logger->encolar(3, __VA_ARGS__, __func__, __FILE__)
-#define error(...) if (NIVEL <= 4) logger->encolar(4, __VA_ARGS__, __func__, __FILE__)
+#define debug(...) if (NIVEL <= 1) logger->encolar(_DEBUG, __VA_ARGS__, __func__, __FILE__)
+#define info(...) if (NIVEL <= 2) logger->encolar(_INFO, __VA_ARGS__, __func__, __FILE__)
+#define warn(...) if (NIVEL <= 3) logger->encolar(_WARN, __VA_ARGS__, __func__, __FILE__)
+#define error(...) if (NIVEL <= 4) logger->encolar(_ERROR, __VA_ARGS__, __func__, __FILE__)
 
 #endif /* LOGGER_H_ */
 

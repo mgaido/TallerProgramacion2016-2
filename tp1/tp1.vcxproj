@@ -134,7 +134,7 @@
     <ClInclude Include="src\CodificadorDeMensajesServidor.h" />
     <ClInclude Include="src\ColaBloqueante.h" />
     <ClInclude Include="src\Conexion.h" />
-    <ClCompile Include="src\Logger.h" />
+    <ClInclude Include="src\Logger.h" />
     <ClInclude Include="src\Mensaje.h" />
     <ClInclude Include="src\Mensajeria.h" />
     <ClInclude Include="src\Servidor.h" />

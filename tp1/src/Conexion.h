@@ -11,8 +11,8 @@ public:
 	Conexion(SOCKET socketD);
 	Conexion();
 
-	void enviar(std::string mensaje) throw(SocketException);
-	std::string recibir() throw(SocketException);
+	void enviar(std::string mensaje);
+	std::string recibir();
 private:
 	SOCKET socketD;
 };

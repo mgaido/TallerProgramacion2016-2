@@ -8,7 +8,7 @@ Conexion::Conexion() {
 	
 }
 
-void Conexion::enviar(std::string mensaje) throw(SocketException) {
+void Conexion::enviar(std::string mensaje) {
 	int size = mensaje.size();
 	if (send(socketD, (char*) &size, sizeof(size), 0) != SOCKET_ERROR) {
 		if (send(socketD, mensaje.data(), size, 0) == SOCKET_ERROR) {
@@ -21,7 +21,7 @@ void Conexion::enviar(std::string mensaje) throw(SocketException) {
 	}
 }
 
-std::string Conexion::recibir() throw(SocketException) {
+std::string Conexion::recibir() {
 	int size;
 	std::string mensaje;
 

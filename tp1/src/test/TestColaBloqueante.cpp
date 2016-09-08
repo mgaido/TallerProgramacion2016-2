@@ -46,7 +46,7 @@ long TestColaBloqueante::consumir(std::string n) {
 			suma += v;
 			if (v % 2 == 0)
 				std::this_thread::sleep_for(std::chrono::microseconds(1));
-		} catch (ColaCerrada e) {
+		} catch (ColaCerrada) {
 			break;
 		}
 	}
