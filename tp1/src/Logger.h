@@ -23,6 +23,7 @@
 #define _ERROR 4
 
 #define NIVEL _DEBUG
+#define verbose false
 #endif
 
 using Nivel = int;
@@ -57,17 +58,19 @@ public:
 	void encolar(Nivel nivel, std::string texto, std::exception &e, std::string funcion, std::string fuente);
 private:
 	ColaBloqueante<Log> logs;
+	std::ofstream archivo;
 	std::thread ciclo;
+
 	void desencolar();
 	void loguear(Log& log);
 };
 
 extern Logger* logger;
 
-#define debug(...) if (NIVEL <= 1) logger->encolar(_DEBUG, __VA_ARGS__, __func__, __FILE__)
-#define info(...) if (NIVEL <= 2) logger->encolar(_INFO, __VA_ARGS__, __func__, __FILE__)
-#define warn(...) if (NIVEL <= 3) logger->encolar(_WARN, __VA_ARGS__, __func__, __FILE__)
-#define error(...) if (NIVEL <= 4) logger->encolar(_ERROR, __VA_ARGS__, __func__, __FILE__)
+#define debug(...) if (NIVEL <= _DEBUG) logger->encolar(_DEBUG, __VA_ARGS__, __func__, __FILE__)
+#define info(...) if (NIVEL <= _INFO) logger->encolar(_INFO, __VA_ARGS__, __func__, __FILE__)
+#define warn(...) if (NIVEL <= _WARN) logger->encolar(_WARN, __VA_ARGS__, __func__, __FILE__)
+#define error(...) if (NIVEL <= _ERROR) logger->encolar(_ERROR, __VA_ARGS__, __func__, __FILE__)
 
 #endif /* LOGGER_H_ */
 

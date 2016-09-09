@@ -51,6 +51,10 @@ std::string& Log::getHora() {
 /* Logger */
 
 Logger::Logger() {
+	archivo.open("tp1.log", std::ios::app);
+	if (!archivo.good())
+		throw "No se puede escribir en archivo de log";
+
 	ciclo = std::thread(&Logger::desencolar, this);
 }
 
@@ -86,7 +90,10 @@ void Logger::desencolar() {
 }
 
 void Logger::loguear(Log& log) {
-	std::cout << log.getFecha() << " " << log.getHora() << " " << log.getNombreNivel() << " ["
-			<< log.getFuente() << " " << log.getFuncion() << "]: " << log.getTexto() << std::endl;
+
+	archivo << log.getFecha() << " " << log.getHora() << " " << log.getNombreNivel();
+	if (verbose)
+		archivo << " [" << log.getFuente() << " " << log.getFuncion() << "]";
+	archivo << ": " << log.getTexto() << std::endl;
 }
 

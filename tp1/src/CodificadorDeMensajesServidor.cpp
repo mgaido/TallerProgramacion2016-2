@@ -43,7 +43,7 @@ void CodificadorDeMensajesServidor::enviarMensaje() {
 		} catch (std::invalid_argument){}
 
 		std::vector<Usuario> usuarios = Usuarios::getUsuarios();
-		if (index < 0 || index > usuarios.size()){
+		if (index < 0 || (unsigned) index > usuarios.size()){
 			con.enviar("0- Usuario Invalido");
 			return;
 		}

@@ -201,7 +201,7 @@ void Cliente::enviarMensaje(){
 		index = std::stoi(destinatario)-1;
 	} catch (std::invalid_argument){}
 
-	if (index < 0 || index > usuarios.size()){
+	if (index < 0 || (unsigned) index > usuarios.size()){
 		std::cout << "Opción inválida: " << destinatario << std::endl;
 		return;
 	}
@@ -256,10 +256,10 @@ void Cliente::loremIpsum() {
 		int longitudMensajeAleatoria, destinatarioAleatorio;
 		std::string destinatario;
 		std::string texto;
-		srand(time(NULL));
+		srand((unsigned) time(NULL));
 		destinatarioAleatorio = rand() % usuarios.size();
 		destinatario = usuarios.at(destinatarioAleatorio);
-		srand(time(NULL));
+		srand((unsigned) time(NULL));
 		longitudMensajeAleatoria = rand() % RANGO_LONGITUD_MENSAJE_LOREM_IPSUM + 1;
 		texto = getMensajeLoremIpsum(archivoLoremIpsum, longitudMensajeAleatoria);
 		try {
