@@ -258,7 +258,7 @@ void Cliente::loremIpsum() {
 		std::string texto;
 		srand((unsigned) time(NULL));
 		destinatarioAleatorio = rand() % usuarios.size();
-		destinatario = std::to_string(destinatarioAleatorio);
+		destinatario = std::to_string(destinatarioAleatorio+1);
 		srand((unsigned) time(NULL));
 		longitudMensajeAleatoria = rand() % RANGO_LONGITUD_MENSAJE_LOREM_IPSUM + 1;
 		texto = getMensajeLoremIpsum(archivoLoremIpsum, longitudMensajeAleatoria);
