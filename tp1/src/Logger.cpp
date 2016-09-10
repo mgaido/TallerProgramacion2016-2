@@ -6,6 +6,8 @@
  */
 
 #include "Logger.h"
+#include <time.h>
+
 
 std::string nombres[] = {"DEBUG", "INFO", "WARN", "ERROR"};
 
@@ -16,8 +18,10 @@ Log::Log(Nivel nivel, std::string& texto, std::string& funcion, std::string& fue
 	this->texto = texto;
 	this->funcion = funcion;
 	this->fuente = fuente;
-	this->fecha = __DATE__;
-	this->hora = __TIME__;
+	time_t t = time(0);   // get time now
+	struct tm * now = localtime(&t);
+	this->fecha = (std::to_string(now->tm_mday) + ":" + std::to_string(now->tm_mon+1) + ":" + std::to_string(now->tm_year+1900));
+	this->hora = (std::to_string(now->tm_hour) +":"+ std::to_string(now->tm_min)+":" + std::to_string(now->tm_sec));
 }
 
 std::string& Log::getTexto() {
