@@ -17,7 +17,7 @@ private:
 	int puerto;
 	bool detenido;
 	std::thread thread;
-	std::vector<Sesion> sesiones;
+	std::vector<Sesion*> sesiones;
 
 	int crearSocket();
 	void aceptarConexiones();
