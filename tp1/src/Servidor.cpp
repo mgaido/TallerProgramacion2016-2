@@ -94,6 +94,7 @@ void Servidor::detener() {
 			auto it = sesiones.begin();
 			while (it != sesiones.end()) {
 				(*it)->detener();
+				delete (*it);
 				it++;
 			}
 			sesiones.clear();
