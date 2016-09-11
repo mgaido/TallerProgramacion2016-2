@@ -28,7 +28,7 @@ void Sesion::atenderCliente() {
 	info("Cliente " + ip + " conectado. Esperando autentificacion.");
 
 	Conexion con(socketD);
-	CodificadorDeMensajesServidor codificadorDeMensajes(socketD);
+	CodificadorDeMensajesServidor codificadorDeMensajes(&con);
 	while (! detenido) {
 		try {
 			if (logueado) {

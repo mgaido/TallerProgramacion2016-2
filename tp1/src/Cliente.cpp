@@ -214,7 +214,7 @@ void Cliente::enviarMensaje() {
 		std::string texto;
 		std::getline(std::cin, texto);
 		try {
-			CodificadorDeMensajesCliente codificadorDeMensajes(socketD);
+			CodificadorDeMensajesCliente codificadorDeMensajes(&con);
 			codificadorDeMensajes.enviarMensajeFormateado(destinatario, texto);
 		}
 		catch (SocketException e) {
@@ -232,7 +232,7 @@ void Cliente::enviarMensaje() {
 
 void Cliente::recibirMensajes() {
 	if (conectado && logueado) {
-		CodificadorDeMensajesCliente codificadorDeMensajes(socketD);
+		CodificadorDeMensajesCliente codificadorDeMensajes(&con);
 		try {
 			codificadorDeMensajes.recibirMensajes();
 		}
@@ -254,7 +254,7 @@ void Cliente::loremIpsum() {
 		std::string pathFileLoremImpsum = "loremIpsum.txt";
 		int frecuenciaDeEnvio;
 		int cantidadDeEnvios;
-		CodificadorDeMensajesCliente codificadorDeMensajes(socketD);
+		CodificadorDeMensajesCliente codificadorDeMensajes(&con);
 		std::ifstream archivoLoremIpsum(pathFileLoremImpsum);
 
 		std::cout << "Ingrese frecuencia de envio en milisegundos: ";

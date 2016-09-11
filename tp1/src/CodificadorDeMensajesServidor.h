@@ -15,13 +15,13 @@
 
 class CodificadorDeMensajesServidor {
 public:
-	CodificadorDeMensajesServidor(SOCKET socketD);
+	CodificadorDeMensajesServidor(Conexion *nuevaCon);
 	~CodificadorDeMensajesServidor();
 	void interpretarComando(std::string);
 	void setUsuario(Usuario *unUsuario);
 
 private:
-	Conexion con;
+	Conexion *con;
 	Usuario *usuario;
 	int hashCode(std::string text);
 	void enviarMensaje();
