@@ -224,7 +224,8 @@ void Cliente::enviarMensaje() {
 				conectado = false;
 			}
 		}
-	} else {
+	}
+	else {
 		std::cout << "No hay una Conexion abierta." << std::endl;
 	}
 }
@@ -242,47 +243,50 @@ void Cliente::recibirMensajes() {
 				conectado = false;
 			}
 		}
-	} else {
+	}
+	else {
 		std::cout << "No hay una Conexion abierta." << std::endl;
 	}
 }
 
 void Cliente::loremIpsum() {
-	std::string pathFileLoremImpsum = "loremIpsum.txt";
-	int frecuenciaDeEnvio;
-	int cantidadDeEnvios;
-	CodificadorDeMensajesCliente codificadorDeMensajes(socketD);
-	std::ifstream archivoLoremIpsum(pathFileLoremImpsum);
+	if (conectado && logueado) {
+		std::string pathFileLoremImpsum = "loremIpsum.txt";
+		int frecuenciaDeEnvio;
+		int cantidadDeEnvios;
+		CodificadorDeMensajesCliente codificadorDeMensajes(socketD);
+		std::ifstream archivoLoremIpsum(pathFileLoremImpsum);
 
-	std::cout << "Ingrese frecuencia de envio en milisegundos: ";
-	std::string entradaUsuario;
-	std::getline(std::cin, entradaUsuario);
-	frecuenciaDeEnvio = std::stoi(entradaUsuario);					//falta chequeo de tipo de dato int
-	std::cout << "Ingrese cantidad de envios maximos: ";
-	std::getline(std::cin, entradaUsuario);
-	cantidadDeEnvios = std::stoi(entradaUsuario);				//falta chequeo de tipo de dato int
+		std::cout << "Ingrese frecuencia de envio en milisegundos: ";
+		std::string entradaUsuario;
+		std::getline(std::cin, entradaUsuario);
+		frecuenciaDeEnvio = std::stoi(entradaUsuario);					//falta chequeo de tipo de dato int
+		std::cout << "Ingrese cantidad de envios maximos: ";
+		std::getline(std::cin, entradaUsuario);
+		cantidadDeEnvios = std::stoi(entradaUsuario);				//falta chequeo de tipo de dato int
 
-	while (cantidadDeEnvios > 0) {
-		std::this_thread::sleep_for(std::chrono::milliseconds(frecuenciaDeEnvio));
-		int longitudMensajeAleatoria, destinatarioAleatorio;
-		std::string destinatario;
-		std::string texto;
-		srand((unsigned)time(NULL));
-		destinatarioAleatorio = rand() % usuarios.size();
-		destinatario = std::to_string(destinatarioAleatorio + 1);
-		srand((unsigned)time(NULL));
-		longitudMensajeAleatoria = rand() % RANGO_LONGITUD_MENSAJE_LOREM_IPSUM + 1;
-		texto = getMensajeLoremIpsum(archivoLoremIpsum, longitudMensajeAleatoria);
-		try {
-			codificadorDeMensajes.enviarMensajeFormateado(destinatario, texto);
-			cantidadDeEnvios--;
-			//clrScrn();
-		}
-		catch (SocketException e) {
-			if (conectado) {
-				//Logger::error(std:string(e.what()));
-				std::cout << "Conexión con " << host << " cerrada." << std::endl;
-				conectado = false;
+		while (cantidadDeEnvios > 0) {
+			std::this_thread::sleep_for(std::chrono::milliseconds(frecuenciaDeEnvio));
+			int longitudMensajeAleatoria, destinatarioAleatorio;
+			std::string destinatario;
+			std::string texto;
+			srand((unsigned)time(NULL));
+			destinatarioAleatorio = rand() % usuarios.size();
+			destinatario = std::to_string(destinatarioAleatorio + 1);
+			srand((unsigned)time(NULL));
+			longitudMensajeAleatoria = rand() % RANGO_LONGITUD_MENSAJE_LOREM_IPSUM + 1;
+			texto = getMensajeLoremIpsum(archivoLoremIpsum, longitudMensajeAleatoria);
+			try {
+				codificadorDeMensajes.enviarMensajeFormateado(destinatario, texto);
+				cantidadDeEnvios--;
+				//clrScrn();
+			}
+			catch (SocketException e) {
+				if (conectado) {
+					//Logger::error(std:string(e.what()));
+					std::cout << "Conexión con " << host << " cerrada." << std::endl;
+					conectado = false;
+				}
 			}
 		}
 	}
