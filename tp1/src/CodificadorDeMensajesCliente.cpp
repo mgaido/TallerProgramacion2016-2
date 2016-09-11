@@ -10,23 +10,24 @@ CodificadorDeMensajesCliente::~CodificadorDeMensajesCliente() {
 void CodificadorDeMensajesCliente::enviarMensajeFormateado(std::string destinatario, std::string texto) {
 	con.enviar("SND_MESSAGE");
 	std::string resp = con.recibir();
-	std::cout << resp << std::endl;
+	//std::cout << resp << std::endl;
 	if (resp.substr(0, resp.find('-')) == "1") {
 		con.enviar("SND_DESTINATARIO");
 		resp = con.recibir();
-		std::cout << resp << std::endl;
+		//std::cout << resp << std::endl;
 		if (resp.substr(0, resp.find('-')) == "1") {
 			con.enviar(destinatario);
 			resp = con.recibir();
-			std::cout << resp << std::endl;
+			//std::cout << resp << std::endl;
 			if (resp.substr(0, resp.find('-')) == "1") {
 				con.enviar("SND_TEXT");
 				resp = con.recibir();
-				std::cout << resp << std::endl;
+				//std::cout << resp << std::endl;
 				if (resp.substr(0, resp.find('-')) == "1") {
 					con.enviar(texto);
 					resp = con.recibir();
 					if (resp.substr(0, resp.find('-')) == "1") {
+						clrScrn();
 						std::cout << "Mensaje enviado correctamente" << std::endl;
 					}
 				}
@@ -34,6 +35,13 @@ void CodificadorDeMensajesCliente::enviarMensajeFormateado(std::string destinata
 		}
 	}
 
+}
+
+
+void CodificadorDeMensajesCliente::clrScrn() {
+#ifdef _WIN32
+	system("cls");
+#endif
 }
 
 void CodificadorDeMensajesCliente::recibirMensajes() {

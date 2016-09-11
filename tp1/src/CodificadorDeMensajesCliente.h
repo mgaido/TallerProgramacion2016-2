@@ -12,6 +12,7 @@ public:
 	void recibirMensajes();
 
 private:
+	void clrScrn();
 	Conexion con;
 };
 

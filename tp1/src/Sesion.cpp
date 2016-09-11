@@ -71,7 +71,6 @@ bool Sesion::autentificar(std::string msj) {
 			this->usuario = nullptr;
 		}
 	}
-	std::cout << (usuario != nullptr) << std::endl;
 	return usuario != nullptr;
 
 }
