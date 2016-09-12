@@ -36,8 +36,10 @@ void Cliente::conectar() {
 	}
 
 	if (respuesta < 0) {
-		std::string error = "Error llamando a " + funcion + " con código " + std::to_string(getLastError());
-		std::cerr << error << std::endl;
+		//std::string error = "Error llamando a " + funcion + " con codigo " + std::to_string(getLastError());
+		clrScrn();
+		std::cerr << "No se pudo establecer la conexion con el Servidor" << std::endl;
+		error("No se pudo establecer la conexion con el Servidor: " + host);
 	}
 
 }
@@ -140,7 +142,8 @@ void Cliente::loguear() {
 				}
 				else {
 					clrScrn();
-					std::cout << "Error en la Conexion" << std::endl;
+					std::cout << "Usuario o contrasena incorrecta" << std::endl;
+					info("Usuario o contrasena incorrecta");
 				}
 				//std::cout << "El servidor respondio: " << resp << std::endl;
 			}
@@ -148,6 +151,7 @@ void Cliente::loguear() {
 				if (conectado) {
 					//Logger::error(std:string(e.what()));
 					std::cout << "Conexion con " << host << " cerrada." << std::endl;
+					error("Conexion con " + host +" cerrada");
 					conectado = false;
 					logueado = false;
 				}
@@ -179,7 +183,8 @@ void Cliente::desconectar() {
 		usuarios.clear();
 		shutdown(socketD, 2);
 		clrScrn();
-		std::cout << "Desconexion Exitosa." << std::endl;
+		std::cout << "Desconexion Exitosa con: " << host << std::endl;
+		info("Desconexion Exitosa con: " + host);
 	} else {
 		clrScrn();
 		std::cout << "No existe conexion." << std::endl;
@@ -219,13 +224,19 @@ void Cliente::enviarMensaje() {
 		std::string texto;
 		std::getline(std::cin, texto);
 		try {
+			clrScrn();
 			CodificadorDeMensajesCliente codificadorDeMensajes(&con);
 			codificadorDeMensajes.enviarMensajeFormateado(destinatario, texto);
 		}
 		catch (SocketException e) {
 			if (conectado) {
 				//Logger::error(std:string(e.what()));
+				clrScrn();
+				std::cout << "Error al enviar mensaje." << std::endl;
 				std::cout << "Conexion con " << host << " cerrada." << std::endl;
+				error("Error al enviar mensaje");
+				error("Conexion con " + host + " cerrada.");
+				logueado = false;
 				conectado = false;
 			}
 		}
@@ -237,6 +248,7 @@ void Cliente::enviarMensaje() {
 
 void Cliente::recibirMensajes() {
 	if (conectado && logueado) {
+		clrScrn();
 		CodificadorDeMensajesCliente codificadorDeMensajes(&con);
 		try {
 			codificadorDeMensajes.recibirMensajes();
@@ -244,7 +256,11 @@ void Cliente::recibirMensajes() {
 		catch (SocketException e) {
 			if (conectado) {
 				//Logger::error(std:string(e.what()));
+				std::cout << "Error al recibir mensajes." << std::endl;
 				std::cout << "Conexion con " << host << " cerrada." << std::endl;
+				error("Error al recibir mensajes");
+				error("Conexion con " + host + " cerrada.");
+				logueado = false;
 				conectado = false;
 			}
 		}
@@ -291,11 +307,21 @@ void Cliente::loremIpsum() {
 			catch (SocketException e) {
 				if (conectado) {
 					//Logger::error(std:string(e.what()));
+					std::cout << "Error al enviar LoremIpsum" << std::endl;
 					std::cout << "Conexión con " << host << " cerrada." << std::endl;
+					error("Error al enviar LoremIpsum");
+					error("Conexion con " + host + " cerrada.");
+					logueado = false;
 					conectado = false;
+					break;
 				}
 			}
 		}
+		if (conectado && logueado) {
+			info("LoremIsum enviado correctamente.");
+		}
+	} else {
+		std::cout << "No hay una Conexion abierta." << std::endl;
 	}
 }
 

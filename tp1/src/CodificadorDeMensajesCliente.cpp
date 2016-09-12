@@ -30,6 +30,7 @@ void CodificadorDeMensajesCliente::enviarMensajeFormateado(std::string destinata
 						clrScrn();
 						info("Mensaje: " +texto+" enviado correctamente a "+destinatario);
 						std::cout << "Mensaje enviado correctamente" << std::endl;
+						info("Mensaje enviado correctamente");
 					}
 				}
 			}
@@ -59,6 +60,6 @@ void CodificadorDeMensajesCliente::recibirMensajes() {
 				cantidadDeMensajes--;
 			}
 		}
-
+		info("Recepcion de mensajes correcta");
 	}
 }
