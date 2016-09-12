@@ -29,6 +29,7 @@ void CodificadorDeMensajesCliente::enviarMensajeFormateado(std::string destinata
 					if (resp.substr(0, resp.find('-')) == "1") {
 						clrScrn();
 						std::cout << "Mensaje enviado correctamente" << std::endl;
+						info("Mensaje enviado correctamente");
 					}
 				}
 			}
@@ -58,6 +59,6 @@ void CodificadorDeMensajesCliente::recibirMensajes() {
 				cantidadDeMensajes--;
 			}
 		}
-
+		info("Recepcion de mensajes correcta");
 	}
 }
