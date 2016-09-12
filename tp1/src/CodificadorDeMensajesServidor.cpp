@@ -2,6 +2,7 @@
 
 CodificadorDeMensajesServidor::CodificadorDeMensajesServidor(Conexion *nuevaCon) {
 	con = nuevaCon;
+	detenido = false;
 }
 
 CodificadorDeMensajesServidor::~CodificadorDeMensajesServidor() {
@@ -16,6 +17,11 @@ void CodificadorDeMensajesServidor::interpretarComando(std::string text) {
 	}
 	case RCV_MESSAGES: {
 		devolverMensaje();
+		break;
+	}
+
+	case DISCONNECT: {
+		desconectar();
 		break;
 	}
 
@@ -114,4 +120,13 @@ std::string CodificadorDeMensajesServidor::formatearMensaje(std::string destinat
 
 void CodificadorDeMensajesServidor::setUsuario(Usuario *unUsuario) {
 	usuario = unUsuario;
+}
+
+bool CodificadorDeMensajesServidor::pedidoDeDesconexion() {
+	return detenido;
+}
+
+void CodificadorDeMensajesServidor::desconectar() {
+	detenido = true;
+	con->enviar("1- Desconexion exitosa");
 }

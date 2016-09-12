@@ -29,7 +29,7 @@ void Sesion::atenderCliente() {
 
 	Conexion con(socketD);
 	CodificadorDeMensajesServidor codificadorDeMensajes(&con);
-	while (! detenido) {
+	while (! detenido && !codificadorDeMensajes.pedidoDeDesconexion()) {
 		try {
 			if (logueado) {
 				std::string text = con.recibir();
@@ -49,12 +49,12 @@ void Sesion::atenderCliente() {
 			}
 		} catch (SocketException &e) {
 			if (! detenido) {
-				error("Error de conexión con " + ip, e);
+				error("Error de conexión con " + ip + ". Conexion perdida.", e);
 				detenido = true;
 			}
-			info("Cliente " + ip + " desconectado.");
 		}
 	}
+	info("Cliente " + ip + " desconectado.");
 }
 
 

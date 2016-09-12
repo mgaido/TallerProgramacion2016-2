@@ -169,13 +169,17 @@ void Cliente::parseoUsuario(std::string textoUsuarios) {
 
 void Cliente::desconectar() {
 	if (conectado) {
+		std::string resp = "";
+		do {
+			con.enviar("DISCONNECT");
+			resp = con.recibir();
+		} while (!(resp.substr(0, resp.find('-')) == "1"));
 		conectado = false;
 		usuarios.clear();
 		shutdown(socketD, 2);
 		clrScrn();
 		std::cout << "Desconexion Exitosa." << std::endl;
-	}
-	else {
+	} else {
 		clrScrn();
 		std::cout << "No existe conexion." << std::endl;
 	}
