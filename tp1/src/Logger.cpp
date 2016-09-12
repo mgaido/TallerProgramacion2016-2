@@ -90,7 +90,6 @@ void Logger::desencolar() {
 }
 
 void Logger::loguear(Log& log) {
-
 	archivo << log.getFecha() << " " << log.getHora() << " " << log.getNombreNivel();
 	if (verbose)
 		archivo << " [" << log.getFuente() << " " << log.getFuncion() << "]";

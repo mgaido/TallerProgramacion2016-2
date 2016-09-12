@@ -6,12 +6,6 @@
 Logger* logger = new Logger();
 
 int main(int argc, char *argv[]) {
-
-#ifdef _WIN32
-	WSADATA wsa;
-	WSAStartup(MAKEWORD(2, 2), &wsa);
-#endif
-
 	bool server = true;
 	std::string host = "127.0.0.1";
 	std::string archivo = "usuarios.txt";
@@ -47,6 +41,12 @@ int main(int argc, char *argv[]) {
 			}
 		}
 	}
+
+
+	#ifdef _WIN32
+	WSADATA wsa;
+	WSAStartup(MAKEWORD(2, 2), &wsa);
+	#endif
 
 	if (server) {
 		std::cout << "Iniciado servidor en puerto " << std::to_string(puerto) << " y leyendo usuarios de " << archivo << std::endl;

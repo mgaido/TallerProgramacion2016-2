@@ -16,7 +16,6 @@
 #include <fstream>
 #include <thread>
 
-#ifndef NIVEL
 #define _DEBUG 1
 #define _INFO 2
 #define _WARN 3
@@ -24,7 +23,6 @@
 
 #define NIVEL _DEBUG
 #define verbose false
-#endif
 
 using Nivel = int;
 
