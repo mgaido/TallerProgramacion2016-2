@@ -12,21 +12,25 @@
 #define SND_TEXT 8
 #define RCV_MESSAGES 12
 #define DOWNLOAD_MESSAGES 17
+#define DISCONNECT 10
 
 class CodificadorDeMensajesServidor {
 public:
-	CodificadorDeMensajesServidor(SOCKET socketD);
+	CodificadorDeMensajesServidor(Conexion *nuevaCon);
 	~CodificadorDeMensajesServidor();
 	void interpretarComando(std::string);
 	void setUsuario(Usuario *unUsuario);
+	bool pedidoDeDesconexion();
 
 private:
-	Conexion con;
+	Conexion *con;
+	bool detenido;
 	Usuario *usuario;
 	int hashCode(std::string text);
 	void enviarMensaje();
 	std::string formatearMensaje(std::string destinatario, std::string remitente, std::string texto);
 	void devolverMensaje();
+	void desconectar();
 };
 
 #endif

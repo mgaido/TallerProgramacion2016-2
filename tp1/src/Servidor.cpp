@@ -67,7 +67,7 @@ void Servidor::aceptarConexiones() {
 
 		if (newSocketD != INVALID_SOCKET) {
 			inet_ntop(AF_INET, &(clientAddress.sin_addr), ip, INET_ADDRSTRLEN);
-			sesiones.push_back(Sesion(newSocketD, ip));
+			sesiones.push_back(new Sesion(newSocketD, ip));
 		} else if (!detenido)
 			response = -1;
 
@@ -93,7 +93,8 @@ void Servidor::detener() {
 
 			auto it = sesiones.begin();
 			while (it != sesiones.end()) {
-				it->detener();
+				(*it)->detener();
+				delete (*it);
 				it++;
 			}
 			sesiones.clear();

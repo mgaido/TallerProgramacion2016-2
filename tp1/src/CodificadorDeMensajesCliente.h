@@ -6,13 +6,14 @@
 
 class CodificadorDeMensajesCliente {
 public:
-	CodificadorDeMensajesCliente(SOCKET socketD);
+	CodificadorDeMensajesCliente(Conexion *nuevaCon);
 	~CodificadorDeMensajesCliente();
 	void enviarMensajeFormateado(std::string destinatario, std::string texto);
 	void recibirMensajes();
 
 private:
-	Conexion con;
+	void clrScrn();
+	Conexion *con;
 };
 
 #endif

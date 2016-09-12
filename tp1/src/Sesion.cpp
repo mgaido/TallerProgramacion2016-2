@@ -28,8 +28,8 @@ void Sesion::atenderCliente() {
 	info("Cliente " + ip + " conectado. Esperando autentificacion.");
 
 	Conexion con(socketD);
-	CodificadorDeMensajesServidor codificadorDeMensajes(socketD);
-	while (! detenido) {
+	CodificadorDeMensajesServidor codificadorDeMensajes(&con);
+	while (! detenido && !codificadorDeMensajes.pedidoDeDesconexion()) {
 		try {
 			if (logueado) {
 				std::string text = con.recibir();
@@ -49,12 +49,12 @@ void Sesion::atenderCliente() {
 			}
 		} catch (SocketException &e) {
 			if (! detenido) {
-				error("Error de conexión con " + ip, e);
+				error("Error de conexión con " + ip + ". Conexion perdida.", e);
 				detenido = true;
 			}
-			info("Cliente " + ip + " desconectado.");
 		}
 	}
+	info("Cliente " + ip + " desconectado.");
 }
 
 
@@ -71,7 +71,6 @@ bool Sesion::autentificar(std::string msj) {
 			this->usuario = nullptr;
 		}
 	}
-	std::cout << (usuario != nullptr) << std::endl;
 	return usuario != nullptr;
 
 }

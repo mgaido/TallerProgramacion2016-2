@@ -43,9 +43,9 @@ void Cliente::conectar() {
 }
 
 void Cliente::clrScrn() {
-	#ifdef _WIN32
+#ifdef _WIN32
 	system("cls");
-	#endif
+#endif
 }
 
 void Cliente::iniciar() {
@@ -93,9 +93,10 @@ char Cliente::imprimirMenu() {
 	char opcionChar;
 	bool correcto = false;
 	while (!correcto) {
-		if (! logueado) {
+		if (!logueado) {
 			std::cout << "1. Conectar" << std::endl;
-		} else {
+		}
+		else {
 			std::cout << "2. Desconectar" << std::endl;
 			std::cout << "3. Enviar" << std::endl;
 			std::cout << "4. Recibir" << std::endl;
@@ -136,12 +137,16 @@ void Cliente::loguear() {
 					std::cout << "Conexion Exitosa." << std::endl;
 					parseoUsuario(resp.substr(resp.find('-') + 1, resp.length()));
 				}
-				std::cout << "El servidor respondio: " << resp << std::endl;
+				else {
+					clrScrn();
+					std::cout << "Error en la Conexion" << std::endl;
+				}
+				//std::cout << "El servidor respondio: " << resp << std::endl;
 			}
 			catch (SocketException e) {
 				if (conectado) {
 					//Logger::error(std:string(e.what()));
-					std::cout << "Conexión con " << host << " cerrada." << std::endl;
+					std::cout << "Conexion con " << host << " cerrada." << std::endl;
 					conectado = false;
 					logueado = false;
 				}
@@ -160,21 +165,21 @@ void Cliente::parseoUsuario(std::string textoUsuarios) {
 		usuarios.push_back(textoUsuarios.substr(0, textoUsuarios.find(',')));
 		textoUsuarios = textoUsuarios.substr(textoUsuarios.find(',') + 1, textoUsuarios.length() - 1);
 	}
-	//for (std::vector<std::string>::const_iterator i = usuarios.begin(); i != usuarios.end(); ++i) {
-	//	// process i
-	//	std::cout << *i << " "; // this will print all the contents of *features*
-	//}
 }
 
 void Cliente::desconectar() {
 	if (conectado) {
+		std::string resp = "";
+		do {
+			con.enviar("DISCONNECT");
+			resp = con.recibir();
+		} while (!(resp.substr(0, resp.find('-')) == "1"));
 		conectado = false;
 		usuarios.clear();
 		shutdown(socketD, 2);
 		clrScrn();
 		std::cout << "Desconexion Exitosa." << std::endl;
-	}
-	else {
+	} else {
 		clrScrn();
 		std::cout << "No existe conexion." << std::endl;
 	}
@@ -182,97 +187,110 @@ void Cliente::desconectar() {
 
 }
 
-void Cliente::enviarMensaje(){
-	int index = 1;
-	auto it = usuarios.begin();
-	while (it < usuarios.end()){
-		std::cout << index << ". " << *it << std::endl;
-		it++;
-		index++;
-	}
-	std::cout << index << ". " << "Todos" << std::endl;
-	std::cout << std::endl;
-
-	std::cout << "Ingrese destinatario: ";
-	std::string destinatario;
-	std::getline(std::cin, destinatario);
-
-	index = -1;
-	try {
-		index = std::stoi(destinatario)-1;
-	} catch (std::invalid_argument){}
-
-	if (index < 0 || (unsigned) index > usuarios.size()){
-		std::cout << "Opción inválida: " << destinatario << std::endl;
-		return;
-	}
-
-	std::cout << "Ingrese Mensaje: ";
-	std::string texto;
-	std::getline(std::cin, texto);
-	try {
-		CodificadorDeMensajesCliente codificadorDeMensajes(socketD);
-		codificadorDeMensajes.enviarMensajeFormateado(destinatario, texto);
-	}
-	catch (SocketException e) {
-		if (conectado) {
-			//Logger::error(std:string(e.what()));
-			std::cout << "Conexión con " << host << " cerrada." << std::endl;
-			conectado = false;
+void Cliente::enviarMensaje() {
+	if (conectado && logueado) {
+		int index = 1;
+		auto it = usuarios.begin();
+		while (it < usuarios.end()) {
+			std::cout << index << ". " << *it << std::endl;
+			it++;
+			index++;
 		}
-	}
-}
+		std::cout << index << ". " << "Todos" << std::endl;
+		std::cout << std::endl;
 
-void Cliente::recibirMensajes() {
-	CodificadorDeMensajesCliente codificadorDeMensajes(socketD);
-	try {
-		codificadorDeMensajes.recibirMensajes();
-	}
-	catch (SocketException e) {
-		if (conectado) {
-			//Logger::error(std:string(e.what()));
-			std::cout << "Conexión con " << host << " cerrada." << std::endl;
-			conectado = false;
-		}
-	}
-}
-
-void Cliente::loremIpsum() {
-	std::string pathFileLoremImpsum = "loremIpsum.txt";
-	int frecuenciaDeEnvio;
-	int cantidadDeEnvios;
-	CodificadorDeMensajesCliente codificadorDeMensajes(socketD);
-	std::ifstream archivoLoremIpsum(pathFileLoremImpsum);
-
-	std::cout << "Ingrese frecuencia de envio en milisegundos: ";
-	std::string entradaUsuario;
-	std::getline(std::cin, entradaUsuario);
-	frecuenciaDeEnvio = std::stoi(entradaUsuario);					//falta chequeo de tipo de dato int
-	std::cout << "Ingrese cantidad de envios maximos: ";
-	std::getline(std::cin, entradaUsuario);
-	cantidadDeEnvios = std::stoi(entradaUsuario);				//falta chequeo de tipo de dato int
-
-	while (cantidadDeEnvios > 0) {
-		std::this_thread::sleep_for(std::chrono::milliseconds(frecuenciaDeEnvio));
-		int longitudMensajeAleatoria, destinatarioAleatorio;
+		std::cout << "Ingrese destinatario: ";
 		std::string destinatario;
-		std::string texto;
-		srand((unsigned) time(NULL));
-		destinatarioAleatorio = rand() % usuarios.size();
-		destinatario = std::to_string(destinatarioAleatorio+1);
-		srand((unsigned) time(NULL));
-		longitudMensajeAleatoria = rand() % RANGO_LONGITUD_MENSAJE_LOREM_IPSUM + 1;
-		texto = getMensajeLoremIpsum(archivoLoremIpsum, longitudMensajeAleatoria);
+		std::getline(std::cin, destinatario);
+
+		index = -1;
 		try {
+			index = std::stoi(destinatario) - 1;
+		}
+		catch (std::invalid_argument) {}
+
+		if (index < 0 || (unsigned)index > usuarios.size()) {
+			std::cout << "Opcion invalida: " << destinatario << std::endl;
+			return;
+		}
+
+		std::cout << "Ingrese Mensaje: ";
+		std::string texto;
+		std::getline(std::cin, texto);
+		try {
+			CodificadorDeMensajesCliente codificadorDeMensajes(&con);
 			codificadorDeMensajes.enviarMensajeFormateado(destinatario, texto);
-			cantidadDeEnvios--;
-			//clrScrn();
 		}
 		catch (SocketException e) {
 			if (conectado) {
 				//Logger::error(std:string(e.what()));
-				std::cout << "Conexión con " << host << " cerrada." << std::endl;
+				std::cout << "Conexion con " << host << " cerrada." << std::endl;
 				conectado = false;
+			}
+		}
+	}
+	else {
+		std::cout << "No hay una Conexion abierta." << std::endl;
+	}
+}
+
+void Cliente::recibirMensajes() {
+	if (conectado && logueado) {
+		CodificadorDeMensajesCliente codificadorDeMensajes(&con);
+		try {
+			codificadorDeMensajes.recibirMensajes();
+		}
+		catch (SocketException e) {
+			if (conectado) {
+				//Logger::error(std:string(e.what()));
+				std::cout << "Conexion con " << host << " cerrada." << std::endl;
+				conectado = false;
+			}
+		}
+	}
+	else {
+		std::cout << "No hay una Conexion abierta." << std::endl;
+	}
+}
+
+void Cliente::loremIpsum() {
+	if (conectado && logueado) {
+		std::string pathFileLoremImpsum = "loremIpsum.txt";
+		int frecuenciaDeEnvio;
+		int cantidadDeEnvios;
+		CodificadorDeMensajesCliente codificadorDeMensajes(&con);
+		std::ifstream archivoLoremIpsum(pathFileLoremImpsum);
+
+		std::cout << "Ingrese frecuencia de envio en milisegundos: ";
+		std::string entradaUsuario;
+		std::getline(std::cin, entradaUsuario);
+		frecuenciaDeEnvio = std::stoi(entradaUsuario);					//falta chequeo de tipo de dato int
+		std::cout << "Ingrese cantidad de envios maximos: ";
+		std::getline(std::cin, entradaUsuario);
+		cantidadDeEnvios = std::stoi(entradaUsuario);				//falta chequeo de tipo de dato int
+
+		while (cantidadDeEnvios > 0) {
+			std::this_thread::sleep_for(std::chrono::milliseconds(frecuenciaDeEnvio));
+			int longitudMensajeAleatoria, destinatarioAleatorio;
+			std::string destinatario;
+			std::string texto;
+			srand((unsigned)time(NULL));
+			destinatarioAleatorio = rand() % usuarios.size();
+			destinatario = std::to_string(destinatarioAleatorio + 1);
+			srand((unsigned)time(NULL));
+			longitudMensajeAleatoria = rand() % RANGO_LONGITUD_MENSAJE_LOREM_IPSUM + 1;
+			texto = getMensajeLoremIpsum(archivoLoremIpsum, longitudMensajeAleatoria);
+			try {
+				codificadorDeMensajes.enviarMensajeFormateado(destinatario, texto);
+				cantidadDeEnvios--;
+				//clrScrn();
+			}
+			catch (SocketException e) {
+				if (conectado) {
+					//Logger::error(std:string(e.what()));
+					std::cout << "Conexión con " << host << " cerrada." << std::endl;
+					conectado = false;
+				}
 			}
 		}
 	}
