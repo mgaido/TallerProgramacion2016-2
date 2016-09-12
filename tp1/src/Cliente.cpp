@@ -135,6 +135,7 @@ void Cliente::loguear() {
 					logueado = true;
 					clrScrn();
 					std::cout << "Conexion Exitosa." << std::endl;
+					std::cout << resp << std::endl;
 					parseoUsuario(resp.substr(resp.find('-') + 1, resp.length()));
 				}
 				else {
@@ -261,24 +262,26 @@ void Cliente::loremIpsum() {
 		CodificadorDeMensajesCliente codificadorDeMensajes(&con);
 		std::ifstream archivoLoremIpsum(pathFileLoremImpsum);
 
-		std::cout << "Ingrese frecuencia de envio en milisegundos: ";
+		std::cout << "Ingrese frecuencia de envio en segundos: ";
 		std::string entradaUsuario;
 		std::getline(std::cin, entradaUsuario);
 		frecuenciaDeEnvio = std::stoi(entradaUsuario);					//falta chequeo de tipo de dato int
 		std::cout << "Ingrese cantidad de envios maximos: ";
 		std::getline(std::cin, entradaUsuario);
-		cantidadDeEnvios = std::stoi(entradaUsuario);				//falta chequeo de tipo de dato int
+		cantidadDeEnvios = std::stoi(entradaUsuario);	
+		//falta chequeo de tipo de dato int
+
+		int longitudMensajeAleatoria, destinatarioAleatorio;
+		std::string destinatario;
+		destinatarioAleatorio = rand() % usuarios.size();
+		destinatario = std::to_string(destinatarioAleatorio + 1);
+		srand((unsigned)time(NULL));
+		longitudMensajeAleatoria = rand() % RANGO_LONGITUD_MENSAJE_LOREM_IPSUM + 1;
 
 		while (cantidadDeEnvios > 0) {
-			std::this_thread::sleep_for(std::chrono::milliseconds(frecuenciaDeEnvio));
-			int longitudMensajeAleatoria, destinatarioAleatorio;
-			std::string destinatario;
+			std::this_thread::sleep_for(std::chrono::seconds(1/frecuenciaDeEnvio));
 			std::string texto;
-			srand((unsigned)time(NULL));
-			destinatarioAleatorio = rand() % usuarios.size();
-			destinatario = std::to_string(destinatarioAleatorio + 1);
-			srand((unsigned)time(NULL));
-			longitudMensajeAleatoria = rand() % RANGO_LONGITUD_MENSAJE_LOREM_IPSUM + 1;
+			srand((unsigned)time(NULL));		
 			texto = getMensajeLoremIpsum(archivoLoremIpsum, longitudMensajeAleatoria);
 			try {
 				codificadorDeMensajes.enviarMensajeFormateado(destinatario, texto);
@@ -299,13 +302,20 @@ void Cliente::loremIpsum() {
 std::string Cliente::getMensajeLoremIpsum(std::ifstream &archivo, int longitudMensaje) {
 	char *nuevoMensaje = new char[longitudMensaje];
 	std::string nuevoMensajeString;
-	if (archivo.eof()) {
-		archivo.clear();
-		archivo.seekg(0, std::ios::beg);
+	int i = 0;
+	while (i < longitudMensaje) {
+
+		if (archivo.eof()) {
+			archivo.clear();
+			archivo.seekg(0, std::ios::beg);
+			continue;
+		}
+		archivo.read(nuevoMensaje+i, 1);
+		i++;
 	}
-	archivo.read(nuevoMensaje, longitudMensaje - 1);
-	nuevoMensajeString.assign(nuevoMensaje);
+	nuevoMensajeString.assign(nuevoMensaje,longitudMensaje);
 	delete nuevoMensaje;
 	nuevoMensaje = NULL;
 	return nuevoMensajeString;
+
 }
