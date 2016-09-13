@@ -1,7 +1,6 @@
 #ifndef CLIENTE_H
 #define CLIENTE_H
 
-#include "CodificadorDeMensajesCliente.h"
 #include "stdafx.h"
 #include "Conexion.h"
 #define RANGO_LONGITUD_MENSAJE_LOREM_IPSUM 200
@@ -13,14 +12,13 @@ public:
 	void desconectar();
 	void iniciar();
 private:
-	void leerComando();
 	void enviarMensaje();
+	void enviarMensaje(int usuario, std::string texto);
 	void recibirMensajes();
 	void loremIpsum();
 	void loguear();
 	void parseoUsuario(std::string textoUsuarios);
 	char imprimirMenu();
-	void clrScrn();
 	std::string getMensajeLoremIpsum(std::ifstream &archivo, int longitudMensaje);
 
 	std::string host;

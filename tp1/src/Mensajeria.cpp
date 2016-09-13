@@ -11,6 +11,7 @@ void Mensajeria::enviarMensaje(std::string & texto, Usuario & remitente, Usuario
 	lock.lock();
 	mensajes.push_back(mensaje);
 	lock.unlock();
+	info("Mensaje enviado de " + remitente.getNombre() + " a " + destinatario.getNombre() + ": " + texto);
 }
 
 std::vector<Mensaje> Mensajeria::getMensajesParaUsuario(Usuario &usuario) {

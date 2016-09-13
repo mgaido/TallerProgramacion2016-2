@@ -19,6 +19,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <thread>
 #include <vector>
 
@@ -46,6 +47,7 @@ inline int getLastError() {
 }
 
 #endif
+
 
 #endif // STDAFX_H
 

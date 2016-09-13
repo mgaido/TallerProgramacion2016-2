@@ -13,7 +13,6 @@
 #include "Mensajeria.h"
 #include "Mensaje.h"
 #include "Conexion.h"
-#include "CodificadorDeMensajesServidor.h"
 
 class Sesion {
 public:
@@ -22,12 +21,15 @@ public:
 private:
 	void atenderCliente();
 
-	bool autentificar(std::string msj);
-	//enviar, recibir, loremIpsum, etc.
+	void autentificar(std::vector<std::string> parametros);
+	void enviarMensaje(std::vector<std::string> parametros);
+	void devolverMensajes();
+	void desconectar();
 
 	bool detenido;
 	std::string ip;
 	SOCKET socketD;
+	Conexion con;
 	std::thread thread;
 
 	bool logueado;

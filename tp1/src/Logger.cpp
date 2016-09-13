@@ -13,11 +13,9 @@ std::string nombres[] = {"DEBUG", "INFO", "WARN", "ERROR"};
 
 /* Log */
 
-Log::Log(Nivel nivel, std::string& texto, std::string& funcion, std::string& fuente) {
+Log::Log(Nivel nivel, std::string& texto) {
 	this->nivel = nivel;
 	this->texto = texto;
-	this->funcion = funcion;
-	this->fuente = fuente;
 	time_t t = time(0);   // get time now
 	struct tm * now = localtime(&t);
 	this->fecha = (std::to_string(now->tm_mday) + ":" + std::to_string(now->tm_mon+1) + ":" + std::to_string(now->tm_year+1900));
@@ -40,14 +38,6 @@ std::string& Log::getFecha() {
 	return fecha;
 }
 
-std::string& Log::getFuente() {
-	return fuente;
-}
-
-std::string& Log::getFuncion() {
-	return funcion;
-}
-
 std::string& Log::getHora() {
 	return hora;
 }
@@ -67,18 +57,18 @@ Logger::~Logger() {
 	ciclo.join();
 }
 
-void Logger::encolar(Nivel nivel, std::string texto, std::string funcion, std::string fuente) {
-	Log log(nivel, texto, funcion, fuente);
+void Logger::encolar(Nivel nivel, std::string texto, bool aConsola) {
+	Log log(nivel, texto);
 	if (! logs.cerrada())
 		logs.encolar(log);
 	else
 		loguear(log);
-}
-
-void Logger::encolar(Nivel nivel, std::string texto, std::exception& e, std::string funcion, std::string fuente) {
-	texto = texto + " " + e.what();
-	Log log(nivel, texto, funcion, fuente);
-	logs.encolar(log);
+	if (aConsola) {
+		if (nivel == _ERROR)
+			std::cerr << texto << std::endl;
+		else
+			std::cout << texto << std::endl;
+	}
 }
 
 void Logger::desencolar() {
@@ -95,8 +85,6 @@ void Logger::desencolar() {
 
 void Logger::loguear(Log& log) {
 	archivo << log.getFecha() << " " << log.getHora() << " " << log.getNombreNivel();
-	if (verbose)
-		archivo << " [" << log.getFuente() << " " << log.getFuncion() << "]";
 	archivo << ": " << log.getTexto() << std::endl;
 }
 

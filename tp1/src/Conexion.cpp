@@ -9,15 +9,25 @@ Conexion::Conexion() {
 }
 
 void Conexion::enviar(std::string mensaje) {
+	mensaje += DELIM;
 	int size = mensaje.size();
-	if (send(socketD, (char*) &size, sizeof(size), 0) != SOCKET_ERROR) {
-		if (send(socketD, mensaje.data(), size, 0) == SOCKET_ERROR) {
-			throw SocketException("Error escribiendo el mensaje al socket. Código "
-									+ std::to_string(getLastError()));
+
+	int sent = send(socketD, (char*)&size, sizeof(size), 0);
+	if (sent == sizeof(size)) {
+		const char* c = mensaje.c_str();
+		sent = 0;
+		while (sent < size) {
+			int s = send(socketD, (char*) c + sent, size - sent, 0);
+			if (s > 0)
+				sent += s;
+			else {
+				error("Error leyendo mensaje del socket. Codigo " + std::to_string(getLastError()));
+				throw SocketException();
+			}
 		}
 	} else {
-		throw SocketException("Error escribiendo la longitud del mensaje al socket. Código "
-								+ std::to_string(getLastError()));
+		error("Error escribiendo la longitud del mensaje del socket. Codigo " + std::to_string(getLastError()));
+		throw SocketException();
 	}
 }
 
@@ -33,16 +43,16 @@ std::string Conexion::recibir() {
 			int r = recv(socketD, c + read, size - read, 0);
 			if (r > 0)
 				read += r;
-			else
-				throw SocketException("Error leyendo el mensaje el socket. Código "
-						+ std::to_string(getLastError()));
+			else {
+				error("Error leyendo mensaje del socket. Codigo " + std::to_string(getLastError()));
+				throw SocketException();
+			}
 		}
 		mensaje.assign(c, size);
 		delete c;
 	} else {
-		throw SocketException("Error leyendo la longitud del mensaje del socket. Código "
-						+ std::to_string(getLastError()));
+		error("Error leyendo la longitud del mensaje del socket. Codigo " + std::to_string(getLastError()));
+		throw SocketException();
 	}
-
 	return mensaje;
 }

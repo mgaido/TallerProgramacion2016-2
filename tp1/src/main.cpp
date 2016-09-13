@@ -9,7 +9,7 @@ int main(int argc, char *argv[]) {
 	bool server = true;
 	std::string host = "127.0.0.1";
 	std::string archivo = "usuarios.txt";
-	int puerto = 10000;
+	int puerto = 10002;
 
 	for (int i = 1; i < argc; ++i) {
 		auto param = std::string(argv[i]);
@@ -54,9 +54,9 @@ int main(int argc, char *argv[]) {
 			Servidor servidor(puerto);
 			servidor.iniciar();
 		} else
-			std::cerr << "Ocurrió un problema leyendo usuarios";
+			std::cerr << "Ocurrio un problema leyendo usuarios";
 	} else {
-		std::cout << "Iniciando cliente y conectando a " << host << ':' << std::to_string(puerto) << std::endl;
+		std::cout << "Iniciando cliente - Se conectara a: " << host << ':' << std::to_string(puerto) << std::endl;
 		Cliente cliente(host, puerto);
 		cliente.iniciar();
 	}
