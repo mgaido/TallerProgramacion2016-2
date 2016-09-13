@@ -140,12 +140,15 @@ void Cliente::loguear() {
 
 void Cliente::desconectar() {
 	if (conectado) {
-		std::stringstream ss;
-		ss << BYE;
-		con.enviar(ss.str());
-		con.recibir();
 		logueado = false;
 		conectado = false;
+
+		std::stringstream ss;
+		ss << BYE;
+		try {
+			con.enviar(ss.str());
+			con.recibir();
+		} catch (SocketException) {}
 		closesocket(socketD);
 		info("Desconexion exitosa con: " + host, true);
 	} else {
@@ -260,7 +263,7 @@ void Cliente::loremIpsum() {
 
 		int frecuenciaDeEnvio=-1;
 		while (frecuenciaDeEnvio < 0) {
-			std::cout << "Ingrese frecuencia de envio en segundos: ";
+			std::cout << "Ingrese frecuencia de envio por segundo: ";
 			std::string entradaUsuario;
 			std::getline(std::cin, entradaUsuario);
 			try {
@@ -295,17 +298,27 @@ void Cliente::loremIpsum() {
 		srand((unsigned)time(NULL));
 		longitudMensajeAleatoria = rand() % RANGO_LONGITUD_MENSAJE_LOREM_IPSUM + 1;
 
+		auto total = std::chrono::system_clock::now().time_since_epoch() / std::chrono::milliseconds(1);
+
+		long pausa = 0;
 		while (conectado && cantidadDeEnvios > 0) {
-			if (frecuenciaDeEnvio > 0)
-				std::this_thread::sleep_for(std::chrono::seconds(1/frecuenciaDeEnvio));
-			std::string texto;
-			texto = getMensajeLoremIpsum(archivoLoremIpsum, longitudMensajeAleatoria);
+ 			if (pausa > 0)
+				std::this_thread::sleep_for(std::chrono::milliseconds(pausa));
+
+ 			auto time = std::chrono::system_clock::now().time_since_epoch() / std::chrono::milliseconds(1);
+
+			std::string texto = getMensajeLoremIpsum(archivoLoremIpsum, longitudMensajeAleatoria);
 			enviarMensaje(destinatarioAleatorio, texto);
+
+			time = std::chrono::system_clock::now().time_since_epoch() / std::chrono::milliseconds(1) - time;
+			pausa = (unsigned long) (1000 / (double) frecuenciaDeEnvio) - time;
+
 			cantidadDeEnvios--;
 		}
 		archivoLoremIpsum.close();
 		if (conectado && logueado) {
-			info("LoremIsum enviado correctamente", true);
+			total = std::chrono::system_clock::now().time_since_epoch() / std::chrono::milliseconds(1) - total;
+			info("LoremIsum enviado correctamente en " + std::to_string(total) + "ms", true);
 		}
 	} else {
 		warn("No hay una Conexion abierta");
