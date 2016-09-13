@@ -199,9 +199,9 @@ void Cliente::enviarMensaje(int usuario, std::string texto) {
 
 		std::string s = con.recibir();
 		std::vector<std::string> resp = split(s, DELIM);
-
 		if (resp[0] == SUCCESS) {
-			info("Mensaje enviado a " + usuarios[usuario] + ": " + texto, true);
+			info("Mensaje enviado a " + usuarios[usuario] + ": " + texto);
+			std::cout << "Mensaje enviado." << std::endl;
 		} else {
 			error("No se pudo enviar el mensaje: " + resp[1], true);
 		}
