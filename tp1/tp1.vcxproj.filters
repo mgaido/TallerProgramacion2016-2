@@ -30,9 +30,6 @@
     <ClCompile Include="src\stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\test\TestColaBloqueante.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Usuario.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -45,19 +42,10 @@
     <ClCompile Include="src\Sesion.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\SocketException.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Usuarios.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Logger.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\CodificadorDeMensajesCliente.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\CodificadorDeMensajesServidor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -77,9 +65,6 @@
     <ClInclude Include="src\ColaBloqueante.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\test\TestColaBloqueante.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\Usuario.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -96,12 +81,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Usuarios.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\CodificadorDeMensajesCliente.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\CodificadorDeMensajesServidor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Logger.h">

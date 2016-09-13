@@ -121,7 +121,6 @@
     <ClCompile Include="src\Mensajeria.cpp" />
     <ClCompile Include="src\Servidor.cpp" />
     <ClCompile Include="src\Sesion.cpp" />
-    <ClCompile Include="src\SocketException.cpp" />
     <ClCompile Include="src\stdafx.cpp" />
     <ClCompile Include="src\Usuario.cpp" />
     <ClCompile Include="src\Usuarios.cpp" />
