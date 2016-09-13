@@ -7,6 +7,8 @@
 #include "sys/types.h"
 #include "netinet/in.h"
 #include "arpa/inet.h"
+#include "unistd.h"
+#include "signal.h"
 #include "errno.h"
 #elif _WIN32
 #include "SDKDDKVer.h"
@@ -37,7 +39,8 @@ inline int getLastError() {
 
 
 inline int closesocket(SOCKET socketD) {
-	return shutdown(socketD, 2);
+	shutdown(socketD, 2);
+	return close(socketD);
 }
 
 #elif _WIN32

@@ -17,6 +17,7 @@
 class Sesion {
 public:
 	Sesion(SOCKET socketD, std::string ip);
+	~Sesion();
 	void detener();
 private:
 	void atenderCliente();

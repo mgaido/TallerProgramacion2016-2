@@ -47,7 +47,8 @@ char Cliente::imprimirMenu() {
 	char opcionChar;
 	bool correcto = false;
 	while (!correcto) {
-		if (!logueado) {
+		std::cout << std::endl;
+		if (!conectado || !logueado) {
 			std::cout << "1. Conectar" << std::endl;
 		} else {
 			std::cout << "2. Desconectar" << std::endl;
@@ -128,6 +129,7 @@ void Cliente::loguear() {
 				if (conectado) {
 					error("Conexion con " + host +" cerrada", true);
 					conectado = false;
+					logueado = false;
 				}
 			}
 		}
@@ -142,7 +144,7 @@ void Cliente::desconectar() {
 		ss << BYE;
 		con.enviar(ss.str());
 		con.recibir();
-
+		logueado = false;
 		conectado = false;
 		closesocket(socketD);
 		info("Desconexion exitosa con: " + host, true);
@@ -199,13 +201,14 @@ void Cliente::enviarMensaje(int usuario, std::string texto) {
 		std::vector<std::string> resp = split(s, DELIM);
 
 		if (resp[0] == SUCCESS) {
-			info("Mensaje enviado a " + usuarios[usuario] + ": " + texto);
+			info("Mensaje enviado a " + usuarios[usuario] + ": " + texto, true);
 		} else {
 			error("No se pudo enviar el mensaje: " + resp[1], true);
 		}
 	} catch (SocketException) {
 		if (conectado) {
 			conectado = false;
+			logueado = false;
 			error("Error al enviar mensaje", true);
 			error("Conexion con " + host + " cerrada", true);
 		}
@@ -241,6 +244,7 @@ void Cliente::recibirMensajes() {
 			}
 		} catch (SocketException) {
 			if (conectado) {
+				logueado = false;
 				conectado = false;
 				error("Error al recibir mensajes", true);
 				error("Conexion con " + host + " cerrada", true);
@@ -274,16 +278,11 @@ void Cliente::loremIpsum() {
 
 		while (conectado && cantidadDeEnvios > 0) {
 			if (frecuenciaDeEnvio > 0)
-				std::this_thread::sleep_for(std::chrono::seconds(1/(float)frecuenciaDeEnvio));
-			int longitudMensajeAleatoria, destinatarioAleatorio;
+				std::this_thread::sleep_for(std::chrono::seconds(1/frecuenciaDeEnvio));
 			std::string texto;
-			srand((unsigned)time(NULL));
-			destinatarioAleatorio = rand() % usuarios.size();
-			srand((unsigned)time(NULL));
-			longitudMensajeAleatoria = rand() % RANGO_LONGITUD_MENSAJE_LOREM_IPSUM + 1;
 			texto = getMensajeLoremIpsum(archivoLoremIpsum, longitudMensajeAleatoria);
-
 			enviarMensaje(destinatarioAleatorio, texto);
+			cantidadDeEnvios--;
 		}
 		if (conectado && logueado) {
 			info("LoremIsum enviado correctamente", true);

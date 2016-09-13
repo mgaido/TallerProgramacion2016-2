@@ -9,7 +9,7 @@ int main(int argc, char *argv[]) {
 	bool server = true;
 	std::string host = "127.0.0.1";
 	std::string archivo = "usuarios.txt";
-	int puerto = 10002;
+	int puerto = 10000;
 
 	for (int i = 1; i < argc; ++i) {
 		auto param = std::string(argv[i]);
@@ -42,8 +42,9 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-
-	#ifdef _WIN32
+	#ifdef __linux__
+	signal(SIGPIPE, SIG_IGN);
+	#elif _WIN32
 	WSADATA wsa;
 	WSAStartup(MAKEWORD(2, 2), &wsa);
 	#endif

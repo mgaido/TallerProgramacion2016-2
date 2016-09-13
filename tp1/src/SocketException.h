@@ -13,10 +13,7 @@
 
 class SocketException: public std::exception {
 public:
-	SocketException(std::string msg);
-	virtual const char* what() const throw();
-private:
-	std::string msg;
+	SocketException(){};
 };
 
 #endif /* SOCKETEXCEPTION_H_ */

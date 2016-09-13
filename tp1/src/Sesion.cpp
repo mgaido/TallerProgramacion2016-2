@@ -16,11 +16,15 @@ Sesion::Sesion(SOCKET socketD, std::string ip) {
 	this->thread = std::thread(&Sesion::atenderCliente, this);
 }
 
+Sesion::~Sesion(){
+	thread.join();
+}
+
 void Sesion::detener() {
-	if (! detenido) {
-		detenido = true;
-		shutdown(socketD, 2);
-		thread.join();
+	detenido = true;
+	if (socketD != INVALID_SOCKET) {
+		closesocket(socketD);
+		socketD = INVALID_SOCKET;
 	}
 }
 
@@ -59,6 +63,7 @@ void Sesion::atenderCliente() {
 			}
 		}
 	}
+	detener();
 }
 
 void Sesion::autentificar(std::vector<std::string> parametros) {
@@ -151,6 +156,10 @@ void Sesion::devolverMensajes() {
 
 void Sesion::desconectar() {
 	detenido = true;
-	con.enviar(BYE);
+	try {
+		con.enviar(BYE);
+	} catch (SocketException) {
+		warn("Error al desconectar");
+	}
 	info("Cliente " + ip + " desconectado.");
 }
