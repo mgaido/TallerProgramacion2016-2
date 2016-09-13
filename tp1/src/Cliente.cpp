@@ -85,6 +85,9 @@ void Cliente::conectar() {
 		socketD = socket(AF_INET, SOCK_STREAM, 0);
 
 		if (socketD != INVALID_SOCKET) {
+			int activar = 1;
+			setsockopt(socketD, IPPROTO_TCP, TCP_NODELAY, (char*)&activar, sizeof(activar));
+
 			funcion = "connect";
 			respuesta = connect(socketD, (struct sockaddr *) &serverAddress, sizeof(serverAddress));
 
