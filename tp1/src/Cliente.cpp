@@ -257,19 +257,38 @@ void Cliente::recibirMensajes() {
 
 void Cliente::loremIpsum() {
 	if (conectado && logueado) {
-		std::string pathFileLoremImpsum = "loremIpsum.txt";
-		int frecuenciaDeEnvio;
-		int cantidadDeEnvios;
-		std::ifstream archivoLoremIpsum(pathFileLoremImpsum);
 
-		std::cout << "Ingrese frecuencia de envio en segundos: ";
-		std::string entradaUsuario;
-		std::getline(std::cin, entradaUsuario);
-		frecuenciaDeEnvio = std::stoi(entradaUsuario);					//falta chequeo de tipo de dato int
-		std::cout << "Ingrese cantidad de envios maximos: ";
-		std::getline(std::cin, entradaUsuario);
-		cantidadDeEnvios = std::stoi(entradaUsuario);				//falta chequeo de tipo de dato int
+		int frecuenciaDeEnvio=-1;
+		while (frecuenciaDeEnvio < 0) {
+			std::cout << "Ingrese frecuencia de envio en segundos: ";
+			std::string entradaUsuario;
+			std::getline(std::cin, entradaUsuario);
+			try {
+				frecuenciaDeEnvio = std::stoi(entradaUsuario);
+			} catch (std::invalid_argument) {}
+		}
 
+		int cantidadDeEnvios=-1;
+		while (cantidadDeEnvios < 0) {
+			std::cout << "Ingrese cantidad de envios mensajes: ";
+			std::string entradaUsuario;
+			std::getline(std::cin, entradaUsuario);
+			try {
+				cantidadDeEnvios = std::stoi(entradaUsuario);
+			} catch (std::invalid_argument) {}
+		}
+
+		bool good = false;
+		std::ifstream archivoLoremIpsum;
+		while (! good) {
+			std::cout << "Ingrese el nombre del archivo [loremIpsum.txt]: ";
+			std::string pathFileLoremImpsum;
+			std::getline(std::cin, pathFileLoremImpsum);
+			if (pathFileLoremImpsum.empty())
+				pathFileLoremImpsum = "loremIpsum.txt";
+			archivoLoremIpsum = std::ifstream(pathFileLoremImpsum);
+			good = archivoLoremIpsum.good();
+		}
 
 		int longitudMensajeAleatoria, destinatarioAleatorio;
 		destinatarioAleatorio = rand() % usuarios.size();
@@ -284,6 +303,7 @@ void Cliente::loremIpsum() {
 			enviarMensaje(destinatarioAleatorio, texto);
 			cantidadDeEnvios--;
 		}
+		archivoLoremIpsum.close();
 		if (conectado && logueado) {
 			info("LoremIsum enviado correctamente", true);
 		}
