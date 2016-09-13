@@ -46,16 +46,15 @@ void Sesion::atenderCliente() {
 				} else if (comando == BYE) {
 					desconectar();
 				} else {
-					warn("Comando inválido: " + comando);
+					warn("Comando invalido: " + comando);
 					std::stringstream ss;
-					ss << ERROR << DELIM << "Comando inválido: " + comando;
+					ss << ERROR << DELIM << "Comando invalido: " + comando;
 					con.enviar(ss.str());
 				}
 			}
-		}
-		catch (SocketException &e) {
+		} catch (SocketException) {
 			if (!detenido) {
-				error("Error de conexión con " + ip);
+				error("Error de conexion con " + ip);
 				detenido = true;
 			}
 		}

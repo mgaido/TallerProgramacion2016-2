@@ -275,9 +275,14 @@ void Cliente::loremIpsum() {
 		while (conectado && cantidadDeEnvios > 0) {
 			if (frecuenciaDeEnvio > 0)
 				std::this_thread::sleep_for(std::chrono::seconds(1/(float)frecuenciaDeEnvio));
+			int longitudMensajeAleatoria, destinatarioAleatorio;
 			std::string texto;
 			srand((unsigned)time(NULL));
+			destinatarioAleatorio = rand() % usuarios.size();
+			srand((unsigned)time(NULL));
+			longitudMensajeAleatoria = rand() % RANGO_LONGITUD_MENSAJE_LOREM_IPSUM + 1;
 			texto = getMensajeLoremIpsum(archivoLoremIpsum, longitudMensajeAleatoria);
+
 			enviarMensaje(destinatarioAleatorio, texto);
 		}
 		if (conectado && logueado) {
@@ -291,20 +296,13 @@ void Cliente::loremIpsum() {
 std::string Cliente::getMensajeLoremIpsum(std::ifstream &archivo, int longitudMensaje) {
 	char *nuevoMensaje = new char[longitudMensaje+1];
 	std::string nuevoMensajeString;
-
-	int i = 0;
-	while (i < longitudMensaje) {
-
-			if (archivo.eof()) {
-				archivo.clear();
-				archivo.seekg(0, std::ios::beg);
-	 			continue;
-	 		}
-	 		archivo.read(nuevoMensaje+i, 1);
-	 		i++;
+	if (archivo.eof()) {
+		archivo.clear();
+		archivo.seekg(0, std::ios::beg);
 	}
+	archivo.read(nuevoMensaje, longitudMensaje);
 	nuevoMensaje[longitudMensaje] = '\0';
-	nuevoMensajeString.assign(nuevoMensaje,longitudMensaje);
+	nuevoMensajeString.assign(nuevoMensaje);
 	delete nuevoMensaje;
 	nuevoMensaje = NULL;
 	return nuevoMensajeString;
