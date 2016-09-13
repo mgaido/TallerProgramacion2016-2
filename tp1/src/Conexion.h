@@ -12,7 +12,7 @@
 #define BYE "BYE"
 
 #define SUCCESS "SUCCESS"
-#define ERROR "ERROR"
+#define FAIL "FAIL"
 
 class Conexion {
 public:

@@ -114,8 +114,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Cliente.cpp" />
-    <ClCompile Include="src\CodificadorDeMensajesCliente.cpp" />
-    <ClCompile Include="src\CodificadorDeMensajesServidor.cpp" />
     <ClCompile Include="src\Conexion.cpp" />
     <ClCompile Include="src\Logger.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -125,14 +123,11 @@
     <ClCompile Include="src\Sesion.cpp" />
     <ClCompile Include="src\SocketException.cpp" />
     <ClCompile Include="src\stdafx.cpp" />
-    <ClCompile Include="src\test\TestColaBloqueante.cpp" />
     <ClCompile Include="src\Usuario.cpp" />
     <ClCompile Include="src\Usuarios.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Cliente.h" />
-    <ClInclude Include="src\CodificadorDeMensajesCliente.h" />
-    <ClInclude Include="src\CodificadorDeMensajesServidor.h" />
     <ClInclude Include="src\ColaBloqueante.h" />
     <ClInclude Include="src\Conexion.h" />
     <ClInclude Include="src\Logger.h" />
@@ -142,7 +137,6 @@
     <ClInclude Include="src\Sesion.h" />
     <ClInclude Include="src\SocketException.h" />
     <ClInclude Include="src\stdafx.h" />
-    <ClInclude Include="src\test\TestColaBloqueante.h" />
     <ClInclude Include="src\Usuario.h" />
     <ClInclude Include="src\Usuarios.h" />
   </ItemGroup>

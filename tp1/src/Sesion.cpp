@@ -91,7 +91,7 @@ void Sesion::autentificar(std::vector<std::string> parametros) {
 
 	warn("El cliente " + this->ip + " inicio sesion incorrectamente: " + errorMsg);
 	std::stringstream ss;
-	ss << ERROR << DELIM << errorMsg;
+	ss << FAIL << DELIM << errorMsg;
 	con.enviar(ss.str());
 }
 
@@ -129,7 +129,7 @@ void Sesion::enviarMensaje(std::vector<std::string> parametros) {
 	warn(errorMsg);
 
 	std::stringstream ss;
-	ss << ERROR << DELIM << errorMsg;
+	ss << FAIL << DELIM << errorMsg;
 	con.enviar(ss.str());
 }
 
