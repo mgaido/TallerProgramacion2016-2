@@ -52,7 +52,7 @@ void Sesion::atenderCliente() {
 				} else {
 					warn("Comando invalido: " + comando);
 					std::stringstream ss;
-					ss << ERROR << DELIM << "Comando invalido: " + comando;
+					ss << FAIL << DELIM << "Comando invalido: " + comando;
 					con.enviar(ss.str());
 				}
 			}
