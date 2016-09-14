@@ -293,7 +293,7 @@ void Cliente::loremIpsum() {
 			std::getline(std::cin, pathFileLoremImpsum);
 			if (pathFileLoremImpsum.empty())
 				pathFileLoremImpsum = "loremIpsum.txt";
-			archivoLoremIpsum = std::ifstream(pathFileLoremImpsum);
+			archivoLoremIpsum.open(pathFileLoremImpsum);
 			good = archivoLoremIpsum.good();
 		}
 
@@ -315,7 +315,7 @@ void Cliente::loremIpsum() {
 			enviarMensaje(destinatarioAleatorio, texto);
 
 			time = std::chrono::system_clock::now().time_since_epoch() / std::chrono::milliseconds(1) - time;
-			pausa = (long) (1000 / (double) frecuenciaDeEnvio) - time;
+			pausa = (long) ((1000 / (double) frecuenciaDeEnvio) - time);
 
 			cantidadDeEnvios--;
 		}
