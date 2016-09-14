@@ -44,7 +44,7 @@ private:
 
 class Logger {
 public:
-	Logger();
+	Logger(std::string nombreArchivo);
 	~Logger();
 
 	void encolar(Nivel nivel, std::string texto, bool aConsola=false);

@@ -44,8 +44,8 @@ std::string& Log::getHora() {
 
 /* Logger */
 
-Logger::Logger() {
-	archivo.open("tp1.log", std::ios::app);
+Logger::Logger(std::string nombreArchivo) {
+	archivo.open(nombreArchivo, std::ios::app);
 	if (!archivo.good())
 		throw "No se puede escribir en archivo de log";
 

@@ -3,7 +3,7 @@
 #include "Servidor.h"
 #include "Cliente.h"
 
-Logger* logger = new Logger();
+Logger* logger;
 
 int main(int argc, char *argv[]) {
 	bool server = true;
@@ -50,6 +50,7 @@ int main(int argc, char *argv[]) {
 	#endif
 
 	if (server) {
+		logger = new Logger("servidor.log");
 		std::cout << "Iniciado servidor en puerto " << std::to_string(puerto) << " y leyendo usuarios de " << archivo << std::endl;
 		if (Usuarios::leerUsuarios(archivo)) {
 			Servidor servidor(puerto);
@@ -57,6 +58,7 @@ int main(int argc, char *argv[]) {
 		} else
 			std::cerr << "Ocurrio un problema leyendo usuarios";
 	} else {
+		logger = new Logger("cliente.log");
 		std::cout << "Iniciando cliente - Se conectara a: " << host << ':' << std::to_string(puerto) << std::endl;
 		Cliente cliente(host, puerto);
 		cliente.iniciar();
