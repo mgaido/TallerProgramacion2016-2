@@ -8,7 +8,7 @@
 #ifndef TESTCOLABLOQUEANTE_H_
 #define TESTCOLABLOQUEANTE_H_
 
-#include "../ColaBloqueante.h"
+#include "../src/ColaBloqueante.h"
 #include <thread>
 #include <future>
 #include <chrono>
