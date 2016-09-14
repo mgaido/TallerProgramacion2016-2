@@ -37,10 +37,10 @@ std::string Conexion::recibir() {
 
 	int read = recv(socketD, (char*) &size, sizeof(size), 0);
 	if (read == sizeof(size)) {
-		char* c = new char[size];
+		std::unique_ptr<char[]> buffer(new char [size]);
 		read = 0;
 		while (read < size) {
-			int r = recv(socketD, c + read, size - read, 0);
+			int r = recv(socketD, buffer.get() + read, size - read, 0);
 			if (r > 0)
 				read += r;
 			else {
@@ -48,8 +48,7 @@ std::string Conexion::recibir() {
 				throw SocketException();
 			}
 		}
-		mensaje.assign(c, size);
-		delete c;
+		mensaje.assign(buffer.get(), size);
 	} else {
 		error("Error leyendo la longitud del mensaje del socket. Codigo " + std::to_string(getLastError()));
 		throw SocketException();

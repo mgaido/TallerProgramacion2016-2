@@ -207,7 +207,7 @@ void Cliente::enviarMensaje(int usuario, std::string texto) {
 		std::vector<std::string> resp = split(s, DELIM);
 		if (resp[0] == SUCCESS) {
 			info("Mensaje enviado a " + usuarios[usuario] + ": " + texto);
-			std::cout << "Mensaje enviado." << std::endl;
+			//std::cout << "Mensaje enviado." << std::endl;
 		} else {
 			error("No se pudo enviar el mensaje: " + resp[1], true);
 		}
@@ -314,7 +314,7 @@ void Cliente::loremIpsum() {
 			enviarMensaje(destinatarioAleatorio, texto);
 
 			time = std::chrono::system_clock::now().time_since_epoch() / std::chrono::milliseconds(1) - time;
-			pausa = (unsigned long) (1000 / (double) frecuenciaDeEnvio) - time;
+			pausa = (long) (1000 / (double) frecuenciaDeEnvio) - time;
 
 			cantidadDeEnvios--;
 		}
@@ -329,16 +329,16 @@ void Cliente::loremIpsum() {
 }
 
 std::string Cliente::getMensajeLoremIpsum(std::ifstream &archivo, int longitudMensaje) {
-	char *nuevoMensaje = new char[longitudMensaje+1];
-	std::string nuevoMensajeString;
+	std::unique_ptr<char[]> nuevoMensaje(new char [longitudMensaje+1]);
+
 	if (archivo.eof()) {
 		archivo.clear();
 		archivo.seekg(0, std::ios::beg);
 	}
-	archivo.read(nuevoMensaje, longitudMensaje);
-	nuevoMensaje[longitudMensaje] = '\0';
-	nuevoMensajeString.assign(nuevoMensaje);
-	delete nuevoMensaje;
-	nuevoMensaje = NULL;
+	archivo.read(nuevoMensaje.get(), longitudMensaje);
+	nuevoMensaje.get()[longitudMensaje] = '\0';
+
+	std::string nuevoMensajeString;
+	nuevoMensajeString.assign(nuevoMensaje.get());
 	return nuevoMensajeString;
 }
