@@ -125,6 +125,7 @@ void Cliente::loguear() {
 					logueado = true;
 					usuarios = split(resp[1], ',');
 					info("Conexion exitosa con el Servidor: " + host, true);
+					std::cout << resp[1] << std::endl;
 				} else {
 					warn("Error en la conexion con " + host + ": " + resp[1], true);
 				}
@@ -264,13 +265,13 @@ void Cliente::recibirMensajes() {
 void Cliente::loremIpsum() {
 	if (conectado && logueado) {
 
-		int frecuenciaDeEnvio=-1;
+		double frecuenciaDeEnvio=-1;
 		while (frecuenciaDeEnvio < 0) {
 			std::cout << "Ingrese frecuencia de envio por segundo: ";
 			std::string entradaUsuario;
 			std::getline(std::cin, entradaUsuario);
 			try {
-				frecuenciaDeEnvio = std::stoi(entradaUsuario);
+				frecuenciaDeEnvio = std::stod(entradaUsuario);
 			} catch (std::invalid_argument) {}
 		}
 
