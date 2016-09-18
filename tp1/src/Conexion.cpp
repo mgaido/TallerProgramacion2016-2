@@ -1,11 +1,10 @@
 #include "Conexion.h"
 
-Conexion::Conexion(SOCKET socketD) {
-	this->socketD = socketD;
+Conexion::Conexion() {
 }
 
-Conexion::Conexion() {
-	
+void Conexion::setSocket(SOCKET socketD) {
+	this->socketD = socketD;
 }
 
 void Conexion::enviar(std::string mensaje) {

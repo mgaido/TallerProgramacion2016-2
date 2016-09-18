@@ -5,6 +5,7 @@
  *      Author: rodrigo
  */
 
+#include "Logger.h"
 #include "Usuarios.h"
 
 std::vector<Usuario> Usuarios::usuarios;

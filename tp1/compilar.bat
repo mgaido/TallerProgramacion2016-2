@@ -9,3 +9,7 @@ set LIB=%programfiles(x86)%\Microsoft Visual Studio 14.0\VC\lib;%programfiles(x8
 md obj
 
 cl /O2 /EHs /MD /MP2 /Fo.\obj\ src\*.cpp /link /out:tp1.exe ws2_32.lib
+
+rmdir /S /Q obj
+
+pause

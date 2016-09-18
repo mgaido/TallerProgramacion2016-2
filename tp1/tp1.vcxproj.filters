@@ -27,9 +27,6 @@
     <ClCompile Include="src\Servidor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Usuario.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -48,6 +45,9 @@
     <ClCompile Include="src\Logger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Sockets.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Cliente.h">
@@ -59,7 +59,7 @@
     <ClInclude Include="src\Servidor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\stdafx.h">
+    <ClInclude Include="src\sockets.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\ColaBloqueante.h">
@@ -84,6 +84,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Logger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

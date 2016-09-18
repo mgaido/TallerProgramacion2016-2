@@ -9,10 +9,10 @@
 #define SESION_H_
 
 #include "Usuarios.h"
-#include "Usuario.h"
 #include "Mensajeria.h"
-#include "Mensaje.h"
 #include "Conexion.h"
+#include "Logger.h"
+#include "Utils.h"
 
 class Sesion {
 public:
@@ -25,6 +25,7 @@ private:
 	void autentificar(std::vector<std::string> parametros);
 	void enviarMensaje(std::vector<std::string> parametros);
 	void devolverMensajes();
+	void ping();
 	void desconectar();
 
 	bool detenido;

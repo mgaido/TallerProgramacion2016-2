@@ -1,8 +1,10 @@
 #ifndef SERVIDOR_H
 #define SERVIDOR_H
 
-#include "stdafx.h"
 #include "Sesion.h"
+#include "Sockets.h"
+#include "Logger.h"
+#include "Utils.h"
 
 class Servidor {
 

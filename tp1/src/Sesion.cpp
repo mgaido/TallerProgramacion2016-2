@@ -31,7 +31,7 @@ void Sesion::detener() {
 void Sesion::atenderCliente() {
 	info("Cliente " + ip + " conectado. Esperando autentificacion.");
 
-	con = Conexion(socketD);
+	con.setSocket(socketD);
 	while (!detenido) {
 		try {
 			std::string text = con.recibir();
@@ -47,6 +47,8 @@ void Sesion::atenderCliente() {
 					enviarMensaje(parametros);
 				} else if (comando == RETR) {
 					devolverMensajes();
+				} else if (comando == PING) {
+					ping();
 				} else if (comando == BYE) {
 					desconectar();
 				} else {
@@ -152,6 +154,10 @@ void Sesion::devolverMensajes() {
 		error("Error devolviendo mensajes. Se reinsertan en la lista");
 		Mensajeria::insertarMensajes(mensajes);
 	}
+}
+
+void Sesion::ping() {
+	con.enviar(SUCCESS);
 }
 
 void Sesion::desconectar() {

@@ -31,9 +31,8 @@ int Servidor::crearSocket() {
 
 	if (socketD != INVALID_SOCKET) {
 		response = 0;
-
-		int activar = 1;
-		setsockopt(socketD, IPPROTO_TCP, TCP_NODELAY, (char*)&activar, sizeof(activar));
+		setTcpNoDelay(socketD);
+		setTcpKeepAlive(socketD);
 
 		struct sockaddr_in serverAddress;
 		serverAddress.sin_family = AF_INET;

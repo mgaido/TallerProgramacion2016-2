@@ -1,4 +1,5 @@
-#include "stdafx.h"
+#include "Sockets.h"
+
 #ifdef __linux__
 int INVALID_SOCKET = -1;
 int SOCKET_ERROR = -1;

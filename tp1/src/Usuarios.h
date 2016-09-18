@@ -8,10 +8,8 @@
 #ifndef USUARIOS_H_
 #define USUARIOS_H_
 
-#include <string>
-#include <vector>
-
 #include "Usuario.h"
+#include "Logger.h"
 
 class Usuarios {
 public:

@@ -42,12 +42,7 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	#ifdef __linux__
-	signal(SIGPIPE, SIG_IGN);
-	#elif _WIN32
-	WSADATA wsa;
-	WSAStartup(MAKEWORD(2, 2), &wsa);
-	#endif
+	initSockets();
 
 	if (server) {
 		logger = new Logger("servidor.log");

@@ -8,9 +8,9 @@
 #ifndef MENSAJE_H_
 #define MENSAJE_H_
 
-#include "stdafx.h"
 #include "Usuario.h"
-
+#include "Logger.h"
+#include "Utils.h"
 
 class Mensaje {
 public:

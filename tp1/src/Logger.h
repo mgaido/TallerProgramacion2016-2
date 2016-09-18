@@ -9,12 +9,8 @@
 #define LOGGER_H_
 
 #include "ColaBloqueante.h"
-
-#include <string>
-#include <sstream>
-#include <iostream>
-#include <fstream>
-#include <thread>
+#include "Logger.h"
+#include "Utils.h"
 
 #define _DEBUG 1
 #define _INFO 2

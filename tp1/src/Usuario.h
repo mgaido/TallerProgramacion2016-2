@@ -8,7 +8,8 @@
 #ifndef USUARIO_H_
 #define USUARIO_H_
 
-#include "stdafx.h"
+#include "Logger.h"
+#include "Utils.h"
 
 class Usuario {
 public:
