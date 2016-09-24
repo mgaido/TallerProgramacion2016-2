@@ -11,16 +11,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tp2", "tp2\tp2.vcxproj", "{
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E185C3AE-DD67-44B5-B09C-27B345F01593}.Release|x64.ActiveCfg = Release|Win32
-		{E185C3AE-DD67-44B5-B09C-27B345F01593}.Release|x64.Build.0 = Release|Win32
 		{E185C3AE-DD67-44B5-B09C-27B345F01593}.Release|x86.ActiveCfg = Release|Win32
 		{E185C3AE-DD67-44B5-B09C-27B345F01593}.Release|x86.Build.0 = Release|Win32
-		{CCFF0AEB-5687-4CD8-896B-EEAA8ED1DCAA}.Release|x64.ActiveCfg = Release|x64
-		{CCFF0AEB-5687-4CD8-896B-EEAA8ED1DCAA}.Release|x64.Build.0 = Release|x64
 		{CCFF0AEB-5687-4CD8-896B-EEAA8ED1DCAA}.Release|x86.ActiveCfg = Release|Win32
 		{CCFF0AEB-5687-4CD8-896B-EEAA8ED1DCAA}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
