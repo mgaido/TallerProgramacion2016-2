@@ -181,13 +181,14 @@ void Cliente::enviarMensaje() {
 	}
 }
 
-void Cliente::enviarMensaje(int usuario, std::string texto) {
+void Cliente::enviarMensaje(int index, std::string texto) {
 	std::stringstream ss;
-	ss << SEND << DELIM << usuario << DELIM << texto;
+	ss << SEND << DELIM << index << DELIM << texto;
 	std::vector<std::string> resp = enviarComando(ss.str());
 
 	if (resp[0] == SUCCESS) {
-		info("Mensaje enviado a " + usuarios[usuario] + ": " + texto);
+		std::string usuario = (unsigned) index < usuarios.size() ? usuarios[index] : "todos";
+		info("Mensaje enviado a " + usuario + ": " + texto);
 		//std::cout << "Mensaje enviado." << std::endl;
 	} else {
 		error("No se pudo enviar el mensaje: " + resp[1], true);
