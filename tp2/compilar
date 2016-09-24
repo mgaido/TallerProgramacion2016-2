@@ -1,0 +1,3 @@
+#!/bin/bash
+
+g++ -O3 -std=c++11 src/*.cpp -lpthread -lsdl -o tp2
