@@ -80,14 +80,7 @@
 							<tool errorParsers="org.eclipse.cdt.core.VCErrorParser" id="org.eclipse.cdt.msvc.cl.dll.debug.192008026" name="C++ Compiler (cl)" superClass="org.eclipse.cdt.msvc.cl.dll.debug">
 								<option id="org.eclipse.cdt.msvc.cl.option.optimization.988363344" name="Optimization" superClass="org.eclipse.cdt.msvc.cl.option.optimization" useByScannerDiscovery="false"/>
 								<option id="org.eclipse.cdt.msvc.cl.option.debugFormat.1459316496" name="Debug Information Format" superClass="org.eclipse.cdt.msvc.cl.option.debugFormat" useByScannerDiscovery="false"/>
-								<option id="org.eclipse.cdt.msvc.cl.option.includes.1248740132" name="Include Path (/I)" superClass="org.eclipse.cdt.msvc.cl.option.includes" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\atlmfc\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Program Files (x86)\Windows Kits\10\Include\10.0.10150.0\ucrt&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Program Files (x86)\Windows Kits\8.1\Include\um&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Program Files (x86)\Windows Kits\8.1\Include\shared&quot;"/>
-								</option>
+								<option id="org.eclipse.cdt.msvc.cl.option.includes.1248740132" name="Include Path (/I)" superClass="org.eclipse.cdt.msvc.cl.option.includes" useByScannerDiscovery="false" valueType="includePath"/>
 								<option id="org.eclipse.cdt.msvc.cl.option.macros.1251683008" name="Defines (/D)" superClass="org.eclipse.cdt.msvc.cl.option.macros" useByScannerDiscovery="false"/>
 								<inputType id="org.eclipse.cdt.msvc.cl.inputType.675745533" superClass="org.eclipse.cdt.msvc.cl.inputType"/>
 							</tool>
@@ -110,15 +103,8 @@
 									<listOptionValue builtIn="false" value="ws2_32.lib"/>
 									<listOptionValue builtIn="false" value="SDL2.lib"/>
 								</option>
-								<option id="org.eclipse.cdt.msvc.link.option.libpath.901829730" name="Additional Libpath (/libpath)" superClass="org.eclipse.cdt.msvc.link.option.libpath" useByScannerDiscovery="false" valueType="stringList">
-									<listOptionValue builtIn="false" value="&quot;C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\lib&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\atlmfc\lib&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Program Files (x86)\Windows Kits\10\lib\10.0.10240.0\ucrt\x86&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Program Files (x86)\Windows Kits\10\Lib\10.0.10150.0\ucrt\x86&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Program Files (x86)\Windows Kits\8.1\lib\winv6.3\um\x86&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\Lib\um\x86&quot;"/>
-								</option>
-								<option id="org.eclipse.cdt.msvc.link.option.others.1624548520" name="Other Options" superClass="org.eclipse.cdt.msvc.link.option.others" useByScannerDiscovery="false" valueType="stringList"/>
+								<option id="org.eclipse.cdt.msvc.link.option.libpath.901829730" name="Additional Libpath (/libpath)" superClass="org.eclipse.cdt.msvc.link.option.libpath" useByScannerDiscovery="false" valueType="stringList"/>
+								<option id="org.eclipse.cdt.msvc.link.option.others.1624548520" name="Other Options" superClass="org.eclipse.cdt.msvc.link.option.others" useByScannerDiscovery="false"/>
 								<inputType id="org.eclipse.cdt.msvc.link.inputType.1903849741" superClass="org.eclipse.cdt.msvc.link.inputType"/>
 							</tool>
 							<tool id="org.eclipse.cdt.msvc.lib.1890657324" name="Library Manager (lib)" superClass="org.eclipse.cdt.msvc.lib"/>
