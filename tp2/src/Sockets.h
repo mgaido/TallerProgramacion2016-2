@@ -42,6 +42,10 @@ inline int closesocket(SOCKET socketD) {
 
 #elif _WIN32
 
+inline int poll(pollfd* fd, int nfd, long timeout) {
+	return WSAPoll(fd, nfd, timeout);
+}
+
 inline int getLastError() {
 	return WSAGetLastError();
 }

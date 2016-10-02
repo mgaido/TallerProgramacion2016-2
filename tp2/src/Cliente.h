@@ -4,6 +4,7 @@
 #include "Conexion.h"
 #include "Logger.h"
 #include "Utils.h"
+#include "Vista.h"
 
 #include <exception>
 
@@ -13,22 +14,22 @@ public:
 	~Cliente();
 
 	void iniciar();
+	void desconectar();
 private:
 	void conectar();
-	void desconectar();
-	void ping();
-
-	std::vector<std::string> enviarComando(std::string msg);
+	void enviarEventos();
+	void recibirActualizaciones();
 
 	std::string host;
 	int puerto;
-	SOCKET socketD;
 	Conexion con;
 	bool conectado;
-	bool detenido;
 
-	std::mutex conLock;
-	std::thread pingThread;
+	ColaBloqueante<int> eventosTeclado;
+	Vista* vista;
+
+	std::thread t_enviarEventos;
+	std::thread t_recibirAct;
 };
 
 #endif // CLIENTE_H

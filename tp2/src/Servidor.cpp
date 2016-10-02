@@ -13,14 +13,10 @@ Servidor::~Servidor() {
 void Servidor::iniciar() {
 	int response = crearSocket();
 	if (response < 0) {
-		std::cerr << "No se pudo iniciar la conexión" << std::endl;
+		std::cerr << "No se pudo iniciar la conexion" << std::endl;
 	} else {
 		thread = std::thread(&Servidor::aceptarConexiones, this);
-		std::cout << "Presiona enter para terminar..." << std::endl;
-		std::string msg;
-		std::getline(std::cin, msg);
 	}
-	detener();
 }
 
 int Servidor::crearSocket() {
@@ -50,7 +46,7 @@ int Servidor::crearSocket() {
 
 	if (response < 0) {
 		socketD = INVALID_SOCKET;
-		error("Error llamando a " + funcion + " con código " + std::to_string(getLastError()));
+		error("Error llamando a " + funcion + " con codigo " + std::to_string(getLastError()));
 	}
 
 	return response;
@@ -78,7 +74,7 @@ void Servidor::aceptarConexiones() {
 	}
 
 	if (response < 0) {
-		error("Error llamando a accept con código " + std::to_string(getLastError()));
+		error("Error llamando a accept con codigo " + std::to_string(getLastError()));
 	} else {
 		debug("Finalizando thread aceptarConexiones");
 	}
@@ -91,7 +87,6 @@ void Servidor::detener() {
 		if (socketD != INVALID_SOCKET) {
 			closesocket(socketD);
 			debug("Socket cerrado");
-
 
 			auto it = sesiones.begin();
 			while (it != sesiones.end()) {

@@ -10,6 +10,7 @@
 
 #include "Conexion.h"
 #include "Logger.h"
+#include "Teclas.h"
 #include "Utils.h"
 
 class Sesion {
@@ -18,13 +19,12 @@ public:
 	~Sesion();
 	void detener();
 private:
-	void atenderCliente();
-	void ping();
+	void atenderCliente(SOCKET socketD);
+	void eventoTeclado(Teclas& teclas);
 	void desconectar();
 
 	bool detenido;
 	std::string ip;
-	SOCKET socketD;
 	Conexion con;
 	std::thread thread;
 };

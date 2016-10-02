@@ -8,10 +8,9 @@
 #include "Sesion.h"
 
 Sesion::Sesion(SOCKET socketD, std::string ip) {
-	this->socketD = socketD;
 	this->ip = ip;
 	this->detenido=false;
-	this->thread = std::thread(&Sesion::atenderCliente, this);
+	this->thread = std::thread(&Sesion::atenderCliente, this, socketD);
 }
 
 Sesion::~Sesion(){
@@ -20,34 +19,29 @@ Sesion::~Sesion(){
 
 void Sesion::detener() {
 	detenido = true;
-	if (socketD != INVALID_SOCKET) {
-		closesocket(socketD);
-		socketD = INVALID_SOCKET;
-	}
+	con.cerrar();
 }
 
-void Sesion::atenderCliente() {
-	info("Cliente " + ip + " conectado. Esperando autentificacion.");
-
+void Sesion::atenderCliente(SOCKET socketD) {
+	info("Cliente " + ip + " conectado.");
 	con.setSocket(socketD);
 	while (!detenido) {
 		try {
-			std::string text = con.recibir();
-			std::vector<std::string> parametros = split(text, DELIM);
+			Bytes bytes = con.recibir();
+			if ( bytes.size() > 0) {
+				int comando;
+				bytes.get(comando);
 
-			if (! parametros.empty()) {
-				std::string comando = parametros[0];
-				parametros.erase(parametros.begin());
-
-				if (comando == PING) {
-					ping();
+				if (comando == KEY) {
+					int estado;
+					bytes.get(estado);
+					Teclas teclas;
+					teclas.setEstado(estado);
+					eventoTeclado(teclas);
 				} else if (comando == BYE) {
 					desconectar();
 				} else {
-					warn("Comando invalido: " + comando);
-					std::stringstream ss;
-					ss << FAIL << DELIM << "Comando invalido: " + comando;
-					con.enviar(ss.str());
+					warn("Comando invalido: " + std::to_string(comando));
 				}
 			}
 		} catch (SocketException) {
@@ -60,14 +54,23 @@ void Sesion::atenderCliente() {
 	detener();
 }
 
-void Sesion::ping() {
-	con.enviar(SUCCESS);
+void Sesion::eventoTeclado(Teclas& teclas) {
+	std::stringstream ss;
+	ss << "Teclas: " << teclas.getEstado();
+	if (teclas.arriba())
+		ss << " Arriba";
+	if (teclas.izq())
+		ss << " Izquierda";
+	if (teclas.der())
+		ss << " Derecha";
+
+	info(ss.str(), true);
 }
 
 void Sesion::desconectar() {
 	detenido = true;
 	try {
-		con.enviar(BYE);
+		//con.enviar(BYE);
 	} catch (SocketException) {
 		warn("Error al desconectar");
 	}

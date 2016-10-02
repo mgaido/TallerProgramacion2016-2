@@ -24,7 +24,7 @@ public:
 	void cerrar();
 	bool cerrada();
 
-	void encolar(T& elemento);
+	void encolar(T elemento);
 	T desencolar();
 
 private:
@@ -55,7 +55,7 @@ inline bool ColaBloqueante<T>::cerrada() {
 }
 
 template<typename T>
-inline void ColaBloqueante<T>::encolar(T& elemento) {
+inline void ColaBloqueante<T>::encolar(T elemento) {
 	mutex.lock();
 	cola.push_front(elemento);
 	mutex.unlock();
