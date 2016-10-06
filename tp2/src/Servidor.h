@@ -18,11 +18,14 @@ private:
 	SOCKET socketD;
 	int puerto;
 	bool detenido;
-	std::thread thread;
+	std::thread t_aceptarConexiones;
 	std::vector<Sesion*> sesiones;
+	Juego* juego;
+	std::thread t_juego;
 
 	int crearSocket();
 	void aceptarConexiones();
+	void avanzarJuego();
 };
 
 #endif // SERVIDOR_H

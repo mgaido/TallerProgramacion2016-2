@@ -7,8 +7,9 @@
 #include "netinet/in.h"
 #include "netinet/tcp.h"
 #include "arpa/inet.h"
-#include "unistd.h"
+#include "poll.h"
 #include "signal.h"
+#include "unistd.h"
 #include "errno.h"
 #elif _WIN32
 #include "winsock2.h"
@@ -42,6 +43,10 @@ inline int closesocket(SOCKET socketD) {
 
 #elif _WIN32
 
+inline int poll(pollfd* fd, int nfd, long timeout) {
+	return WSAPoll(fd, nfd, timeout);
+}
+
 inline int getLastError() {
 	return WSAGetLastError();
 }
@@ -55,6 +60,11 @@ inline void initSockets(){
 	WSADATA wsa;
 	WSAStartup(MAKEWORD(2, 2), &wsa);
 	#endif
+}
+
+inline int setReuseAddress(SOCKET socket){
+	int activar = 1;
+	return setsockopt(socket, SOL_SOCKET, SO_REUSEADDR, (char*)&activar, sizeof(activar));
 }
 
 inline int setTcpNoDelay(SOCKET socket){

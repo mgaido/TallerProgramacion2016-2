@@ -76,7 +76,7 @@ void Logger::desencolar() {
 		try {
 			Log log = logs.desencolar();
 			loguear(log);
-		} catch (ColaCerrada) {
+		} catch (ColaCerrada&) {
 			break;
 		}
 	}

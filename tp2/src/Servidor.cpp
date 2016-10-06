@@ -4,6 +4,7 @@ Servidor::Servidor(int puerto, std::string archivo) {
 	this->puerto = puerto;
 	detenido = false;
 	socketD = INVALID_SOCKET;
+	juego = nullptr;
 }
 
 Servidor::~Servidor() {
@@ -13,14 +14,28 @@ Servidor::~Servidor() {
 void Servidor::iniciar() {
 	int response = crearSocket();
 	if (response < 0) {
-		std::cerr << "No se pudo iniciar la conexión" << std::endl;
+		std::cerr << "No se pudo iniciar la conexion" << std::endl;
 	} else {
-		thread = std::thread(&Servidor::aceptarConexiones, this);
-		std::cout << "Presiona enter para terminar..." << std::endl;
-		std::string msg;
-		std::getline(std::cin, msg);
+		juego = new Juego();
+		t_aceptarConexiones = std::thread(&Servidor::aceptarConexiones, this);
+		t_juego = std::thread(&Servidor::avanzarJuego, this);
 	}
-	detener();
+}
+
+void Servidor::avanzarJuego() {
+	while (! detenido) {
+		if (juego->estaIniciado()) {
+			Bytes bytes;
+			if (juego->getActualizaciones(bytes)) {
+				auto it = sesiones.begin();
+				while (it != sesiones.end()) {
+					(*it)->nuevaActualizacion(bytes);
+					it++;
+				}
+			}
+		}
+		std::this_thread::sleep_for(std::chrono::milliseconds(20));
+	}
 }
 
 int Servidor::crearSocket() {
@@ -33,6 +48,7 @@ int Servidor::crearSocket() {
 		response = 0;
 		setTcpNoDelay(socketD);
 		setTcpKeepAlive(socketD);
+		setReuseAddress(socketD);
 
 		struct sockaddr_in serverAddress;
 		serverAddress.sin_family = AF_INET;
@@ -50,7 +66,7 @@ int Servidor::crearSocket() {
 
 	if (response < 0) {
 		socketD = INVALID_SOCKET;
-		error("Error llamando a " + funcion + " con código " + std::to_string(getLastError()));
+		error("Error llamando a " + funcion + " con codigo " + std::to_string(getLastError()));
 	}
 
 	return response;
@@ -69,7 +85,7 @@ void Servidor::aceptarConexiones() {
 
 		if (newSocketD != INVALID_SOCKET) {
 			inet_ntop(AF_INET, &(clientAddress.sin_addr), ip, INET_ADDRSTRLEN);
-			sesiones.push_back(new Sesion(newSocketD, ip));
+			sesiones.push_back(new Sesion(newSocketD, ip, juego));
 		} else if (!detenido)
 			response = -1;
 
@@ -78,7 +94,7 @@ void Servidor::aceptarConexiones() {
 	}
 
 	if (response < 0) {
-		error("Error llamando a accept con código " + std::to_string(getLastError()));
+		error("Error llamando a accept con codigo " + std::to_string(getLastError()));
 	} else {
 		debug("Finalizando thread aceptarConexiones");
 	}
@@ -92,6 +108,9 @@ void Servidor::detener() {
 			closesocket(socketD);
 			debug("Socket cerrado");
 
+			debug("Esperando que termine thread juego");
+			t_juego.join();
+			debug("Thread juego termino");
 
 			auto it = sesiones.begin();
 			while (it != sesiones.end()) {
@@ -100,9 +119,10 @@ void Servidor::detener() {
 				it++;
 			}
 			sesiones.clear();
+			delete juego;
 
 			debug("Esperando que termine thread aceptarConexiones");
-			thread.join();
+			t_aceptarConexiones.join();
 			debug("Thread aceptarConexiones termino");
 		}
 		info("Servidor detenido");

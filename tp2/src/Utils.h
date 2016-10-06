@@ -8,7 +8,10 @@
 #include <future>
 #include <chrono>
 #include <mutex>
+#include <unordered_map>
 #include <vector>
+
+using millis = unsigned long long;
 
 inline std::vector<std::string> split(std::string s, char delim) {
 	std::vector<std::string> parts;
@@ -20,6 +23,10 @@ inline std::vector<std::string> split(std::string s, char delim) {
 		parts.push_back(item);
 	}
 	return parts;
+}
+
+inline millis tiempo() {
+	return std::chrono::system_clock::now().time_since_epoch() / std::chrono::milliseconds(1);
 }
 
 #endif

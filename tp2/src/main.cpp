@@ -34,9 +34,6 @@ int main(int argc, char *argv[]) {
 						archivo = std::string(argv[++i]);
 					}
 					break;
-				case 'c':
-					server = false;
-					break;
 				default:
 					break;
 				}
@@ -45,20 +42,27 @@ int main(int argc, char *argv[]) {
 	}
 
 	initSockets();
+	logger = new Logger("tp2.log");
 
+	std::cout << "Iniciado servidor en puerto " << std::to_string(puerto) << " y leyendo configuracion de " << archivo << std::endl;
+	Servidor servidor(puerto, archivo);
 	if (server) {
-		logger = new Logger("servidor.log");
-		std::cout << "Iniciado servidor en puerto " << std::to_string(puerto) << " y leyendo configuracion de " << archivo << std::endl;
-		Servidor servidor(puerto, archivo);
 		servidor.iniciar();
-	} else {
-		logger = new Logger("cliente.log");
+		std::this_thread::sleep_for(std::chrono::milliseconds(200));
+	}
+
+	{
 		std::cout << "Iniciando cliente - Se conectara a: " << host << ':' << std::to_string(puerto) << std::endl;
 		Cliente cliente(host, puerto);
 		cliente.iniciar();
+		cliente.desconectar();
+		std::cout << "Cliente finalizado" << std::endl;
 	}
+	if (server)
+		servidor.detener();
 
 	delete logger;
 
 	return 0;
 }
+

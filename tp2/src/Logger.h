@@ -9,7 +9,6 @@
 #define LOGGER_H_
 
 #include "ColaBloqueante.h"
-#include "Logger.h"
 #include "Utils.h"
 
 #define _DEBUG 1

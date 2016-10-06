@@ -2,21 +2,55 @@
 
 Cliente::Cliente(std::string cHost, int cPuerto) {
 	conectado = false;
-	detenido = false;
-	socketD = INVALID_SOCKET;
 	puerto = cPuerto;
 	host = cHost;
 
-	pingThread = std::thread(&Cliente::ping, this);
+	vista = nullptr;
 }
 
 Cliente::~Cliente() {
-	detenido = true;
-	pingThread.join();
 }
 
 void Cliente::iniciar() {
+	conectar();
+	if (conectado) {
+		vista = new Vista(eventosTeclado);
+		t_enviarEventos = std::thread(&Cliente::enviarEventos, this);
+		t_recibirAct = std::thread(&Cliente::recibirActualizaciones, this);
+		vista->iniciar();
+		eventosTeclado.cerrar();
+		t_enviarEventos.join();
+	}
+}
 
+void Cliente::enviarEventos() {
+	while (conectado) {
+		try {
+			int estado = eventosTeclado.desencolar();
+			Bytes bytes;
+			bytes.put(KEY);
+			bytes.put(estado);
+			con.enviar(bytes);
+		} catch (ColaCerrada&) {
+			break;
+		}
+	}
+}
+
+void Cliente::recibirActualizaciones() {
+	while (conectado) {
+		try {
+			Bytes bytes = con.recibir();
+
+			int comando;
+			bytes.get(comando);
+			if (comando == UPD) {
+				std::vector<Actualizacion> actualizaciones;
+				bytes.getAll(actualizaciones);
+				vista->recibirActualizaciones(actualizaciones);
+			}
+		} catch (SocketException&) {}
+	}
 }
 
 void Cliente::conectar() {
@@ -30,7 +64,7 @@ void Cliente::conectar() {
 	if (respuesta >= 0) {
 		funcion = "socket";
 		respuesta = -1;
-		socketD = socket(AF_INET, SOCK_STREAM, 0);
+		SOCKET socketD = socket(AF_INET, SOCK_STREAM, 0);
 
 		if (socketD != INVALID_SOCKET) {
 			setTcpNoDelay(socketD);
@@ -55,45 +89,24 @@ void Cliente::conectar() {
 
 void Cliente::desconectar() {
 	if (conectado) {
-		enviarComando(BYE);
-		if (conectado) {
-			conectado = false;
+		conectado = false;
+
+		eventosTeclado.cerrar();
+		vista->detener();
+		delete vista;
+
+		Bytes bytes;
+		bytes.put(BYE);
+		try {
+			con.enviar(bytes);
 			info("Desconexion exitosa con: " + host, true);
-		}
-		closesocket(socketD);
+		} catch (SocketException&){}
+
+		con.cerrar();
+		t_recibirAct.join();
 	} else {
 		warn("No hay una Conexion abierta");
 	}
 }
 
-void Cliente::ping() {
-	int i = 1;
-	while (! detenido) {
-		std::this_thread::sleep_for(std::chrono::milliseconds(250));
-		if (conectado && (i % 4) == 0) {
-			i = 0;
-			std::vector<std::string> resp = enviarComando(PING);
-			if (resp[0] != SUCCESS)
-				error(resp[1], true);
-		}
-		i++;
-	}
-}
 
-std::vector<std::string> Cliente::enviarComando(std::string msg) {
-	std::vector<std::string> resp;
-	try {
-		conLock.lock();
-		con.enviar(msg);
-		msg = con.recibir();
-		conLock.unlock();
-		resp = split(msg, DELIM);
-	}  catch (SocketException e) {
-		conLock.unlock();
-		conectado = false;
-		resp.push_back(FAIL);
-		resp.push_back("Conexion perdida con el servidor");
-	}
-
-	return resp;
-}
