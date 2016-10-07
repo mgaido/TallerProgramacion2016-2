@@ -7,36 +7,40 @@
 
 #include "Sesion.h"
 
-Sesion::Sesion(SOCKET socketD, std::string ip, Juego* juego) {
+Sesion::Sesion(SOCKET socketD, std::string ip, Servidor* servidor) {
 	this->ip = ip;
 	this->detenido=false;
-	this->juego = juego;
+	this->servidor = servidor;
 	this->jugador = nullptr;
 
-	info("Cliente " + ip + " conectado.");
 	con.setSocket(socketD);
-
-	this->t_events = std::thread(&Sesion::atenderCliente, this);
-	this->t_updates = std::thread(&Sesion::enviarActializaciones, this);
+	info("Cliente " + ip + " conectado.");
+	this->t_atenderCliente = std::thread(&Sesion::atenderCliente, this);
+	this->t_enviarActualizaciones = std::thread(&Sesion::enviarActializaciones, this);
 }
 
 Sesion::~Sesion(){
-	t_events.join();
-	t_updates.join();
+	debug("Esperando que termine thread atenderCliente");
+	t_atenderCliente.join();
+	debug("Thread atenderCliente termino");
+
+	debug("Esperando que termine thread enviarActualizaciones");
+	t_enviarActualizaciones.join();
+	debug("Thread enviarActualizaciones termino");
 }
 
 void Sesion::nuevaActualizacion(Bytes bytes) {
-	actualizaciones.encolar(bytes);
+	if (! detenido)
+		actualizaciones.encolar(bytes);
 }
 
 void Sesion::atenderCliente() {
 	//TODO handshake
-	jugador = juego->nuevoJugador(ip);
+	jugador = servidor->getJuego()->nuevoJugador(ip);
 
-	while (!detenido) {
+	while (! detenido) {
 		try {
 			Bytes bytes = con.recibir();
-
 			if ( bytes.size() > 0) {
 				int comando;
 				bytes.get(comando);
@@ -49,13 +53,12 @@ void Sesion::atenderCliente() {
 				}
 			}
 		} catch (SocketException&) {
-			if (!detenido) {
+			if (! detenido) {
 				error("Error de conexion con " + ip);
-				detenido = true;
+				detener();
 			}
 		}
 	}
-	detener();
 }
 
 void Sesion::eventoTeclado(Bytes& bytes) {
@@ -64,15 +67,19 @@ void Sesion::eventoTeclado(Bytes& bytes) {
 	Teclas teclas;
 	teclas.setEstado(estado);
 
-	if (teclas.arriba())
+	if (teclas.arriba()) {
 		jugador->saltar();
-	else if (teclas.der() && ! teclas.izq())
+		debug(ip + " tecla arriba");
+	}  else if (teclas.der() && !teclas.izq()) {
 		jugador->caminar(Direccion::DERECHA);
-	else if (teclas.izq() && ! teclas.der())
+		debug(ip + " tecla derecha");
+	} else if (teclas.izq() && !teclas.der()) {
 		jugador->caminar(Direccion::IZQUIERDA);
-	else
+		debug(ip + " tecla izquierda");
+	}  else {
 		jugador->detenerse();
-
+		debug(ip + " sin teclas");
+	}
 }
 
 void Sesion::enviarActializaciones() {
@@ -82,18 +89,27 @@ void Sesion::enviarActializaciones() {
 			con.enviar(bytes);
 		} catch (ColaCerrada&) {
 			break;
+		} catch (SocketException&) {
+			detener();
+			break;
 		}
 	}
 }
 
 
 void Sesion::detener() {
-	detenido = true;
-	con.cerrar();
-	actualizaciones.cerrar();
+	if (!detenido) {
+		detenido = true;
+		servidor->removerSesion(this);
+		
+		con.cancelarRecepcion();
+		actualizaciones.cerrar();
+		con.cerrar();
+	}
 }
 
 void Sesion::desconectar() {
-	detenido = true;
 	info("Cliente " + ip + " desconectado.");
+	//TODO avisarle al juego
+	detener();
 }

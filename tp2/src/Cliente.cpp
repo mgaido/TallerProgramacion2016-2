@@ -18,8 +18,6 @@ void Cliente::iniciar() {
 		t_enviarEventos = std::thread(&Cliente::enviarEventos, this);
 		t_recibirAct = std::thread(&Cliente::recibirActualizaciones, this);
 		vista->iniciar();
-		eventosTeclado.cerrar();
-		t_enviarEventos.join();
 	}
 }
 
@@ -91,7 +89,16 @@ void Cliente::desconectar() {
 	if (conectado) {
 		conectado = false;
 
+		debug("Esperando que termine thread enviarEventos");
 		eventosTeclado.cerrar();
+		t_enviarEventos.join();
+		debug("Thread enviarEventos termino");
+		
+		debug("Esperando que termine thread recibirActualizaciones");
+		con.cancelarRecepcion();
+		t_recibirAct.join();
+		debug("Thread recibirActualizaciones termino");
+
 		vista->detener();
 		delete vista;
 
@@ -101,9 +108,7 @@ void Cliente::desconectar() {
 			con.enviar(bytes);
 			info("Desconexion exitosa con: " + host, true);
 		} catch (SocketException&){}
-
 		con.cerrar();
-		t_recibirAct.join();
 	} else {
 		warn("No hay una Conexion abierta");
 	}

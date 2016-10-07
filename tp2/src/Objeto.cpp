@@ -9,7 +9,6 @@
 
 Objeto::Objeto(int id) {
 	this->id = id;
-	cambios = false;
 }
 
 Objeto::~Objeto() {
@@ -36,5 +35,5 @@ Tipo Objeto::getTipo() {
 }
 
 bool Objeto::tieneCambios() {
-	return cambios;
+	return false;
 }

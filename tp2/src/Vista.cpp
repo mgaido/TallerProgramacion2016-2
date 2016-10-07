@@ -7,7 +7,7 @@
 
 #include "Vista.h"
 
-int delay = 1000/60.0;
+double delay = 1000/60.0;
 
 Vista::Vista(ColaBloqueante<int>& _eventosTeclado) : eventosTeclado(_eventosTeclado) {
 	ventana = nullptr;
@@ -62,7 +62,7 @@ void Vista::cicloPrincipal() {
 		millis t = tiempo();
 		enviarEventos();
 		actualizar();
-		t = delay - (tiempo() - t);
+		t = (millis) delay - (tiempo() - t);
 		if (t > 0)
 			std::this_thread::sleep_for(std::chrono::milliseconds(t));
 	}
@@ -111,7 +111,7 @@ void Vista::actualizar() {
 
 	auto it = actualizaciones.begin();
 	while (it != actualizaciones.end()) {
-		info(it->toString());
+		//info(it->toString(), true);
 
 		if (it->getEvento() == Evento::Agregar) {
 			SDL_Rect rect;

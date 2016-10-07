@@ -8,8 +8,6 @@
 #ifndef OBJETO_H_
 #define OBJETO_H_
 
-#include <chrono>
-
 #include "Utils.h"
 
 enum class Estado { Quieto, Caminando, Saltando };
@@ -45,7 +43,6 @@ protected:
 	Punto tamanio;
 	Estado estado;
 	Tipo tipo;
-	bool cambios;
 };
 
 #endif /* OBJETO_H_ */

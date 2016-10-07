@@ -7,14 +7,12 @@ const int UPD = 3;
 const int BYE = 4;
 
 Conexion::Conexion() {
-	socketD = INVALID_SOCKET;
-	sendLock = new std::mutex();
-	recvLock = new std::mutex();
+	this->socketD = INVALID_SOCKET;
+	puedeRecibir = true;
 }
 
 Conexion::~Conexion() {
-	delete sendLock;
-	delete recvLock;
+	cerrar();
 }
 
 void Conexion::setSocket(SOCKET socketD) {
@@ -22,8 +20,9 @@ void Conexion::setSocket(SOCKET socketD) {
 }
 
 void Conexion::enviar(Bytes &mensaje) {
+	std::unique_lock<std::mutex> lock(sendMutex);
+	
 	int size = mensaje.size();
-	sendLock->lock();
 	int sent = send(socketD, (char*)&size, sizeof(size), 0);
 	if (sent == sizeof(size)) {
 		const char* c = mensaje.toVector().data();
@@ -33,37 +32,35 @@ void Conexion::enviar(Bytes &mensaje) {
 			if (s > 0)
 				sent += s;
 			else {
-				sendLock->unlock();
 				error("Error leyendo mensaje del socket. Codigo " + std::to_string(getLastError()));
 				throw SocketException();
 			}
 		}
-		sendLock->unlock();
 	} else {
-		sendLock->unlock();
 		error("Error escribiendo la longitud del mensaje del socket. Codigo " + std::to_string(getLastError()));
 		throw SocketException();
 	}
 }
 
 Bytes Conexion::recibir() {
-	Bytes mensaje;
+	std::unique_lock<std::mutex> lock(recvMutex);
 
-	recvLock->lock();
 	struct pollfd pollD[1];
 	pollD[0].fd = socketD;
 	pollD[0].events = POLLIN;
 	int response = 0;
 	do {
 		response = poll(pollD, 1, 250);
-	} while (response == 0 && socketD != INVALID_SOCKET);
+	} while (response == 0 && puedeRecibir && socketD != INVALID_SOCKET);
 
 	if (response > 0) {
+		Bytes mensaje;
+
 		int size;
 		int read = recv(socketD, (char*) &size, sizeof(size), 0);
 		std::vector<char> bytes;
-		bytes.resize(size);
 		bytes.reserve(size);
+		bytes.resize(size);
 
 		if (read == sizeof(size)) {
 			read = 0;
@@ -72,21 +69,29 @@ Bytes Conexion::recibir() {
 				if (r > 0)
 					read += r;
 				else {
-					recvLock->unlock();
 					error("Error leyendo mensaje del socket. Codigo " + std::to_string(getLastError()));
 					throw SocketException();
 				}
 			}
 
 			mensaje.fromVector(bytes);
-			recvLock->unlock();
+			return mensaje;
 		} else {
-			recvLock->unlock();
 			error("Error leyendo la longitud del mensaje del socket. Codigo " + std::to_string(getLastError()));
 			throw SocketException();
 		}
 	}
-	return mensaje;
+
+	if (response < 0)
+		error("Error leyendo la longitud del mensaje del socket. Codigo " + std::to_string(getLastError()));
+	else
+		error("No se puede recibir: conexion cerrara");
+
+	throw SocketException();
+}
+
+void Conexion::cancelarRecepcion() {
+	puedeRecibir = false;
 }
 
 void Conexion::cerrar() {

@@ -9,14 +9,15 @@
 #define SESION_H_
 
 #include "Conexion.h"
-#include "Juego.h"
-#include "Logger.h"
 #include "Teclas.h"
-#include "Utils.h"
+#include "Juego.h"
+#include "Servidor.h"
+
+class Servidor;
 
 class Sesion {
 public:
-	Sesion(SOCKET socketD, std::string ip, Juego* juego);
+	Sesion(SOCKET socketD, std::string ip, Servidor* servidor);
 	~Sesion();
 	void nuevaActualizacion(Bytes bytes);
 	void detener();
@@ -29,15 +30,15 @@ private:
 	void enviarActializaciones();
 
 	bool detenido;
-	Juego* juego;
+	Servidor* servidor;
 	Jugador* jugador;
 
 	std::string ip;
 	Conexion con;
 	ColaBloqueante<Bytes> actualizaciones;
 
-	std::thread t_events;
-	std::thread t_updates;
+	std::thread t_atenderCliente;
+	std::thread t_enviarActualizaciones;
 };
 
 #endif /* SESION_H_ */

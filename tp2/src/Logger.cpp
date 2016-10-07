@@ -17,9 +17,10 @@ Log::Log(Nivel nivel, std::string& texto) {
 	this->nivel = nivel;
 	this->texto = texto;
 	time_t t = time(0);   // get time now
-	struct tm * now = localtime(&t);
-	this->fecha = (std::to_string(now->tm_mday) + ":" + std::to_string(now->tm_mon+1) + ":" + std::to_string(now->tm_year+1900));
-	this->hora = (std::to_string(now->tm_hour) +":"+ std::to_string(now->tm_min)+":" + std::to_string(now->tm_sec));
+	struct tm now;
+	localtime_s(&now, &t);
+	this->fecha = (std::to_string(now.tm_mday) + ":" + std::to_string(now.tm_mon+1) + ":" + std::to_string(now.tm_year+1900));
+	this->hora = (std::to_string(now.tm_hour) +":"+ std::to_string(now.tm_min)+":" + std::to_string(now.tm_sec));
 }
 
 std::string& Log::getTexto() {

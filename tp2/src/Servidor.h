@@ -6,6 +6,8 @@
 #include "Logger.h"
 #include "Utils.h"
 
+class Sesion;
+
 class Servidor {
 
 public:
@@ -14,6 +16,10 @@ public:
 
 	void iniciar();
 	void detener();
+
+	void removerSesion(Sesion* sesion);
+	Juego* getJuego();
+
 private:
 	SOCKET socketD;
 	int puerto;

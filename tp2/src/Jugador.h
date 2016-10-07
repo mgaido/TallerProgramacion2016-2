@@ -25,11 +25,13 @@ public:
 	virtual bool tieneCambios();
 
 private:
+	bool actualizar();
+
 	std::string nombre;
-	double velocX, velocY;
+	double velocCaminar, velocSaltoX, velocSaltoY;
 	millis tiempoSalto;
 	millis tiempoCaminando;
-	std::mutex lock;
+	std::mutex mutex;
 };
 
 #endif /* JUGADOR_H_ */

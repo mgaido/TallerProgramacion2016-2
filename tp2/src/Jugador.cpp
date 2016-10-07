@@ -14,8 +14,7 @@ double g = 0.0045;
 Jugador::Jugador(int id, std::string nombre) : Objeto(id) {
 	tamanio.x=60;
 	tamanio.y=100;
-	velocX=0;
-	velocY=0;
+	velocCaminar = 0, velocSaltoX = 0, velocSaltoY = 0;
 
 	tiempoCaminando=0;
 	tiempoSalto=0;
@@ -28,78 +27,82 @@ Jugador::~Jugador() {
 }
 
 void Jugador::caminar(Direccion direccion) {
-	lock.lock();
-	if (tiempoSalto == 0) {
-		if (direccion == Direccion::IZQUIERDA)
-			velocX=-vx;
-		else
-			velocX=vx;
-
-		tiempoCaminando=tiempo();
-		lock.unlock();
-	}
-	lock.unlock();
+	std::unique_lock<std::mutex> lock(mutex);
+	
+	if (direccion == Direccion::IZQUIERDA)
+		velocCaminar = -vx;
+	else
+		velocCaminar = vx;
+	
+	if (tiempoSalto == 0)
+		tiempoCaminando = tiempo();
 }
 
 void Jugador::detenerse() {
-	lock.lock();
-	if (tiempoCaminando > 0) {
-		pos.x += velocX * (tiempo() - tiempoCaminando);
-		cambios = true;
-	}
+	std::unique_lock<std::mutex> lock(mutex);
+	actualizar();
+	velocCaminar = 0;
 	tiempoCaminando = 0;
-
-	if (tiempoSalto == 0) {
-		velocX=0;
-		estado = Estado::Quieto;
-	}
-	lock.unlock();
 }
 
 void Jugador::saltar() {
-	lock.lock();
+	std::unique_lock<std::mutex> lock(mutex);
+
 	if (tiempoSalto == 0) {
+		velocSaltoY=vy;
+		velocSaltoX = velocCaminar;
 		tiempoSalto = tiempo();
-		velocY=vy;
-		estado = Estado::Saltando;
 	}
-	lock.unlock();
 }
 
 bool Jugador::tieneCambios() {
-	lock.lock();
-	if (tiempoCaminando > 0) {
-		pos.x += velocX * (tiempo() - tiempoCaminando);
-		tiempoCaminando = tiempo();
-		cambios = true;
-	}
+	std::unique_lock<std::mutex> lock(mutex);
+	return actualizar();
+}
+
+
+bool Jugador::actualizar() {
+	millis t;
+	double vx = 0;
 
 	if (tiempoSalto > 0) {
-		long t = tiempo() - tiempoSalto;
-		velocY -= t*g;
-		pos.y += t*velocY;
-		if (tiempoCaminando == 0 && velocX != 0)
-			pos.x += t*velocX;
-
-		if (pos.y <= 0) {
-			pos.y = 0;
-			tiempoSalto = 0;
-			if (tiempoCaminando == 0) {
-				velocX = 0;
-				estado = Estado::Quieto;
-			} else
-				estado = Estado::Caminando;
-		} else
-			tiempoSalto = tiempo();
-
-		cambios = true;
+		vx = velocSaltoX;
+		t = tiempo() - tiempoSalto;
+		velocSaltoY -= t*g;
+		tiempoSalto += t;
+	} else if (tiempoCaminando > 0) {
+		vx = velocCaminar;
+		t = tiempo() - tiempoCaminando;
+		tiempoCaminando += t;
 	}
 
-	bool rv = cambios;
-	cambios = false;
+	bool cambios = t != 0;
 
-	lock.unlock();
+	pos.x += vx*t;
+	pos.y += velocSaltoY*t;
+	if (tiempoSalto > 0 && pos.y <= 0) {
+		pos.y = 0;
+		velocSaltoX = 0;
+		velocSaltoY = 0;
+		if (velocCaminar != 0)
+			tiempoCaminando = tiempoSalto;
+		tiempoSalto = 0;
+	}
 
-	return rv;
+	if (t > 0 && pos.x < 0)
+		pos.x = 0;
+	
+	Estado estado;
+	if (tiempoSalto > 0)
+		estado = Estado::Saltando;
+	else if (tiempoCaminando > 0)
+		estado = Estado::Caminando;
+	else
+		estado = Estado::Quieto;
+
+	cambios |= estado != this->estado;
+	this->estado = estado;
+
+	return cambios;
 }
 

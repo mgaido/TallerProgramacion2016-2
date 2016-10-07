@@ -24,6 +24,7 @@ void Servidor::iniciar() {
 
 void Servidor::avanzarJuego() {
 	while (! detenido) {
+		millis t = tiempo();
 		if (juego->estaIniciado()) {
 			Bytes bytes;
 			if (juego->getActualizaciones(bytes)) {
@@ -34,7 +35,9 @@ void Servidor::avanzarJuego() {
 				}
 			}
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(20));
+		t = 16 - (tiempo() - t);
+		if (t > 0)
+			std::this_thread::sleep_for(std::chrono::milliseconds(t));
 	}
 }
 
@@ -85,7 +88,7 @@ void Servidor::aceptarConexiones() {
 
 		if (newSocketD != INVALID_SOCKET) {
 			inet_ntop(AF_INET, &(clientAddress.sin_addr), ip, INET_ADDRSTRLEN);
-			sesiones.push_back(new Sesion(newSocketD, ip, juego));
+			sesiones.push_back(new Sesion(newSocketD, ip, this));
 		} else if (!detenido)
 			response = -1;
 
@@ -105,9 +108,6 @@ void Servidor::detener() {
 		detenido = true;
 
 		if (socketD != INVALID_SOCKET) {
-			closesocket(socketD);
-			debug("Socket cerrado");
-
 			debug("Esperando que termine thread juego");
 			t_juego.join();
 			debug("Thread juego termino");
@@ -121,11 +121,29 @@ void Servidor::detener() {
 			sesiones.clear();
 			delete juego;
 
+			closesocket(socketD);
+			debug("Socket cerrado");
+
 			debug("Esperando que termine thread aceptarConexiones");
 			t_aceptarConexiones.join();
 			debug("Thread aceptarConexiones termino");
 		}
 		info("Servidor detenido");
 	}
+}
+
+void Servidor::removerSesion(Sesion * sesion) {
+	auto it = sesiones.begin();
+	while (it != sesiones.end()) {
+		if (*it == sesion) {
+			sesiones.erase(it);
+			break;
+		}
+		it++;
+	}
+}
+
+Juego * Servidor::getJuego() {
+	return juego;
 }
 

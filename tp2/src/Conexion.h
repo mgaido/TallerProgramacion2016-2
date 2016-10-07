@@ -18,11 +18,13 @@ public:
 	void enviar(Bytes &msg);
 	Bytes recibir();
 
+	void cancelarRecepcion();
 	void cerrar();
 private:
 	SOCKET socketD;
-	std::mutex *sendLock;
-	std::mutex *recvLock;
+	bool puedeRecibir;
+	std::mutex sendMutex;
+	std::mutex recvMutex;
 };
 
 #endif // CONEXION_H
