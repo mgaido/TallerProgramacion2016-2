@@ -7,6 +7,9 @@
 #include "Utils.h"
 
 extern const int KEY;
+extern const int HSK_REQ;
+extern const int HSK_RES;
+extern const int KEY;
 extern const int UPD;
 extern const int BYE;
 

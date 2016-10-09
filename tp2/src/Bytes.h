@@ -16,9 +16,16 @@
 
 #include "Logger.h"
 
+class Bytes;
+
+class Serializable {
+public:
+	virtual void toBytes(Bytes &bytes) = 0;
+	virtual void fromBytes(Bytes &bytes) = 0;
+};
+
 class Bytes {
 public:
-
 	Bytes() {
 		cursor = 0;
 	}
@@ -27,6 +34,11 @@ public:
 	Bytes& put(T valor) {
 		const char* var = reinterpret_cast<const char*>(&valor);
 		bytes.insert(bytes.end(), var, var + sizeof valor);
+		return *this;
+	}
+
+	Bytes& putSerializable(Serializable &valor) {
+		valor.toBytes(*this);
 		return *this;
 	}
 
@@ -43,6 +55,11 @@ public:
 		void* ptr = &bytes[cursor];
 		memcpy(&valor, ptr, sizeof valor);
 		cursor += sizeof valor;
+		return *this;
+	}
+
+	Bytes& getSerializable(Serializable &valor) {
+		valor.fromBytes(*this);
 		return *this;
 	}
 
@@ -76,5 +93,7 @@ private:
 	std::vector<char> bytes;
 	unsigned int cursor;
 };
+
+
 
 #endif /* BYTES_H_ */

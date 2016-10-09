@@ -96,7 +96,6 @@ void Sesion::enviarActializaciones() {
 	}
 }
 
-
 void Sesion::detener() {
 	if (!detenido) {
 		detenido = true;

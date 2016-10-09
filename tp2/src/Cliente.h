@@ -3,13 +3,14 @@
 
 #include "Actualizacion.h"
 #include "Conexion.h"
+#include "Handshake.h"
 #include "Logger.h"
 #include "Utils.h"
 #include "Vista.h"
 
 class Cliente {
 public:
-	Cliente(std::string host,int puerto);
+	Cliente(std::string host,int puerto, std::string nombre);
 	~Cliente();
 
 	void iniciar();
@@ -23,6 +24,7 @@ private:
 	int puerto;
 	Conexion con;
 	bool conectado;
+	std::string usuario;
 
 	ColaBloqueante<int> eventosTeclado;
 	Vista* vista;

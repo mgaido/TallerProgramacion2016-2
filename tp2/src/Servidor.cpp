@@ -38,7 +38,7 @@ void Servidor::avanzarJuego() {
 				}
 			}
 		}
-		t = tickDelay - (tiempo() - t);
+		t = (millis) (tickDelay - (tiempo() - t));
 		if (t > 0)
 			std::this_thread::sleep_for(std::chrono::milliseconds(t));
 	}
@@ -88,8 +88,23 @@ void Servidor::aceptarConexiones() {
 	while (! detenido) {
 		SOCKET newSocketD = accept(socketD, (struct sockaddr*) &clientAddress,
 				(socklen_t*) &clientAddressLength);
-
+		
 		if (newSocketD != INVALID_SOCKET) {
+			Conexion con;
+			con.setSocket(newSocketD);
+
+			Bytes bytes = con.recibir();
+			HandshakeRequest req;
+			bytes.get(req);
+			info("Jugador conectado " + std::string(req.nombre), true);
+
+			bytes = Bytes();
+			HandshakeResponse res;
+			//TODO verificar nombres;
+			res.aceptado = true;
+			bytes.putSerializable(res);
+			con.enviar(bytes);
+				
 			inet_ntop(AF_INET, &(clientAddress.sin_addr), ip, INET_ADDRSTRLEN);
 			sesiones.push_back(new Sesion(newSocketD, ip, this));
 		} else if (!detenido)
