@@ -12,7 +12,6 @@ Conexion::Conexion() {
 }
 
 Conexion::~Conexion() {
-	cerrar();
 }
 
 void Conexion::setSocket(SOCKET socketD) {

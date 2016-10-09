@@ -1,9 +1,10 @@
 #include "Cliente.h"
 
-Cliente::Cliente(std::string cHost, int cPuerto) {
+Cliente::Cliente(std::string cHost, int cPuerto, std::string usuario) {
 	conectado = false;
 	puerto = cPuerto;
 	host = cHost;
+	this->usuario = usuario;
 
 	vista = nullptr;
 }
@@ -14,10 +15,27 @@ Cliente::~Cliente() {
 void Cliente::iniciar() {
 	conectar();
 	if (conectado) {
-		vista = new Vista(eventosTeclado);
-		t_enviarEventos = std::thread(&Cliente::enviarEventos, this);
-		t_recibirAct = std::thread(&Cliente::recibirActualizaciones, this);
-		vista->iniciar();
+		{
+			Bytes bytes;
+			HandshakeRequest handshakeRequest;
+			usuario.copy(handshakeRequest.nombre, sizeof handshakeRequest.nombre);
+			bytes.put(handshakeRequest);
+			con.enviar(bytes);
+		}
+
+		Bytes bytes = con.recibir();
+		HandshakeResponse handshakeResponse;
+		bytes.getSerializable(handshakeResponse);
+
+		if (handshakeResponse.aceptado) {
+			vista = new Vista(eventosTeclado);
+			t_enviarEventos = std::thread(&Cliente::enviarEventos, this);
+			t_recibirAct = std::thread(&Cliente::recibirActualizaciones, this);
+			vista->iniciar();
+		} else {
+			conectado = false;
+			error("El servidor no acepto un nuevo usuario", true);
+		}
 	}
 }
 

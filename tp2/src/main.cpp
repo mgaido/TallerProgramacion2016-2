@@ -10,6 +10,7 @@ Logger* logger;
 int main(int argc, char *argv[]) {
 	bool server = true;
 	std::string host = "127.0.0.1";
+	std::string usuario = "usuario";
 	std::string archivo = "config.xml";
 	int puerto = 10000;
 
@@ -30,6 +31,10 @@ int main(int argc, char *argv[]) {
 					}
 					break;
 				case 'u':
+					if (i + 1 < argc) {
+						usuario = std::string(argv[++i]);
+					}
+				case 'c':
 					if (i + 1 < argc) {
 						archivo = std::string(argv[++i]);
 					}
@@ -53,15 +58,16 @@ int main(int argc, char *argv[]) {
 
 		{
 			std::cout << "Iniciando cliente - Se conectara a: " << host << ':' << std::to_string(puerto) << std::endl;
-			Cliente cliente(host, puerto);
+			Cliente cliente(host, puerto, usuario);
 			cliente.iniciar();
 			cliente.desconectar();
-			debug("Cliente finalizado");
+			debug("Cliente finalizado", true);
 		}
 
 		if (server) {
-			debug("Deteniendo servidor");
+			debug("Deteniendo servidor", true);
 			servidor.detener();
+			debug("Cliente finalizado", true);
 		}
 	}
 
