@@ -7,8 +7,6 @@
 #include "Utils.h"
 #include "Vista.h"
 
-#include <exception>
-
 class Cliente {
 public:
 	Cliente(std::string host,int puerto);
