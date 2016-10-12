@@ -5,17 +5,20 @@ double tickDelay = 1000.0/tickrate;
 
 Servidor::Servidor(int puerto, std::string archivo) {
 	this->puerto = puerto;
-	config = new Config();
-	config->parsearXML(archivo);
+	this->archivo = archivo;
+	config = nullptr;
+	juego = nullptr;
 	detenido = false;
 	socketD = INVALID_SOCKET;
-	juego = nullptr;
 }
 
 Servidor::~Servidor() {
 }
 
 void Servidor::iniciar() {
+	config = new Config();
+	config->parsearXML(archivo);
+
 	int response = crearSocket();
 	if (response < 0) {
 		std::cerr << "No se pudo iniciar la conexion" << std::endl;
@@ -142,7 +145,6 @@ void Servidor::procesarPeticiones() {
 					it++;
 			}
 
-			res.configuracion = configuracion;
 			juego->getEstado(res.estado);
 
 			if (encontrado) {
@@ -152,7 +154,7 @@ void Servidor::procesarPeticiones() {
 					info("Existe jugador inactivo con nombre " + nombre, true);
 				}
 			} else {
-				if (sesiones.size() < configuracion.maximoJugadores) {
+				if (sesiones.size() < (unsigned) config->getCantidadMaximaJugadores()) {
 					info("Creando jugador con nombre " + nombre, true);
 					jugador = juego->nuevoJugador(nombre);
 				} else {

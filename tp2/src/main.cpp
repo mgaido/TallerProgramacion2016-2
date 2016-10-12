@@ -53,9 +53,9 @@ int main(int argc, char *argv[]) {
 	initSockets();
 	logger = new Logger("tp2.log");
 	{
-		std::cout << "> Iniciado servidor en puerto " << std::to_string(puerto) << " y leyendo configuracion de " << archivo << std::endl;
 		Servidor servidor(puerto, archivo);
 		if (server) {
+			std::cout << "> Iniciado servidor en puerto " << std::to_string(puerto) << " y leyendo configuracion de " << archivo << std::endl;
 			servidor.iniciar();
 			std::this_thread::sleep_for(std::chrono::milliseconds(200));
 		} 

@@ -113,7 +113,7 @@ void Vista::actualizar() {
 
 	auto it = actualizaciones.begin();
 	while (it != actualizaciones.end()) {
-		info(it->toString(), true);
+		//info(it->toString(), true);
 
 		if (it->getEvento() == Evento::Agregar) {
 			SDL_Rect rect;

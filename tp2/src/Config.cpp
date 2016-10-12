@@ -64,6 +64,10 @@ std::vector<int> Config::getAnchoSprites()
 	return this->anchoSprites;
 }
 
+int Config::getCantidadMaximaJugadores() {
+	return this->cantidadMaximaJugadores;
+}
+
 std::vector<int> Config::getAltoSprites()
 {
 	return this->altoSprites;

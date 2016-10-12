@@ -30,10 +30,10 @@ public:
 private:
 	SOCKET socketD;
 	int puerto;
+	std::string archivo;
 	Config* config;
 	bool detenido;
 
-	Configuracion configuracion;
 	std::thread t_aceptarConexiones;
 	ColaBloqueante<Peticion> peticiones;
 	std::thread t_juego;
