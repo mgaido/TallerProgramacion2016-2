@@ -24,6 +24,7 @@ public:
 	bool estaIniciado();
 
 private:
+	void cargarDatosJugadorNuevo();
 	bool iniciado;
 	std::mutex lock;
 	int contador;

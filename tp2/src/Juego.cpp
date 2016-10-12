@@ -12,8 +12,30 @@ Juego::Juego() {
 	contador = 0;
 }
 
-bool Juego::estaIniciado(){
+bool Juego::estaIniciado() {
 	return iniciado;
+}
+
+
+void Juego::cargarDatosJugadorNuevo() {
+	Actualizacion actualizacion;
+	auto it = objetos.begin();
+	while (it != objetos.end()) {
+		if ((*it)->getTipo() == Tipo::Jugador) {
+			Jugador* jugAux = (Jugador*)(*it);
+
+			actualizacion.setId(jugAux->getId());
+			actualizacion.setEvento(Evento::Agregar);
+			actualizacion.setTipo(jugAux->getTipo());
+			actualizacion.setEstado(jugAux->getEstado());
+			actualizacion.setTamanio(jugAux->getTamanio());
+			actualizacion.setPos(jugAux->getPos());
+			lock.lock();
+			actualizaciones.push_back(actualizacion);
+			lock.unlock();
+		}
+		it++;
+	}
 }
 
 Jugador* Juego::nuevoJugador(std::string ip, std::string nombre) {
@@ -24,27 +46,17 @@ Jugador* Juego::nuevoJugador(std::string ip, std::string nombre) {
 
 	auto it = objetos.begin();
 	while (it != objetos.end() && !existe) {
-		if  ((*it)->getTipo() == Tipo::Jugador) {
-			Jugador* jugAux= (Jugador*)(*it);
-			std::cout << jugAux->getNombre() << std::endl;
+		if ((*it)->getTipo() == Tipo::Jugador) {
+			Jugador* jugAux = (Jugador*)(*it);
+			//std::cout << jugAux->getNombre() << std::endl;
 			if (nombre == jugAux->getNombre()) {
 				existe = true;
 				jugador = jugAux;
-				std::cout << "Encontro Match" << std::endl;
-
-				actualizacion.setId(jugador->getId());
-				actualizacion.setEvento(Evento::Agregar);
-				actualizacion.setTipo(jugador->getTipo());
-				actualizacion.setEstado(jugador->getEstado());
-				actualizacion.setTamanio(jugador->getTamanio());
-				lock.lock();
-				actualizaciones.push_back(actualizacion);
-				lock.unlock();
 			}
 		}
 		it++;
 	}
-	if (!existe){
+	if (!existe) {
 		jugador = new Jugador(++contador, nombre);
 		actualizacion.setId(jugador->getId());
 		actualizacion.setEvento(Evento::Agregar);
@@ -56,7 +68,7 @@ Jugador* Juego::nuevoJugador(std::string ip, std::string nombre) {
 		actualizaciones.push_back(actualizacion);
 		lock.unlock();
 	}
-
+	cargarDatosJugadorNuevo();
 	return jugador;
 }
 
