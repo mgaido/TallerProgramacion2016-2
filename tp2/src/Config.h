@@ -2,8 +2,8 @@
 #define CONFIGURACION_H
 
 #include "Utils.h"
-#include "../../rapidxml-1.13/rapidxml.hpp"
-#include "../../rapidxml-1.13/rapidxml_utils.hpp"
+#include "rapidxml.hpp"
+#include "rapidxml_utils.hpp"
 
 class Config {
 public:
