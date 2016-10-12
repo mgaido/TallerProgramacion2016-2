@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuracion>
+<maximo_numero_jugadores>4</maximo_numero_jugadores>
+<capas>
+	<capa>
+		<id>Mapa3</id> 
+		<z_index>25</z_index>
+	</capa>
+</capas>
+<sprites>
+	<sprite>
+		<id>Jugador</id>
+		<z_index>10</z_index>
+		<ancho>35</ancho>
+		<alto>70</alto>
+	</sprite>
+</sprites>
+</configuracion>
