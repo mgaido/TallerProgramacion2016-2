@@ -26,17 +26,18 @@ Jugador* Juego::nuevoJugador(std::string ip, std::string nombre) {
 	while (it != objetos.end() && !existe) {
 		if  ((*it)->getTipo() == Tipo::Jugador) {
 			Jugador* jugAux= (Jugador*)(*it);
-			std::cout << jugAux->getNombre() << std::endl;
+			//std::cout << jugAux->getNombre() << std::endl;
 			if (nombre == jugAux->getNombre()) {
 				existe = true;
 				jugador = jugAux;
-				std::cout << "Encontro Match" << std::endl;
+				//std::cout << "Encontro Match" << std::endl;
 
 				actualizacion.setId(jugador->getId());
 				actualizacion.setEvento(Evento::Agregar);
 				actualizacion.setTipo(jugador->getTipo());
 				actualizacion.setEstado(jugador->getEstado());
 				actualizacion.setTamanio(jugador->getTamanio());
+				actualizacion.setPos(jugador->getPos());
 				lock.lock();
 				actualizaciones.push_back(actualizacion);
 				lock.unlock();
