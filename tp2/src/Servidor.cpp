@@ -106,7 +106,7 @@ void Servidor::aceptarConexiones() {
 			con.enviar(bytes);
 				
 			inet_ntop(AF_INET, &(clientAddress.sin_addr), ip, INET_ADDRSTRLEN);
-			sesiones.push_back(new Sesion(newSocketD, ip, this));
+			sesiones.push_back(new Sesion(newSocketD, ip, req.nombre,this));
 		} else if (!detenido)
 			response = -1;
 

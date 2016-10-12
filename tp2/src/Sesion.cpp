@@ -7,11 +7,13 @@
 
 #include "Sesion.h"
 
-Sesion::Sesion(SOCKET socketD, std::string ip, Servidor* servidor) {
+Sesion::Sesion(SOCKET socketD, std::string ip, std::string nombre,Servidor* servidor) {
 	this->ip = ip;
 	this->detenido=false;
 	this->servidor = servidor;
 	this->jugador = nullptr;
+	this->nombre = nombre;
+
 
 	con.setSocket(socketD);
 	info("Cliente " + ip + " conectado.");
@@ -36,7 +38,8 @@ void Sesion::nuevaActualizacion(Bytes bytes) {
 
 void Sesion::atenderCliente() {
 	//TODO handshake
-	jugador = servidor->getJuego()->nuevoJugador(ip);
+	jugador = servidor->getJuego()->nuevoJugador(ip,nombre);
+	//std::cout << nombre << std::endl;
 
 	while (! detenido) {
 		try {

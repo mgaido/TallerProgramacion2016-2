@@ -19,7 +19,7 @@ class Juego {
 public:
 	Juego();
 
-	Jugador* nuevoJugador(std::string nombre);
+	Jugador* nuevoJugador(std::string ip, std::string nombre);
 	bool getActualizaciones(Bytes& bytes);
 	bool estaIniciado();
 

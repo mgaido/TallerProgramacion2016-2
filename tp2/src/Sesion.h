@@ -17,7 +17,7 @@ class Servidor;
 
 class Sesion {
 public:
-	Sesion(SOCKET socketD, std::string ip, Servidor* servidor);
+	Sesion(SOCKET socketD, std::string ip, std::string nombre,Servidor* servidor);
 	~Sesion();
 	void nuevaActualizacion(Bytes bytes);
 	void detener();
@@ -39,6 +39,8 @@ private:
 
 	std::thread t_atenderCliente;
 	std::thread t_enviarActualizaciones;
+
+	std::string nombre;
 };
 
 #endif /* SESION_H_ */

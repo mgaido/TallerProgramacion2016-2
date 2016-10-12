@@ -16,20 +16,46 @@ bool Juego::estaIniciado(){
 	return iniciado;
 }
 
-Jugador* Juego::nuevoJugador(std::string nombre) {
+Jugador* Juego::nuevoJugador(std::string ip, std::string nombre) {
 	iniciado = true;
-
-	Jugador* jugador = new Jugador(++contador, nombre);
+	bool existe = false;
+	Jugador* jugador = NULL;
 	Actualizacion actualizacion;
-	actualizacion.setId(jugador->getId());
-	actualizacion.setEvento(Evento::Agregar);
-	actualizacion.setTipo(jugador->getTipo());
-	actualizacion.setEstado(jugador->getEstado());
-	actualizacion.setTamanio(jugador->getTamanio());
-	lock.lock();
-	objetos.push_back(jugador);
-	actualizaciones.push_back(actualizacion);
-	lock.unlock();
+
+	auto it = objetos.begin();
+	while (it != objetos.end() && !existe) {
+		if  ((*it)->getTipo() == Tipo::Jugador) {
+			Jugador* jugAux= (Jugador*)(*it);
+			std::cout << jugAux->getNombre() << std::endl;
+			if (nombre == jugAux->getNombre()) {
+				existe = true;
+				jugador = jugAux;
+				std::cout << "Encontro Match" << std::endl;
+
+				actualizacion.setId(jugador->getId());
+				actualizacion.setEvento(Evento::Agregar);
+				actualizacion.setTipo(jugador->getTipo());
+				actualizacion.setEstado(jugador->getEstado());
+				actualizacion.setTamanio(jugador->getTamanio());
+				lock.lock();
+				actualizaciones.push_back(actualizacion);
+				lock.unlock();
+			}
+		}
+		it++;
+	}
+	if (!existe){
+		jugador = new Jugador(++contador, nombre);
+		actualizacion.setId(jugador->getId());
+		actualizacion.setEvento(Evento::Agregar);
+		actualizacion.setTipo(jugador->getTipo());
+		actualizacion.setEstado(jugador->getEstado());
+		actualizacion.setTamanio(jugador->getTamanio());
+		lock.lock();
+		objetos.push_back(jugador);
+		actualizaciones.push_back(actualizacion);
+		lock.unlock();
+	}
 
 	return jugador;
 }

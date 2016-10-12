@@ -21,6 +21,7 @@ Jugador::Jugador(int id, std::string nombre) : Objeto(id) {
 
 	estado = Estado::Quieto;
 	tipo = Tipo::Jugador;
+	this->nombre = nombre;
 }
 
 Jugador::~Jugador() {
@@ -60,6 +61,9 @@ bool Jugador::tieneCambios() {
 	return actualizar();
 }
 
+std::string Jugador::getNombre() {
+	return this->nombre;
+}
 
 bool Jugador::actualizar() {
 	millis t;

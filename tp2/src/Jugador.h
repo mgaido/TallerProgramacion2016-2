@@ -21,6 +21,7 @@ public:
 	void caminar(Direccion direccion);
 	void detenerse();
 	void saltar();
+	std::string getNombre();
 
 	virtual bool tieneCambios();
 
