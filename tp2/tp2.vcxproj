@@ -9,6 +9,7 @@
   <ItemGroup>
     <ClCompile Include="src\Cliente.cpp" />
     <ClCompile Include="src\Conexion.cpp" />
+    <ClCompile Include="src\Config.cpp" />
     <ClCompile Include="src\Handshake.cpp" />
     <ClCompile Include="src\Juego.cpp" />
     <ClCompile Include="src\Jugador.cpp" />
@@ -27,6 +28,7 @@
     <ClInclude Include="src\Cliente.h" />
     <ClInclude Include="src\ColaBloqueante.h" />
     <ClInclude Include="src\Conexion.h" />
+    <ClInclude Include="src\Config.h" />
     <ClInclude Include="src\Handshake.h" />
     <ClInclude Include="src\Juego.h" />
     <ClInclude Include="src\Jugador.h" />

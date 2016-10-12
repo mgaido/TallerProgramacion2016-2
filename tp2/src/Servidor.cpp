@@ -5,6 +5,8 @@ double tickDelay = 1000.0/tickrate;
 
 Servidor::Servidor(int puerto, std::string archivo) {
 	this->puerto = puerto;
+	config = new Config();
+	config->parsearXML(archivo);
 	detenido = false;
 	socketD = INVALID_SOCKET;
 	juego = nullptr;
@@ -66,7 +68,7 @@ int Servidor::crearSocket() {
 				sizeof(serverAddress));
 		if (response == 0) {
 			funcion = "listen";
-			response = listen(socketD, 4);
+			response = listen(socketD, 4);				//config->getCantidadMaximaJugadores()
 		}
 	}
 
@@ -165,3 +167,6 @@ Juego * Servidor::getJuego() {
 	return juego;
 }
 
+Config *Servidor::getConfig() {
+	return config;
+}
