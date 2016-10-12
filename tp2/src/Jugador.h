@@ -18,15 +18,20 @@ public:
 	Jugador(int id, std::string nombre);
 	~Jugador();
 
+	std::string getNombre();
+
 	void caminar(Direccion direccion);
 	void detenerse();
 	void saltar();
+
+	void setConectado(bool conectado);
 
 	virtual bool tieneCambios();
 
 private:
 	bool actualizar();
 
+	bool cambios;
 	std::string nombre;
 	double velocCaminar, velocSaltoX, velocSaltoY;
 	millis tiempoSalto;

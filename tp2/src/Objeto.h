@@ -10,7 +10,7 @@
 
 #include "Utils.h"
 
-enum class Estado { Quieto, Caminando, Saltando };
+enum class Estado { Quieto, Caminando, Saltando, Desconectado };
 enum class Tipo { Jugador };
 enum class Evento { Agregar, Modificar, Eliminar };
 

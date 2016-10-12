@@ -1,6 +1,7 @@
 #include "Cliente.h"
 
 Cliente::Cliente(std::string cHost, int cPuerto, std::string usuario) {
+	cerrado = false;
 	conectado = false;
 	puerto = cPuerto;
 	host = cHost;
@@ -15,26 +16,37 @@ Cliente::~Cliente() {
 void Cliente::iniciar() {
 	conectar();
 	if (conectado) {
-		{
+		HandshakeRequest handshakeRequest;
+		usuario.copy(handshakeRequest.nombre, sizeof handshakeRequest.nombre);
+		handshakeRequest.nombre[usuario.size()] = '\0';
+
+		try {
 			Bytes bytes;
-			HandshakeRequest handshakeRequest;
-			usuario.copy(handshakeRequest.nombre, sizeof handshakeRequest.nombre);
 			bytes.put(handshakeRequest);
+			debug("Enviando handshake");
 			con.enviar(bytes);
-		}
 
-		Bytes bytes = con.recibir();
-		HandshakeResponse handshakeResponse;
-		bytes.getSerializable(handshakeResponse);
+			debug("Recibiendo respuesta a handshake");
+			bytes = con.recibir();
+			HandshakeResponse handshakeResponse;
+			bytes.getSerializable(handshakeResponse);
 
-		if (handshakeResponse.aceptado) {
-			vista = new Vista(eventosTeclado);
-			t_enviarEventos = std::thread(&Cliente::enviarEventos, this);
-			t_recibirAct = std::thread(&Cliente::recibirActualizaciones, this);
-			vista->iniciar();
-		} else {
+			if (handshakeResponse.aceptado) {
+				debug("Usuario aceptado");
+
+				vista = new Vista(eventosTeclado);
+				t_enviarEventos = std::thread(&Cliente::enviarEventos, this);
+				t_recibirAct = std::thread(&Cliente::recibirActualizaciones, this);
+				vista->recibirActualizaciones(handshakeResponse.estado);
+				vista->iniciar(); //Bloquea
+
+			} else {
+				conectado = false;
+				error("El servidor no acepto un nuevo usuario", true);
+			}
+		} catch (SocketException&) {
 			conectado = false;
-			error("El servidor no acepto un nuevo usuario", true);
+			error("Error de conexion durante el handshake");
 		}
 	}
 }
@@ -48,7 +60,9 @@ void Cliente::enviarEventos() {
 			bytes.put(estado);
 			con.enviar(bytes);
 		} catch (ColaCerrada&) {
-			break;
+			conectado = false;
+		} catch (SocketException&) {
+			conectado = false;
 		}
 	}
 }
@@ -57,7 +71,6 @@ void Cliente::recibirActualizaciones() {
 	while (conectado) {
 		try {
 			Bytes bytes = con.recibir();
-
 			int comando;
 			bytes.get(comando);
 			if (comando == UPD) {
@@ -65,7 +78,10 @@ void Cliente::recibirActualizaciones() {
 				bytes.getAll(actualizaciones);
 				vista->recibirActualizaciones(actualizaciones);
 			}
-		} catch (SocketException&) {}
+		} catch (SocketException&) {
+			conectado = false;
+			vista->detener();
+		}
 	}
 }
 
@@ -104,31 +120,40 @@ void Cliente::conectar() {
 }
 
 void Cliente::desconectar() {
-	if (conectado) {
-		conectado = false;
+	if (! cerrado) {
+		cerrado = true;
 
-		debug("Esperando que termine thread enviarEventos");
+		if (conectado) {
+			conectado = false;
+			Bytes bytes;
+			bytes.put(BYE);
+			try {
+				con.enviar(bytes);
+				info("Desconexion exitosa con: " + host);
+			} catch (SocketException&){}
+		}
+
 		eventosTeclado.cerrar();
-		t_enviarEventos.join();
-		debug("Thread enviarEventos termino");
-		
-		debug("Esperando que termine thread recibirActualizaciones");
 		con.cancelarRecepcion();
-		t_recibirAct.join();
-		debug("Thread recibirActualizaciones termino");
 
-		vista->detener();
-		delete vista;
+		if (t_enviarEventos.joinable()) {
+			debug("Esperando que termine thread enviarEventos");
+			t_enviarEventos.join();
+			debug("Thread enviarEventos termino");
+		}
 
-		Bytes bytes;
-		bytes.put(BYE);
-		try {
-			con.enviar(bytes);
-			info("Desconexion exitosa con: " + host, true);
-		} catch (SocketException&){}
+		if (t_recibirAct.joinable()) {
+			debug("Esperando que termine thread recibirActualizaciones");
+			t_recibirAct.join();
+			debug("Thread recibirActualizaciones termino");
+		}
+
+		if (vista != nullptr) {
+			vista->detener();
+			delete vista;
+		}
+
 		con.cerrar();
-	} else {
-		warn("No hay una Conexion abierta");
 	}
 }
 

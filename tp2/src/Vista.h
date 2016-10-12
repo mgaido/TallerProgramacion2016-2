@@ -8,8 +8,8 @@
 #ifndef VISTA_H_
 #define VISTA_H_
 
-#include "Actualizacion.h"
 #include "Conexion.h"
+#include "Actualizacion.h"
 #include "Teclas.h"
 #include "Logger.h"
 #include "Utils.h"

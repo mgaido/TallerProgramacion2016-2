@@ -48,15 +48,31 @@ bool Juego::getActualizaciones(Bytes& bytes) {
 			upd.setTipo(obj->getTipo());
 			upd.setEstado(obj->getEstado());
 			upd.setPos(obj->getPos());
+			upd.setTamanio(obj->getTamanio());
 			actualizaciones.push_back(upd);
 		}
 		it++;
 	}
-
 	if (hayActualizaciones) {
 		bytes.put(UPD);
 		bytes.putAll(actualizaciones);
 	}
 	actualizaciones.clear();
 	return hayActualizaciones;
+}
+
+void Juego::getEstado(std::vector<Actualizacion>& estado) {
+	auto it = objetos.begin();
+	while (it != objetos.end()) {
+		Objeto* obj = *it;
+		Actualizacion upd;
+		upd.setId(obj->getId());
+		upd.setEvento(Evento::Agregar);
+		upd.setTipo(obj->getTipo());
+		upd.setEstado(obj->getEstado());
+		upd.setPos(obj->getPos());
+		upd.setTamanio(obj->getTamanio());
+		estado.push_back(upd);
+		it++;
+	}
 }

@@ -8,11 +8,11 @@
 #ifndef JUEGO_H_
 #define JUEGO_H_
 
-#include "Actualizacion.h"
 #include "Conexion.h"
 #include "Jugador.h"
 #include "Objeto.h"
 #include "Bytes.h"
+#include "Actualizacion.h"
 #include "Logger.h"
 
 class Juego {
@@ -20,6 +20,7 @@ public:
 	Juego();
 
 	Jugador* nuevoJugador(std::string nombre);
+	void getEstado(std::vector<Actualizacion>& estado);
 	bool getActualizaciones(Bytes& bytes);
 	bool estaIniciado();
 

@@ -49,10 +49,10 @@ Bytes Conexion::recibir() {
 	pollD[0].events = POLLIN;
 	int response = 0;
 	do {
-		response = poll(pollD, 1, 250);
+		response = poll(pollD, 1, 500);
 	} while (response == 0 && puedeRecibir && socketD != INVALID_SOCKET);
 
-	if (response > 0) {
+	if (response > 0 && puedeRecibir) {
 		Bytes mensaje;
 
 		int size;
@@ -72,7 +72,6 @@ Bytes Conexion::recibir() {
 					throw SocketException();
 				}
 			}
-
 			mensaje.fromVector(bytes);
 			return mensaje;
 		} else {
@@ -81,10 +80,10 @@ Bytes Conexion::recibir() {
 		}
 	}
 
-	if (response < 0)
-		error("Error leyendo la longitud del mensaje del socket. Codigo " + std::to_string(getLastError()));
-	else
-		error("No se puede recibir: conexion cerrara");
+	if (puedeRecibir && response < 0) {
+		error("Error esperando datos para lectura. Codigo " + std::to_string(getLastError()));
+	} else
+		debug("No se puede recibir: conexion cerrada");
 
 	throw SocketException();
 }
@@ -96,6 +95,7 @@ void Conexion::cancelarRecepcion() {
 void Conexion::cerrar() {
 	if (socketD != INVALID_SOCKET) {
 		closesocket(socketD);
+		info("Socket " + std::to_string(socketD) + " cerrado");
 		socketD = INVALID_SOCKET;
 	}
 }

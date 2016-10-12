@@ -24,6 +24,10 @@ bool Teclas::der() {
 	return (estado & (1 << DER)) != 0;
 }
 
+bool Teclas::reset() {
+	return (estado & (1 << R)) != 0;
+}
+
 int Teclas::getEstado() {
 	return estado;
 }

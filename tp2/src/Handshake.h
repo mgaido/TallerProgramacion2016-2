@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Actualizacion.h"
 #include "Bytes.h"
+#include "Actualizacion.h"
 #include "Utils.h"
 
 class HandshakeRequest {
@@ -26,9 +26,12 @@ public:
 	virtual void toBytes(Bytes &bytes);
 	virtual void fromBytes(Bytes &bytes);
 
+	unsigned short maximoJugadores=6;
+	Punto ventana;
 	std::vector<Sprite> sprites;
 	std::vector<Fondo> fondos;
 };
+
 class HandshakeResponse : public Serializable {
 public:
 	HandshakeResponse();
@@ -37,8 +40,8 @@ public:
 	virtual void fromBytes(Bytes &bytes);
 
 	bool aceptado;
-	std::vector<Actualizacion> estado;
 	Configuracion configuracion;
+	std::vector<Actualizacion> estado;
 };
 
 

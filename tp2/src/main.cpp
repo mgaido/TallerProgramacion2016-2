@@ -8,9 +8,10 @@ Logger* logger;
 #undef main
 
 int main(int argc, char *argv[]) {
+	bool client = true;
 	bool server = true;
 	std::string host = "127.0.0.1";
-	std::string usuario = "usuario";
+	std::string usuario = "player1";
 	std::string archivo = "config.xml";
 	int puerto = 10000;
 
@@ -39,6 +40,9 @@ int main(int argc, char *argv[]) {
 						archivo = std::string(argv[++i]);
 					}
 					break;
+				case 's':
+					client = false;
+					break;
 				default:
 					break;
 				}
@@ -49,25 +53,30 @@ int main(int argc, char *argv[]) {
 	initSockets();
 	logger = new Logger("tp2.log");
 	{
-		std::cout << "Iniciado servidor en puerto " << std::to_string(puerto) << " y leyendo configuracion de " << archivo << std::endl;
+		std::cout << "> Iniciado servidor en puerto " << std::to_string(puerto) << " y leyendo configuracion de " << archivo << std::endl;
 		Servidor servidor(puerto, archivo);
 		if (server) {
 			servidor.iniciar();
 			std::this_thread::sleep_for(std::chrono::milliseconds(200));
 		}
 
-		{
-			std::cout << "Iniciando cliente - Se conectara a: " << host << ':' << std::to_string(puerto) << std::endl;
+		if (client) {
+			std::cout << "> Iniciando cliente - Se conectara a: " << host << ':' << std::to_string(puerto) << std::endl;
 			Cliente cliente(host, puerto, usuario);
 			cliente.iniciar();
 			cliente.desconectar();
-			debug("Cliente finalizado", true);
+			debug("> Cliente finalizado", true);
 		}
 
 		if (server) {
-			debug("Deteniendo servidor", true);
+			if (! client) {
+				std::cout << "Presione enter para detener el servidor" << std::endl;
+				std::string s;
+				getline(std::cin, s);
+			}
+
 			servidor.detener();
-			debug("Cliente finalizado", true);
+			debug("> Servidor finalizado", true);
 		}
 	}
 

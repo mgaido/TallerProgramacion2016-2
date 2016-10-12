@@ -12,6 +12,7 @@ double vy = 1.4;
 double g = 0.0045;
 
 Jugador::Jugador(int id, std::string nombre) : Objeto(id) {
+	this->nombre = nombre;
 	tamanio.x=60;
 	tamanio.y=100;
 	velocCaminar = 0, velocSaltoX = 0, velocSaltoY = 0;
@@ -21,9 +22,15 @@ Jugador::Jugador(int id, std::string nombre) : Objeto(id) {
 
 	estado = Estado::Quieto;
 	tipo = Tipo::Jugador;
+
+	cambios = false;
 }
 
 Jugador::~Jugador() {
+}
+
+std::string Jugador::getNombre() {
+	return nombre;
 }
 
 void Jugador::caminar(Direccion direccion) {
@@ -60,49 +67,65 @@ bool Jugador::tieneCambios() {
 	return actualizar();
 }
 
+void Jugador::setConectado(bool conectado) {
+	if (estado == Estado::Desconectado && conectado) {
+		estado = Estado::Quieto;
+		cambios = true;
+	}
+
+	if (estado != Estado::Desconectado && ! conectado) {
+		estado = Estado::Desconectado;
+		cambios = true;
+	}
+}
 
 bool Jugador::actualizar() {
-	millis t;
-	double vx = 0;
+	if (estado != Estado::Desconectado) {
 
-	if (tiempoSalto > 0) {
-		vx = velocSaltoX;
-		t = tiempo() - tiempoSalto;
-		velocSaltoY -= t*g;
-		tiempoSalto += t;
-	} else if (tiempoCaminando > 0) {
-		vx = velocCaminar;
-		t = tiempo() - tiempoCaminando;
-		tiempoCaminando += t;
+		millis t=0;
+		double vx = 0;
+
+		if (tiempoSalto > 0) {
+			vx = velocSaltoX;
+			t = tiempo() - tiempoSalto;
+			velocSaltoY -= t*g;
+			tiempoSalto += t;
+		} else if (tiempoCaminando > 0) {
+			vx = velocCaminar;
+			t = tiempo() - tiempoCaminando;
+			tiempoCaminando += t;
+		}
+
+		cambios |= t != 0;
+
+		pos.x += (int) (vx*t);
+		pos.y += (int) (velocSaltoY*t);
+		if (tiempoSalto > 0 && pos.y <= 0) {
+			pos.y = 0;
+			velocSaltoX = 0;
+			velocSaltoY = 0;
+			if (velocCaminar != 0)
+				tiempoCaminando = tiempoSalto;
+			tiempoSalto = 0;
+		}
+
+		if (t > 0 && pos.x < 0)
+			pos.x = 0;
+
+		Estado estado;
+		if (tiempoSalto > 0)
+			estado = Estado::Saltando;
+		else if (tiempoCaminando > 0)
+			estado = Estado::Caminando;
+		else
+			estado = Estado::Quieto;
+
+		cambios |= estado != this->estado;
+		this->estado = estado;
 	}
 
-	bool cambios = t != 0;
-
-	pos.x += (int) (vx*t);
-	pos.y += (int) (velocSaltoY*t);
-	if (tiempoSalto > 0 && pos.y <= 0) {
-		pos.y = 0;
-		velocSaltoX = 0;
-		velocSaltoY = 0;
-		if (velocCaminar != 0)
-			tiempoCaminando = tiempoSalto;
-		tiempoSalto = 0;
-	}
-
-	if (t > 0 && pos.x < 0)
-		pos.x = 0;
-	
-	Estado estado;
-	if (tiempoSalto > 0)
-		estado = Estado::Saltando;
-	else if (tiempoCaminando > 0)
-		estado = Estado::Caminando;
-	else
-		estado = Estado::Quieto;
-
-	cambios |= estado != this->estado;
-	this->estado = estado;
-
-	return cambios;
+	bool rv = cambios;
+	cambios = false;
+	return rv;
 }
 

@@ -20,6 +20,7 @@ class Bytes;
 
 class Serializable {
 public:
+	virtual ~Serializable(){};
 	virtual void toBytes(Bytes &bytes) = 0;
 	virtual void fromBytes(Bytes &bytes) = 0;
 };

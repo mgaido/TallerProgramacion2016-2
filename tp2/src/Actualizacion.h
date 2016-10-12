@@ -72,6 +72,9 @@ public:
 			case Estado::Saltando:
 				estado = "saltando";
 				break;
+			case Estado::Desconectado:
+				estado = "desconectado";
+				break;
 			default:
 				estado = "???";
 			}

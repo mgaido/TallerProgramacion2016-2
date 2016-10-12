@@ -7,7 +7,7 @@
 
 #include "Vista.h"
 
-int framerate = 90;
+int framerate = 60;
 double frameDelay = 1000.0/framerate;
 
 Vista::Vista(ColaBloqueante<int>& _eventosTeclado) : eventosTeclado(_eventosTeclado) {
@@ -18,6 +18,9 @@ Vista::Vista(ColaBloqueante<int>& _eventosTeclado) : eventosTeclado(_eventosTecl
 }
 
 Vista::~Vista() {
+	SDL_DestroyWindow(ventana);
+	SDL_DestroyRenderer(renderer);
+	SDL_Quit();
 }
 
 void Vista::iniciar() {
@@ -50,12 +53,7 @@ void Vista::clear() {
 }
 
 void Vista::detener() {
-	if (! detenido) {
-		detenido = true;
-		SDL_DestroyWindow(ventana);
-		SDL_DestroyRenderer(renderer);
-		SDL_Quit();
-	}
+	detenido = true;
 }
 
 void Vista::cicloPrincipal() {
@@ -97,6 +95,9 @@ void Vista::enviarEventos() {
 			case SDLK_RIGHT:
 				cambio = teclas.evento(DER, evento.type == SDL_KEYDOWN);
 				break;
+			case SDLK_r:
+				cambio = teclas.evento(R, evento.type == SDL_KEYDOWN);
+				break;
 			default:
 				break;
 			}
@@ -112,7 +113,7 @@ void Vista::actualizar() {
 
 	auto it = actualizaciones.begin();
 	while (it != actualizaciones.end()) {
-		//info(it->toString(), true);
+		info(it->toString(), true);
 
 		if (it->getEvento() == Evento::Agregar) {
 			SDL_Rect rect;
@@ -121,6 +122,7 @@ void Vista::actualizar() {
 			rect.x = it->getPos().x;
 			rect.y = 400 - it->getPos().y;
 			objs[it->getId()] = rect;
+
 		} else if (it->getEvento() == Evento::Modificar) {
 			SDL_Rect rect = objs[it->getId()];
 			rect.x = it->getPos().x;

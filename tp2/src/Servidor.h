@@ -9,6 +9,11 @@
 
 class Sesion;
 
+struct Peticion {
+	SOCKET socketD;
+	std::string ip;
+};
+
 class Servidor {
 
 public:
@@ -18,20 +23,23 @@ public:
 	void iniciar();
 	void detener();
 
-	void removerSesion(Sesion* sesion);
-	Juego* getJuego();
-
 private:
 	SOCKET socketD;
 	int puerto;
 	bool detenido;
+
+	Configuracion configuracion;
 	std::thread t_aceptarConexiones;
-	std::vector<Sesion*> sesiones;
-	Juego* juego;
+	ColaBloqueante<Peticion> peticiones;
 	std::thread t_juego;
+	Juego* juego;
+	std::thread t_procesarPeticiones;
+	std::vector<Sesion*> sesiones;
+
 
 	int crearSocket();
 	void aceptarConexiones();
+	void procesarPeticiones();
 	void avanzarJuego();
 };
 

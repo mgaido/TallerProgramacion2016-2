@@ -13,29 +13,30 @@
 #include "Juego.h"
 #include "Servidor.h"
 
-class Servidor;
-
 class Sesion {
 public:
-	Sesion(SOCKET socketD, std::string ip, Servidor* servidor);
+	Sesion(SOCKET socketD, std::string ip, Jugador* jugador);
 	~Sesion();
+
+	bool estaActiva();
+	void activar(SOCKET socketD);
+	std::string getNombre();
+
+	Jugador* getJugador();
 	void nuevaActualizacion(Bytes bytes);
-	void detener();
+	void desconectar();
 
 private:
 	void atenderCliente();
 	void eventoTeclado(Bytes& bytes);
-	void desconectar();
+	void enviarActualizaciones();
 
-	void enviarActializaciones();
-
-	bool detenido;
-	Servidor* servidor;
+	bool activa;
 	Jugador* jugador;
+	ColaBloqueante<Bytes> actualizaciones;
 
 	std::string ip;
 	Conexion con;
-	ColaBloqueante<Bytes> actualizaciones;
 
 	std::thread t_atenderCliente;
 	std::thread t_enviarActualizaciones;

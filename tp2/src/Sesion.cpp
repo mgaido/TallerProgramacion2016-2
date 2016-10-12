@@ -7,38 +7,34 @@
 
 #include "Sesion.h"
 
-Sesion::Sesion(SOCKET socketD, std::string ip, Servidor* servidor) {
+Sesion::Sesion(SOCKET socketD, std::string ip, Jugador* jugador) {
 	this->ip = ip;
-	this->detenido=false;
-	this->servidor = servidor;
-	this->jugador = nullptr;
-
+	this->activa=true;
+	this->jugador = jugador;
 	con.setSocket(socketD);
-	info("Cliente " + ip + " conectado.");
 	this->t_atenderCliente = std::thread(&Sesion::atenderCliente, this);
-	this->t_enviarActualizaciones = std::thread(&Sesion::enviarActializaciones, this);
+	this->t_enviarActualizaciones = std::thread(&Sesion::enviarActualizaciones, this);
+	jugador->setConectado(true);
 }
 
 Sesion::~Sesion(){
-	debug("Esperando que termine thread atenderCliente");
-	t_atenderCliente.join();
-	debug("Thread atenderCliente termino");
+}
 
-	debug("Esperando que termine thread enviarActualizaciones");
-	t_enviarActualizaciones.join();
-	debug("Thread enviarActualizaciones termino");
+bool Sesion::estaActiva() {
+	return activa;
+}
+
+Jugador* Sesion::getJugador() {
+	return jugador;
 }
 
 void Sesion::nuevaActualizacion(Bytes bytes) {
-	if (! detenido)
+	if (activa)
 		actualizaciones.encolar(bytes);
 }
 
 void Sesion::atenderCliente() {
-	//TODO handshake
-	jugador = servidor->getJuego()->nuevoJugador(ip);
-
-	while (! detenido) {
+	while (activa) {
 		try {
 			Bytes bytes = con.recibir();
 			if ( bytes.size() > 0) {
@@ -47,15 +43,16 @@ void Sesion::atenderCliente() {
 				if (comando == KEY) {
 					eventoTeclado(bytes);
 				} else if (comando == BYE) {
+					info("Jugador '" + jugador->getNombre() + "' desconectado desde " + ip, true);
 					desconectar();
 				} else {
 					warn("Comando invalido: " + std::to_string(comando));
 				}
 			}
 		} catch (SocketException&) {
-			if (! detenido) {
+			if (activa) {
 				error("Error de conexion con " + ip);
-				detener();
+				desconectar();
 			}
 		}
 	}
@@ -82,33 +79,39 @@ void Sesion::eventoTeclado(Bytes& bytes) {
 	}
 }
 
-void Sesion::enviarActializaciones() {
-	while (! detenido) {
+void Sesion::enviarActualizaciones() {
+	while (activa) {
 		try {
 			Bytes bytes = actualizaciones.desencolar();
 			con.enviar(bytes);
 		} catch (ColaCerrada&) {
 			break;
 		} catch (SocketException&) {
-			detener();
+			desconectar();
 			break;
 		}
 	}
 }
 
-void Sesion::detener() {
-	if (!detenido) {
-		detenido = true;
-		servidor->removerSesion(this);
-		
-		con.cancelarRecepcion();
-		actualizaciones.cerrar();
-		con.cerrar();
-	}
-}
-
 void Sesion::desconectar() {
-	info("Cliente " + ip + " desconectado.");
-	//TODO avisarle al juego
-	detener();
+	if (activa) {
+		activa = false;
+		actualizaciones.cerrar();
+		con.cancelarRecepcion();
+		jugador->setConectado(false);
+	}
+
+	if (t_enviarActualizaciones.joinable() && t_enviarActualizaciones.get_id() != std::this_thread::get_id()) {
+		debug("Esperando que termine thread enviarActualizaciones");
+		t_enviarActualizaciones.join();
+		debug("Thread enviarActualizaciones termino");
+	}
+
+	if (t_atenderCliente.joinable() && t_atenderCliente.get_id() != std::this_thread::get_id()) {
+		debug("Esperando que termine thread atenderCliente");
+		t_atenderCliente.join();
+		debug("Thread atenderCliente termino");
+	}
+
+	con.cerrar();
 }

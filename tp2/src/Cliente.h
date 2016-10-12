@@ -24,6 +24,7 @@ private:
 	int puerto;
 	Conexion con;
 	bool conectado;
+	bool cerrado;
 	std::string usuario;
 
 	ColaBloqueante<int> eventosTeclado;
