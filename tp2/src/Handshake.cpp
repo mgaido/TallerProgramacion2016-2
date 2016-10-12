@@ -6,13 +6,13 @@ HandshakeResponse::HandshakeResponse() {
 
 void HandshakeResponse::toBytes(Bytes & bytes) {
 	bytes.put(aceptado);
-	bytes.putSerializable(configuracion);
+	//bytes.putSerializable(configuracion);
 	bytes.putAll(estado);
 }
 
 void HandshakeResponse::fromBytes(Bytes & bytes) {
 	bytes.get(aceptado);
-	bytes.getSerializable(configuracion);
+	//bytes.getSerializable(configuracion);
 	bytes.getAll(estado);
 }
 

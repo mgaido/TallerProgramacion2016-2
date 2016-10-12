@@ -37,3 +37,4 @@ Tipo Objeto::getTipo() {
 bool Objeto::tieneCambios() {
 	return false;
 }
+

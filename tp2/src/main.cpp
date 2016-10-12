@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
 		if (server) {
 			servidor.iniciar();
 			std::this_thread::sleep_for(std::chrono::milliseconds(200));
-		}
+		} 
 
 		if (client) {
 			std::cout << "> Iniciando cliente - Se conectara a: " << host << ':' << std::to_string(puerto) << std::endl;

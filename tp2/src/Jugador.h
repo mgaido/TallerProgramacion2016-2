@@ -18,13 +18,12 @@ public:
 	Jugador(int id, std::string nombre);
 	~Jugador();
 
-	std::string getNombre();
-
 	void caminar(Direccion direccion);
 	void detenerse();
 	void saltar();
 
 	void setConectado(bool conectado);
+	std::string getNombre();
 
 	virtual bool tieneCambios();
 

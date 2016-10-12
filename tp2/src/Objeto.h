@@ -34,6 +34,7 @@ public:
 	Estado getEstado();
 	Tipo getTipo();
 
+
 	virtual bool tieneCambios();
 
 

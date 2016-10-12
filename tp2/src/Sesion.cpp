@@ -11,6 +11,7 @@ Sesion::Sesion(SOCKET socketD, std::string ip, Jugador* jugador) {
 	this->ip = ip;
 	this->activa=true;
 	this->jugador = jugador;
+
 	con.setSocket(socketD);
 	this->t_atenderCliente = std::thread(&Sesion::atenderCliente, this);
 	this->t_enviarActualizaciones = std::thread(&Sesion::enviarActualizaciones, this);

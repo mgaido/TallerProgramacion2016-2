@@ -1,6 +1,7 @@
 #ifndef SERVIDOR_H
 #define SERVIDOR_H
 
+#include "Config.h"
 #include "Handshake.h"
 #include "Sesion.h"
 #include "Sockets.h"
@@ -23,19 +24,23 @@ public:
 	void iniciar();
 	void detener();
 
+	Juego* getJuego();
+	Config* getConfig();
+
 private:
 	SOCKET socketD;
 	int puerto;
+	Config* config;
 	bool detenido;
 
 	Configuracion configuracion;
 	std::thread t_aceptarConexiones;
 	ColaBloqueante<Peticion> peticiones;
 	std::thread t_juego;
+
 	Juego* juego;
 	std::thread t_procesarPeticiones;
 	std::vector<Sesion*> sesiones;
-
 
 	int crearSocket();
 	void aceptarConexiones();

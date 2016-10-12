@@ -12,7 +12,7 @@ Juego::Juego() {
 	contador = 0;
 }
 
-bool Juego::estaIniciado(){
+bool Juego::estaIniciado() {
 	return iniciado;
 }
 
@@ -37,6 +37,7 @@ Jugador* Juego::nuevoJugador(std::string nombre) {
 bool Juego::getActualizaciones(Bytes& bytes) {
 	bool hayActualizaciones = actualizaciones.size() > 0;
 
+	lock.lock();
 	auto it = objetos.begin();
 	while (it != objetos.end()) {
 		Objeto* obj = *it;
@@ -53,6 +54,7 @@ bool Juego::getActualizaciones(Bytes& bytes) {
 		}
 		it++;
 	}
+	lock.unlock();
 	if (hayActualizaciones) {
 		bytes.put(UPD);
 		bytes.putAll(actualizaciones);
@@ -62,6 +64,7 @@ bool Juego::getActualizaciones(Bytes& bytes) {
 }
 
 void Juego::getEstado(std::vector<Actualizacion>& estado) {
+	lock.lock();
 	auto it = objetos.begin();
 	while (it != objetos.end()) {
 		Objeto* obj = *it;
@@ -75,4 +78,5 @@ void Juego::getEstado(std::vector<Actualizacion>& estado) {
 		estado.push_back(upd);
 		it++;
 	}
+	lock.unlock();
 }
