@@ -17,9 +17,13 @@ Servidor::~Servidor() {
 
 void Servidor::iniciar() {
 	config = new Config();
-	config->parsearXML(archivo);
+	try {
+		config->parsearXML(archivo);
+	} catch (...) {
+		config->defaultConfig();
+	}
 
-	int response = crearSocket();
+	int		response = crearSocket();
 	if (response < 0) {
 		std::cerr << "No se pudo iniciar la conexion" << std::endl;
 	} else {
