@@ -30,6 +30,7 @@ private:
 	void atenderCliente();
 	void eventoTeclado(Bytes& bytes);
 	void enviarActualizaciones();
+	void enviarConfiguraciones();
 
 	bool activa;
 	Jugador* jugador;

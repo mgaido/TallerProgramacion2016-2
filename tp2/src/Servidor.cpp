@@ -89,7 +89,6 @@ int Servidor::crearSocket() {
 
 void Servidor::aceptarConexiones() {
 	int response = 0;
-
 	struct sockaddr_in clientAddress;
 	int clientAddressLength = sizeof(clientAddress);
 

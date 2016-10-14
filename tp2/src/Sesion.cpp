@@ -43,7 +43,10 @@ void Sesion::atenderCliente() {
 				bytes.get(comando);
 				if (comando == KEY) {
 					eventoTeclado(bytes);
-				} else if (comando == BYE) {
+				} else if (comando == INIT){
+					enviarConfiguraciones();
+				}
+				else if (comando == BYE) {
 					info("Jugador '" + jugador->getNombre() + "' desconectado desde " + ip, true);
 					desconectar();
 				} else {
@@ -90,6 +93,18 @@ void Sesion::enviarActualizaciones() {
 		} catch (SocketException&) {
 			desconectar();
 			break;
+		}
+	}
+}
+
+void Sesion::enviarConfiguraciones() {
+	if (activa) {
+		try {
+			Bytes bytes;
+			//creando serializacion de configuracion
+			con.enviar(bytes);
+		} catch (SocketException&) {
+			desconectar();
 		}
 	}
 }

@@ -5,6 +5,7 @@ const int HSK_RES = 1;
 const int KEY = 2;
 const int UPD = 3;
 const int BYE = 4;
+const int INIT = 5;
 
 Conexion::Conexion() {
 	this->socketD = INVALID_SOCKET;
