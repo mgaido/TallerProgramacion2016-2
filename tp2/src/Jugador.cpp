@@ -7,9 +7,9 @@
 
 #include "Jugador.h"
 
-double vx = 0.25;
-double vy = 1.4;
-double g = 0.0045;
+double vx = 0.00025;
+double vy = 0.0014;
+double g = 0.0000000045;
 
 Jugador::Jugador(int id, std::string nombre) : Objeto(id) {
 	this->nombre = nombre;
@@ -82,7 +82,7 @@ void Jugador::setConectado(bool conectado) {
 bool Jugador::actualizar() {
 	if (estado != Estado::Desconectado) {
 
-		millis t=0;
+		micros t=0;
 		double vx = 0;
 
 		if (tiempoSalto > 0) {
@@ -98,8 +98,8 @@ bool Jugador::actualizar() {
 
 		cambios |= t != 0;
 
-		pos.x += (int) (vx*t);
-		pos.y += (int) (velocSaltoY*t);
+		pos.x += (int) round(vx*t);
+		pos.y += (int) round(velocSaltoY*t);
 		if (tiempoSalto > 0 && pos.y <= 0) {
 			pos.y = 0;
 			velocSaltoX = 0;

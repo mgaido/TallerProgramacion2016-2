@@ -8,7 +8,7 @@
 #include "Vista.h"
 
 int framerate = 60;
-double frameDelay = 1000.0/framerate;
+double frameDelay = 1000000.0/framerate;
 
 Vista::Vista(ColaBloqueante<int>& _eventosTeclado) : eventosTeclado(_eventosTeclado) {
 	ventana = nullptr;
@@ -58,12 +58,12 @@ void Vista::detener() {
 
 void Vista::cicloPrincipal() {
 	while (! detenido) {
-		millis t = tiempo();
+		micros t = tiempo();
 		enviarEventos();
 		actualizar();
-		t = (millis) frameDelay - (tiempo() - t);
+		t = (micros) frameDelay - (tiempo() - t);
 		if (t > 0)
-			std::this_thread::sleep_for(std::chrono::milliseconds(t));
+			std::this_thread::sleep_for(std::chrono::milliseconds((long) t/1000));
 	}
 }
 

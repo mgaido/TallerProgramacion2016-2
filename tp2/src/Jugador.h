@@ -33,8 +33,8 @@ private:
 	bool cambios;
 	std::string nombre;
 	double velocCaminar, velocSaltoX, velocSaltoY;
-	millis tiempoSalto;
-	millis tiempoCaminando;
+	micros tiempoSalto;
+	micros tiempoCaminando;
 	std::mutex mutex;
 };
 

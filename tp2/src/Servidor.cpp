@@ -1,7 +1,7 @@
 #include "Servidor.h"
 
-int tickrate = 90;
-double tickDelay = 1000.0/tickrate;
+int tickrate = 60;
+double tickDelay = 1000000.0/tickrate;
 
 Servidor::Servidor(int puerto, std::string archivo) {
 	this->puerto = puerto;
@@ -32,7 +32,7 @@ void Servidor::iniciar() {
 
 void Servidor::avanzarJuego() {
 	while (! detenido) {
-		millis t = tiempo();
+		micros t = tiempo();
 		if (juego->estaIniciado()) {
 			Bytes bytes;
 			if (juego->getActualizaciones(bytes)) {
@@ -43,9 +43,9 @@ void Servidor::avanzarJuego() {
 				}
 			}
 		}
-		t = (millis) (tickDelay - (tiempo() - t));
+		t = (micros) (tickDelay - (tiempo() - t));
 		if (t > 0)
-			std::this_thread::sleep_for(std::chrono::milliseconds(t));
+			std::this_thread::sleep_for(std::chrono::milliseconds((long) t/1000));
 	}
 }
 

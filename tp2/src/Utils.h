@@ -11,8 +11,9 @@
 #include <iterator>
 #include <unordered_map>
 #include <vector>
+#include <cmath>
 
-using millis = unsigned long long;
+using micros = double;
 
 inline std::vector<std::string> split(std::string s, char delim) {
 	std::vector<std::string> parts;
@@ -26,8 +27,8 @@ inline std::vector<std::string> split(std::string s, char delim) {
 	return parts;
 }
 
-inline millis tiempo() {
-	return std::chrono::system_clock::now().time_since_epoch() / std::chrono::milliseconds(1);
+inline micros tiempo() {
+	return (micros) (std::chrono::system_clock::now().time_since_epoch() / std::chrono::microseconds(1));
 }
 
 #endif
