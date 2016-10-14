@@ -44,6 +44,17 @@ void Config::parsearXML(std::string archivo) {//falta chequeo de archivo mal for
 		*/
 }
 
+void Config::toBytes(Bytes & bytes) {
+	bytes.putAll(configCapas);
+	bytes.putAll(configSprites);
+}
+
+void Config::fromBytes(Bytes & bytes) {
+	bytes.getAll(configCapas);
+	bytes.getAll(configSprites);
+}
+
+
 void Config::defaultConfig() {
 	this->cantidadMaximaJugadores = 4;
 }

@@ -7,6 +7,7 @@
 #include "Logger.h"
 #include "Utils.h"
 #include "Vista.h"
+#include "Config.h"
 
 class Cliente {
 public:
@@ -29,6 +30,7 @@ private:
 
 	ColaBloqueante<int> eventosTeclado;
 	Vista* vista;
+	Config config;
 
 	std::thread t_enviarEventos;
 	std::thread t_recibirAct;

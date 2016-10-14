@@ -7,10 +7,11 @@
 
 #include "Sesion.h"
 
-Sesion::Sesion(SOCKET socketD, std::string ip, Jugador* jugador) {
+Sesion::Sesion(SOCKET socketD, std::string ip, Jugador* jugador, Config* config) {
 	this->ip = ip;
 	this->activa=true;
 	this->jugador = jugador;
+	this->config = config;
 
 	con.setSocket(socketD);
 	this->t_atenderCliente = std::thread(&Sesion::atenderCliente, this);
@@ -101,7 +102,8 @@ void Sesion::enviarConfiguraciones() {
 	if (activa) {
 		try {
 			Bytes bytes;
-			//creando serializacion de configuracion
+			bytes.put(INIT);
+			bytes.putSerializable(*config);
 			con.enviar(bytes);
 		} catch (SocketException&) {
 			desconectar();

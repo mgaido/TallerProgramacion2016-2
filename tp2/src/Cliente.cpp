@@ -6,7 +6,6 @@ Cliente::Cliente(std::string cHost, int cPuerto, std::string usuario) {
 	puerto = cPuerto;
 	host = cHost;
 	this->usuario = usuario;
-
 	vista = nullptr;
 }
 
@@ -33,13 +32,14 @@ void Cliente::iniciar() {
 
 			if (handshakeResponse.aceptado) {
 				debug("Usuario aceptado");
-
+				Bytes bytes;
+				bytes.put(INIT);
+				con.enviar(bytes);
 				vista = new Vista(eventosTeclado);
 				t_enviarEventos = std::thread(&Cliente::enviarEventos, this);
 				t_recibirAct = std::thread(&Cliente::recibirActualizaciones, this);
 				vista->recibirActualizaciones(handshakeResponse.estado);
 				vista->iniciar(); //Bloquea
-
 			} else {
 				conectado = false;
 				error("El servidor no acepto un nuevo usuario", true);
@@ -77,6 +77,14 @@ void Cliente::recibirActualizaciones() {
 				std::vector<Actualizacion> actualizaciones;
 				bytes.getAll(actualizaciones);
 				vista->recibirActualizaciones(actualizaciones);
+			} else if (comando == INIT) {
+				bytes.getSerializable(config);
+				std::cout << "IdMapa: " << config.getConfigCapas().at(0).idCapa << std::endl;
+				std::cout << "zIndexMapa: " << config.getConfigCapas().at(0).zIndexCapa << std::endl;
+				std::cout << "IdSprite: " << config.getConfigSprites().at(0).idSprite << std::endl;
+				std::cout << "zSprite: " << config.getConfigSprites().at(0).zIndexSprite << std::endl;
+				std::cout << "anchoSprite: " << config.getConfigSprites().at(0).anchoSprite << std::endl;
+				std::cout << "altoSprite: " << config.getConfigSprites().at(0).altoSprite << std::endl;
 			}
 		} catch (SocketException&) {
 			conectado = false;

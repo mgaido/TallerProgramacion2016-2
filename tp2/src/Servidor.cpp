@@ -167,7 +167,7 @@ void Servidor::procesarPeticiones() {
 
 			if (jugador != nullptr) {
 				res.aceptado = true;
-				sesiones.push_back(new Sesion(peticion.socketD, peticion.ip, jugador));
+				sesiones.push_back(new Sesion(peticion.socketD, peticion.ip, jugador, config));
 			} else {
 				res.aceptado = false;
 				res.estado.clear();

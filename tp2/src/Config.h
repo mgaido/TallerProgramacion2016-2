@@ -4,6 +4,7 @@
 #include "Utils.h"
 #include "rapidxml.hpp"
 #include "rapidxml_utils.hpp"
+#include "Bytes.h"
 
 typedef struct ConfigCapa {
 	std::string idCapa;
@@ -16,8 +17,11 @@ typedef struct ConfigSprite {
 	int altoSprite;
 };
 
-class Config {
+class Config : public Serializable {
 public:
+	virtual void toBytes(Bytes &bytes);
+	virtual void fromBytes(Bytes &bytes);
+
 	void parsearXML(std::string archivo);
 	int getCantidadMaximaJugadores();
 	std::vector<ConfigCapa> getConfigCapas();
