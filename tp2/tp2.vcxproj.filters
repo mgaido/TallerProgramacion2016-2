@@ -83,7 +83,7 @@
     <ClInclude Include="src\Utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Actualizacion.h">
+    <ClInclude Include="src\Estado.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Bytes.h">

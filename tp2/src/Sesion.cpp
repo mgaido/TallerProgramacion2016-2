@@ -15,7 +15,7 @@ Sesion::Sesion(SOCKET socketD, std::string ip, Jugador* jugador, Config* config)
 
 	con.setSocket(socketD);
 	this->t_atenderCliente = std::thread(&Sesion::atenderCliente, this);
-	this->t_enviarActualizaciones = std::thread(&Sesion::enviarActualizaciones, this);
+	this->t_enviarEstado = std::thread(&Sesion::enviarEstado, this);
 	jugador->setConectado(true);
 }
 
@@ -30,9 +30,9 @@ Jugador* Sesion::getJugador() {
 	return jugador;
 }
 
-void Sesion::nuevaActualizacion(Bytes bytes) {
+void Sesion::cambioDeEstado(Bytes bytes) {
 	if (activa)
-		actualizaciones.encolar(bytes);
+		estados.encolar(bytes);
 }
 
 void Sesion::atenderCliente() {
@@ -84,10 +84,10 @@ void Sesion::eventoTeclado(Bytes& bytes) {
 	}
 }
 
-void Sesion::enviarActualizaciones() {
+void Sesion::enviarEstado() {
 	while (activa) {
 		try {
-			Bytes bytes = actualizaciones.desencolar();
+			Bytes bytes = estados.desencolar();
 			con.enviar(bytes);
 		} catch (ColaCerrada&) {
 			break;
@@ -114,15 +114,15 @@ void Sesion::enviarConfiguraciones() {
 void Sesion::desconectar() {
 	if (activa) {
 		activa = false;
-		actualizaciones.cerrar();
+		estados.cerrar();
 		con.cancelarRecepcion();
 		jugador->setConectado(false);
 	}
 
-	if (t_enviarActualizaciones.joinable() && t_enviarActualizaciones.get_id() != std::this_thread::get_id()) {
-		debug("Esperando que termine thread enviarActualizaciones");
-		t_enviarActualizaciones.join();
-		debug("Thread enviarActualizaciones termino");
+	if (t_enviarEstado.joinable() && t_enviarEstado.get_id() != std::this_thread::get_id()) {
+		debug("Esperando que termine thread enviarEstado");
+		t_enviarEstado.join();
+		debug("Thread enviarEstado termino");
 	}
 
 	if (t_atenderCliente.joinable() && t_atenderCliente.get_id() != std::this_thread::get_id()) {

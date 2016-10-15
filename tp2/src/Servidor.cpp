@@ -39,10 +39,11 @@ void Servidor::avanzarJuego() {
 		micros t = tiempo();
 		if (juego->estaIniciado()) {
 			Bytes bytes;
-			if (juego->getActualizaciones(bytes)) {
+			bytes.put(UPD);
+			if (juego->getEstado(bytes)) {
 				auto it = sesiones.begin();
 				while (it != sesiones.end()) {
-					(*it)->nuevaActualizacion(bytes);
+					(*it)->cambioDeEstado(bytes);
 					it++;
 				}
 			}
@@ -148,8 +149,6 @@ void Servidor::procesarPeticiones() {
 					it++;
 			}
 
-			juego->getEstado(res.estado);
-
 			if (encontrado) {
 				if (jugador == nullptr) {
 					info("Ya existe jugador activo con nombre " + nombre, true);
@@ -170,7 +169,6 @@ void Servidor::procesarPeticiones() {
 				sesiones.push_back(new Sesion(peticion.socketD, peticion.ip, jugador, config));
 			} else {
 				res.aceptado = false;
-				res.estado.clear();
 			}
 
 			bytes = Bytes();

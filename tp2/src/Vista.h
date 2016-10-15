@@ -9,7 +9,7 @@
 #define VISTA_H_
 
 #include "Conexion.h"
-#include "Actualizacion.h"
+#include "Estado.h"
 #include "Teclas.h"
 #include "Logger.h"
 #include "Utils.h"
@@ -27,22 +27,20 @@ public:
 
 	void iniciar();
 	void detener();
-	void recibirActualizaciones(std::vector<Actualizacion>& actualizaciones);
+	void recibirEstado(std::vector<EstadoObj>& estado);
 
 private:
 	void cicloPrincipal();
 	void enviarEventos();
 	void actualizar();
 
-	void clear();
-
 	bool detenido;
 
 	Teclas teclas;
 	ColaBloqueante<int>& eventosTeclado;
 
-	std::mutex lockActualizaciones;
-	std::vector<Actualizacion> actualizaciones;
+	std::mutex lockEstado;
+	std::vector<EstadoObj> estado;
 
 	SDL_Window* ventana;
 	SDL_Renderer* renderer;

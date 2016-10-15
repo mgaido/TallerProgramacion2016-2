@@ -9,6 +9,7 @@
 
 Juego::Juego() {
 	iniciado = false;
+	cambios = true;
 	contador = 0;
 }
 
@@ -20,57 +21,26 @@ Jugador* Juego::nuevoJugador(std::string nombre) {
 	iniciado = true;
 
 	Jugador* jugador = new Jugador(++contador, nombre);
-	Actualizacion actualizacion;
-	actualizacion.setId(jugador->getId());
-	actualizacion.setEvento(Evento::Agregar);
-	actualizacion.setTipo(jugador->getTipo());
-	actualizacion.setEstado(jugador->getEstado());
-	actualizacion.setTamanio(jugador->getTamanio());
 	lock.lock();
 	objetos.push_back(jugador);
-	actualizaciones.push_back(actualizacion);
+	cambios = true;
 	lock.unlock();
 
 	return jugador;
 }
 
-bool Juego::getActualizaciones(Bytes& bytes) {
-	bool hayActualizaciones = actualizaciones.size() > 0;
+bool Juego::getEstado(Bytes& bytes) {
+	bool rv = false;;
+	std::vector<EstadoObj> estado;
 
 	lock.lock();
 	auto it = objetos.begin();
 	while (it != objetos.end()) {
 		Objeto* obj = *it;
-		if (obj->tieneCambios()) {
-			hayActualizaciones = true;
-			Actualizacion upd;
-			upd.setId(obj->getId());
-			upd.setEvento(Evento::Modificar);
-			upd.setTipo(obj->getTipo());
-			upd.setEstado(obj->getEstado());
-			upd.setPos(obj->getPos());
-			upd.setTamanio(obj->getTamanio());
-			actualizaciones.push_back(upd);
-		}
-		it++;
-	}
-	lock.unlock();
-	if (hayActualizaciones) {
-		bytes.put(UPD);
-		bytes.putAll(actualizaciones);
-	}
-	actualizaciones.clear();
-	return hayActualizaciones;
-}
+		cambios |= obj->tieneCambios();
 
-void Juego::getEstado(std::vector<Actualizacion>& estado) {
-	lock.lock();
-	auto it = objetos.begin();
-	while (it != objetos.end()) {
-		Objeto* obj = *it;
-		Actualizacion upd;
+		EstadoObj upd;
 		upd.setId(obj->getId());
-		upd.setEvento(Evento::Agregar);
 		upd.setTipo(obj->getTipo());
 		upd.setEstado(obj->getEstado());
 		upd.setPos(obj->getPos());
@@ -78,5 +48,11 @@ void Juego::getEstado(std::vector<Actualizacion>& estado) {
 		estado.push_back(upd);
 		it++;
 	}
+	rv = cambios;
+	cambios = false;
 	lock.unlock();
+
+	if (rv)
+		bytes.putAll(estado);
+	return rv;
 }

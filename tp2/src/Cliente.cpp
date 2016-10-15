@@ -37,8 +37,7 @@ void Cliente::iniciar() {
 				con.enviar(bytes);
 				vista = new Vista(eventosTeclado);
 				t_enviarEventos = std::thread(&Cliente::enviarEventos, this);
-				t_recibirAct = std::thread(&Cliente::recibirActualizaciones, this);
-				vista->recibirActualizaciones(handshakeResponse.estado);
+				t_recibirEstado = std::thread(&Cliente::recibirEstado, this);
 				vista->iniciar(); //Bloquea
 			} else {
 				conectado = false;
@@ -67,16 +66,16 @@ void Cliente::enviarEventos() {
 	}
 }
 
-void Cliente::recibirActualizaciones() {
+void Cliente::recibirEstado() {
 	while (conectado) {
 		try {
 			Bytes bytes = con.recibir();
 			int comando;
 			bytes.get(comando);
 			if (comando == UPD) {
-				std::vector<Actualizacion> actualizaciones;
-				bytes.getAll(actualizaciones);
-				vista->recibirActualizaciones(actualizaciones);
+				std::vector<EstadoObj> estado;
+				bytes.getAll(estado);
+				vista->recibirEstado(estado);
 			} else if (comando == INIT) {
 				bytes.getSerializable(config);
 				/*
@@ -152,10 +151,10 @@ void Cliente::desconectar() {
 			debug("Thread enviarEventos termino");
 		}
 
-		if (t_recibirAct.joinable()) {
-			debug("Esperando que termine thread recibirActualizaciones");
-			t_recibirAct.join();
-			debug("Thread recibirActualizaciones termino");
+		if (t_recibirEstado.joinable()) {
+			debug("Esperando que termine thread recibirEstado");
+			t_recibirEstado.join();
+			debug("Thread recibirEstado termino");
 		}
 
 		if (vista != nullptr) {

@@ -12,7 +12,7 @@
 #include "Jugador.h"
 #include "Objeto.h"
 #include "Bytes.h"
-#include "Actualizacion.h"
+#include "Estado.h"
 #include "Logger.h"
 
 class Juego {
@@ -20,8 +20,7 @@ public:
 	Juego();
 
 	Jugador* nuevoJugador(std::string nombre);
-	void getEstado(std::vector<Actualizacion>& estado);
-	bool getActualizaciones(Bytes& bytes);
+	bool getEstado(Bytes& bytes);
 	bool estaIniciado();
 
 private:
@@ -29,7 +28,7 @@ private:
 	std::mutex lock;
 	int contador;
 	std::vector<Objeto*> objetos;
-	std::vector<Actualizacion> actualizaciones;
+	bool cambios;
 };
 
 #endif /* JUEGO_H_ */

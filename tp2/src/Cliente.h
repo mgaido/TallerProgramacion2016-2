@@ -1,13 +1,13 @@
 #ifndef CLIENTE_H
 #define CLIENTE_H
 
-#include "Actualizacion.h"
 #include "Conexion.h"
 #include "Handshake.h"
 #include "Logger.h"
 #include "Utils.h"
 #include "Vista.h"
 #include "Config.h"
+#include "Estado.h"
 
 class Cliente {
 public:
@@ -19,7 +19,7 @@ public:
 private:
 	void conectar();
 	void enviarEventos();
-	void recibirActualizaciones();
+	void recibirEstado();
 
 	std::string host;
 	int puerto;
@@ -33,7 +33,7 @@ private:
 	Config config;
 
 	std::thread t_enviarEventos;
-	std::thread t_recibirAct;
+	std::thread t_recibirEstado;
 };
 
 #endif // CLIENTE_H

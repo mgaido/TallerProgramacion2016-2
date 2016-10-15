@@ -35,21 +35,9 @@ void Vista::iniciar() {
 			error("Window could not be created! SDL_Error: " + std::string(SDL_GetError()));
 		} else {
 			renderer = SDL_CreateRenderer(ventana, -1, SDL_RENDERER_ACCELERATED);
-			clear();
 			cicloPrincipal();
 		}
 	}
-}
-
-void Vista::clear() {
-	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-	SDL_RenderClear(renderer);
-
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-	for(auto kv : objs) {
-	    SDL_RenderFillRect(renderer, &kv.second);
-	}
-	SDL_RenderPresent(renderer);
 }
 
 void Vista::detener() {
@@ -67,12 +55,11 @@ void Vista::cicloPrincipal() {
 	}
 }
 
-void Vista::recibirActualizaciones(std::vector<Actualizacion>& actualizaciones) {
-	lockActualizaciones.lock();
-	this->actualizaciones.reserve(this->actualizaciones.size() + actualizaciones.size());
-	std::move(actualizaciones.begin(), actualizaciones.end(), std::inserter(this->actualizaciones, this->actualizaciones.end()));
-	actualizaciones.clear();
-	lockActualizaciones.unlock();
+void Vista::recibirEstado(std::vector<EstadoObj>& estado) {
+	lockEstado.lock();
+	this->estado.clear();
+	this->estado = estado;
+	lockEstado.unlock();
 }
 
 void Vista::enviarEventos() {
@@ -109,30 +96,29 @@ void Vista::enviarEventos() {
 }
 
 void Vista::actualizar() {
-	lockActualizaciones.lock();
+	lockEstado.lock();
 
-	auto it = actualizaciones.begin();
-	while (it != actualizaciones.end()) {
-		//info(it->toString(), true);
+	if (estado.size() > 0) {
+		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+		SDL_RenderClear(renderer);
 
-		if (it->getEvento() == Evento::Agregar) {
+		auto it = estado.begin();
+		while (it != estado.end()) {
+			info(it->toString(), true);
+
 			SDL_Rect rect;
 			rect.w = it->getTamanio().x;
 			rect.h = it->getTamanio().y;
 			rect.x = it->getPos().x;
 			rect.y = 400 - it->getPos().y;
-			objs[it->getId()] = rect;
 
-		} else if (it->getEvento() == Evento::Modificar) {
-			SDL_Rect rect = objs[it->getId()];
-			rect.x = it->getPos().x;
-			rect.y = 400 - it->getPos().y;
-			objs[it->getId()] = rect;
+			SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+			SDL_RenderFillRect(renderer, &rect);
+
+			estado.erase(it);
 		}
-
-		actualizaciones.erase(it);
+		SDL_RenderPresent(renderer);
 	}
-	lockActualizaciones.unlock();
 
-	clear();
+	lockEstado.unlock();
 }

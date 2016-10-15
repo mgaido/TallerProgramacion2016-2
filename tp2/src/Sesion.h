@@ -23,25 +23,25 @@ public:
 	std::string getNombre();
 
 	Jugador* getJugador();
-	void nuevaActualizacion(Bytes bytes);
+	void cambioDeEstado(Bytes bytes);
 	void desconectar();
 
 private:
 	void atenderCliente();
 	void eventoTeclado(Bytes& bytes);
-	void enviarActualizaciones();
+	void enviarEstado();
 	void enviarConfiguraciones();
 
 	bool activa;
 	Jugador* jugador;
 	Config* config;
-	ColaBloqueante<Bytes> actualizaciones;
+	ColaBloqueante<Bytes> estados;
 
 	std::string ip;
 	Conexion con;
 
 	std::thread t_atenderCliente;
-	std::thread t_enviarActualizaciones;
+	std::thread t_enviarEstado;
 };
 
 #endif /* SESION_H_ */

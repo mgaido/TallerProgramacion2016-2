@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Bytes.h"
-#include "Actualizacion.h"
+#include "Estado.h"
 #include "Utils.h"
 
 class HandshakeRequest {
@@ -41,7 +41,6 @@ public:
 
 	bool aceptado;
 	Configuracion configuracion;
-	std::vector<Actualizacion> estado;
 };
 
 
