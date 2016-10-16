@@ -22,6 +22,8 @@ Jugador* Juego::nuevoJugador(std::string nombre) {
 	iniciado = true;
 
 	Jugador* jugador = new Jugador(++contador, nombre);
+	jugador->getTamanio().x = configuracion.getTamanioJugador().x;
+	jugador->getTamanio().y = configuracion.getTamanioJugador().y;
 	jugador->getPos().x = escenario.getOffsetVista();
 	lock.lock();
 	jugadores.push_back(jugador);

@@ -15,6 +15,12 @@ void Config::parsearXML(std::string archivo) {
 	valor = nodo.hijo("alto").valor();
 	tamanioVentana.y = std::stoi(valor);
 
+	nodo = doc.hijo("jugador");
+	valor = nodo.hijo("ancho").valor();
+	tamanioJugador.x = std::stoi(valor);
+	valor = nodo.hijo("alto").valor();
+	tamanioJugador.y = std::stoi(valor);
+
 	valor = doc.hijo("longitud").valor();
 	longitud = std::stoi(valor);
 
@@ -76,6 +82,7 @@ void Config::parsearXML(std::string archivo) {
 
 void Config::toBytes(Bytes & bytes) {
 	bytes.put(tamanioVentana);
+	bytes.put(tamanioJugador);
 	bytes.put(cantidadMaximaJugadores);
 	bytes.put(nivelPiso);
 	bytes.put(longitud);
@@ -85,6 +92,7 @@ void Config::toBytes(Bytes & bytes) {
 
 void Config::fromBytes(Bytes & bytes) {
 	bytes.get(tamanioVentana);
+	bytes.get(tamanioJugador);
 	bytes.get(cantidadMaximaJugadores);
 	bytes.get(nivelPiso);
 	bytes.get(longitud);
@@ -96,14 +104,18 @@ void Config::defaultConfig() {
 	this->cantidadMaximaJugadores = 4;
 	this->tamanioVentana.x = 800;
 	this->tamanioVentana.y = 600;
+	this->tamanioJugador.x = 100;
+	this->tamanioJugador.y = 60;
 	this->longitud = this->tamanioVentana.x * 12;
-	this->nivelPiso = 400;
+	this->nivelPiso = tamanioVentana.y * 0.75;
 }
 
 std::string Config::toString() {
 	std::stringstream ss;
 
 	ss << "Ventana: " << tamanioVentana.x << "x" << tamanioVentana.y << "; ";
+	ss << "Jugador: " << tamanioJugador.x << "x" << tamanioJugador.y << "; ";
+
 	ss << "Longitud: " << longitud << "; ";
 	ss << "Nivel piso: " << nivelPiso << "; ";
 	ss << "Cantidad maxima jugadores: " << cantidadMaximaJugadores << "; ";
@@ -157,6 +169,10 @@ int Config::getCantidadMaximaJugadores() {
 
 Punto Config::getTamanioVentana() {
 	return tamanioVentana;
+}
+
+Punto Config::getTamanioJugador() {
+	return tamanioJugador;
 }
 
 int Config::getNivelPiso() {

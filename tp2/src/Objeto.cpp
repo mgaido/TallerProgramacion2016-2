@@ -53,7 +53,7 @@ Punto& Objeto::getPos() {
 	return pos;
 }
 
-Punto Objeto::getTamanio() {
+Punto& Objeto::getTamanio() {
 	return tamanio;
 }
 

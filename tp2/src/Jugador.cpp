@@ -13,8 +13,6 @@ double g = 0.0000000045;
 
 Jugador::Jugador(int id, std::string nombre) : Objeto(id) {
 	this->nombre = nombre;
-	tamanio.x=60;
-	tamanio.y=100;
 	velocCaminar = 0, velocSaltoX = 0, velocSaltoY = 0;
 
 	tiempoCaminando=0;

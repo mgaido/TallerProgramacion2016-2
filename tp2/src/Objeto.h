@@ -49,7 +49,7 @@ public:
 
 	int getId();
 	Punto& getPos();
-	Punto getTamanio();
+	Punto& getTamanio();
 	Estado getEstado();
 	Tipo getTipo();
 	int getFrame();

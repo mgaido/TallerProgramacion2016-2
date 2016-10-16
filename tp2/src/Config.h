@@ -28,6 +28,7 @@ public:
 
 	int getCantidadMaximaJugadores();
 	Punto getTamanioVentana();
+	Punto getTamanioJugador();
 	std::vector<ConfigCapa>& getConfigCapas();
 	std::vector<ConfigSprite>& getConfigSprites();
 	int getNivelPiso();
@@ -39,6 +40,7 @@ public:
 
 private:
 	Punto tamanioVentana;
+	Punto tamanioJugador;
 	int cantidadMaximaJugadores;
 	int longitud;
 	int nivelPiso;

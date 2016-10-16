@@ -3,10 +3,18 @@
 	<ancho>800</ancho>
 	<alto>600</alto>
 </ventana>
+<jugador>
+	<ancho>80</ancho>
+	<alto>140</alto>
+</jugador>
 <longitud>5000</longitud>
 <piso>450</piso>
 <maximo_numero_jugadores>4</maximo_numero_jugadores>
 <capas>
+	<capa>
+		<imagen>img/cielo.png</imagen>
+		<zindex>5</z_index>
+	</capa>
 	<capa>
 		<imagen>img/Mapa3.png</imagen>
 		<zindex>5</z_index>
