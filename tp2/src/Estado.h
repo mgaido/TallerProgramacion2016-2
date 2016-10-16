@@ -61,13 +61,20 @@ public:
 		this->nombre[std::min<int>(nombre.size(), this->nombre.size()-1)] = '\0';
 	}
 
-
 	inline int getFrame() const {
 		return frame;
 	}
 
 	inline void setFrame(int frame) {
 		this->frame = frame;
+	}
+
+	bool getOrientacion() {
+		return orientacion;
+	}
+
+	void setOrientacion(bool orientacion) {
+		this->orientacion = orientacion;
 	}
 
 	inline std::string toString() {
@@ -112,6 +119,7 @@ private:
 	Tipo tipo;
 	std::array<char, 100> nombre;
 	int frame;
+	bool orientacion;
 };
 
 #endif /* ESTADO_H_ */

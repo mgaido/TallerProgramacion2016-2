@@ -98,6 +98,9 @@ bool Jugador::actualizar() {
 
 		cambios |= t != 0;
 
+		if (vx != 0)
+			orientacion = vx < 0;
+
 		pos.x += (int) round(vx*t);
 		pos.y += (int) round(velocSaltoY*t);
 		if (tiempoSalto > 0 && pos.y <= 0) {

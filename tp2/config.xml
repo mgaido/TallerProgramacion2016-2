@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ventana>
-	<ancho>800</ancho>
-	<alto>600</alto>
+	<ancho>1280</ancho>
+	<alto>720</alto>
 </ventana>
 <jugador>
-	<ancho>80</ancho>
-	<alto>140</alto>
+	<ancho>100</ancho>
+	<alto>175</alto>
 </jugador>
-<longitud>5000</longitud>
-<piso>450</piso>
+<longitud>10000</longitud>
+<piso>550</piso>
 <maximo_numero_jugadores>4</maximo_numero_jugadores>
 <capas>
 	<capa>
 		<imagen>img/cielo.png</imagen>
-		<zindex>5</z_index>
+		<zindex>1</z_index>
 	</capa>
 	<capa>
 		<imagen>img/Mapa3.png</imagen>
-		<zindex>5</z_index>
+		<zindex>2</z_index>
 	</capa>
 	<capa>
 		<imagen>img/lineas.png</imagen>
-		<zindex>5</z_index>
+		<zindex>25</z_index>
 	</capa>
 </capas>
 <sprites>
@@ -29,6 +29,24 @@
 		<estado>Caminando</estado>
 		<imagen>img/caminando.png</imagen>
 		<zindex>10</z_index>
-		<frames>8</frames>
+		<frames>6</frames>
+	</sprite>
+	<sprite>
+		<estado>Saltando</estado>
+		<imagen>img/saltando.png</imagen>
+		<zindex>10</z_index>
+		<frames>1</frames>
+	</sprite>
+	<sprite>
+		<estado>Quieto</estado>
+		<imagen>img/quieto.png</imagen>
+		<zindex>10</z_index>
+		<frames>1</frames>
+	</sprite>
+	<sprite>
+		<estado>Desconectado</estado>
+		<imagen>img/desconectado.png</imagen>
+		<zindex>10</z_index>
+		<frames>1</frames>
 	</sprite>
 </sprites>

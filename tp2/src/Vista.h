@@ -18,19 +18,72 @@
 #include "SDL.h"
 #include "SDL_image.h"
 
-class Capa {
+class Imagen {
 public:
-	Capa();
-	~Capa();
-	void cargar(Punto ventana, int longitud, ConfigCapa& config, SDL_Renderer* renderer);
-	void aplicar(SDL_Renderer* surface, int offsetVista);
-private:
+	Imagen(Punto tamanioDestino);
+	virtual ~Imagen();
+	virtual void cargar(SDL_Renderer* renderer)=0;
+	virtual int getZindex() = 0;
+protected:
+	void cargarImagen(SDL_Renderer* renderer, std::array<char, 512>& path);
 	Punto tamanio;
-	int zIndex;
-	Punto ventana;
-	int longitud;
+	Punto tamanioDestino;
 	double escala;
 	SDL_Texture* img;
+};
+
+class RendererSprite;
+class Sprite: public Imagen {
+	friend class RendererSprite;
+public:
+	Sprite(Punto tamanioObj, ConfigSprite& config);
+	virtual void cargar(SDL_Renderer* renderer);
+	virtual int getZindex();
+
+private:
+	ConfigSprite& config;
+};
+
+class RendererCapa;
+class Capa: public Imagen {
+	friend class RendererCapa;
+public:
+	Capa(Punto ventana, int longitud, ConfigCapa& config);
+	virtual void cargar(SDL_Renderer* renderer);
+	virtual int getZindex();
+private:
+	ConfigCapa& config;
+	int longitud;
+};
+
+class Renderer {
+public:
+	virtual int getZindex() = 0;
+	virtual void aplicar(SDL_Renderer* renderer) = 0;
+};
+
+class RendererSprite : public Renderer {
+public:
+	RendererSprite(Sprite* sprite, Punto pos, int frame, bool orientacion, bool esJugador);
+	virtual int getZindex();
+	virtual void aplicar(SDL_Renderer* renderer);
+
+private:
+	Sprite* sprite;
+	Punto pos;
+	int frame;
+	bool orientacion;
+	bool esJugador;
+};
+
+class RendererCapa : public Renderer {
+public:
+	RendererCapa(Capa* capa, int offsetVista);
+	virtual int getZindex();
+	virtual void aplicar(SDL_Renderer* renderer);
+private:
+	Capa* capa;
+	int offsetVista;
 	SDL_Rect seccion, dest;
 };
 
@@ -66,6 +119,7 @@ private:
 	SDL_Window* ventana;
 	SDL_Renderer* renderer;
 	std::vector<std::shared_ptr<Capa>> capas;
+	std::unordered_map<Estado, std::shared_ptr<Sprite>> sprites;
 };
 
 

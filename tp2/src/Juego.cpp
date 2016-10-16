@@ -96,6 +96,8 @@ bool Juego::getEstado(Bytes& bytes) {
 			pos.y = escenario.getNivelPiso() - obj->getTamanio().y - obj->getPos().y;
 			estadoObj.setPos(pos);
 			estadoObj.setTamanio(obj->getTamanio());
+			estadoObj.setFrame(obj->getFrame());
+			estadoObj.setOrientacion(obj->getOrientacion());
 
 			if (obj->getTipo() == Tipo::Jugador)
 				estadoObj.setNombre(((Jugador*)obj)->getNombre());

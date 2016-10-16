@@ -36,10 +36,10 @@ void Escenario::setOffsetVista(int offsetVista) {
 	this->offsetVista = offsetVista;
 }
 
-
 Objeto::Objeto(int id) {
 	this->id = id;
 	this->frame = 0;
+	this->orientacion = false;
 }
 
 Objeto::~Objeto() {
@@ -72,3 +72,8 @@ bool Objeto::tieneCambios() {
 int Objeto::getFrame() {
 	return frame++;
 }
+
+bool Objeto::getOrientacion() {
+	return orientacion;
+}
+

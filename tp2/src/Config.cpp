@@ -77,7 +77,7 @@ void Config::parsearXML(std::string archivo) {
 		this->configSprites.push_back(sprite);
 	} while (nodo.siguiente());
 
-	debug(toString(), true);
+	debug(toString());
 }
 
 void Config::toBytes(Bytes & bytes) {
@@ -107,7 +107,7 @@ void Config::defaultConfig() {
 	this->tamanioJugador.x = 100;
 	this->tamanioJugador.y = 60;
 	this->longitud = this->tamanioVentana.x * 12;
-	this->nivelPiso = tamanioVentana.y * 0.75;
+	this->nivelPiso = (int) tamanioVentana.y * 0.75;
 }
 
 std::string Config::toString() {

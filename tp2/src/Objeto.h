@@ -53,6 +53,7 @@ public:
 	Estado getEstado();
 	Tipo getTipo();
 	int getFrame();
+	bool getOrientacion();
 
 	virtual bool tieneCambios();
 
@@ -64,7 +65,7 @@ protected:
 	Estado estado;
 	Tipo tipo;
 	int frame;
-
+	bool orientacion;
 };
 
 #endif /* OBJETO_H_ */

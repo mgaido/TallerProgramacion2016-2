@@ -18,7 +18,6 @@ Vista::Vista(ColaBloqueante<int>& _eventosTeclado, std::string nombreJugador, in
 	this->idJugador = idJugador;
 	this->nombreJugador = nombreJugador;
 	this->configuracion = configuracion;
-
 	initSDL();
 }
 
@@ -49,12 +48,21 @@ void Vista::iniciar() {
 		error("Window could not be created! SDL_Error: " + std::string(SDL_GetError()));
 	} else {
 
-		auto it = configuracion.getConfigCapas().begin();
-		while (it != configuracion.getConfigCapas().end()) {
-			std::shared_ptr<Capa> capa = std::make_shared<Capa>();
-			capa->cargar(configuracion.getTamanioVentana(), configuracion.getLongitud(),  *it, renderer);
+		auto capaIt = configuracion.getConfigCapas().begin();
+		while (capaIt != configuracion.getConfigCapas().end()) {
+			std::shared_ptr<Capa> capa = std::make_shared<Capa>(configuracion.getTamanioVentana(),
+					configuracion.getLongitud(), *capaIt);
+			capa->cargar(renderer);
 			capas.push_back(capa);
-			it++;
+			capaIt++;
+		}
+
+		auto spriteIt = configuracion.getConfigSprites().begin();
+		while (spriteIt != configuracion.getConfigSprites().end()) {
+			std::shared_ptr<Sprite> sprite = std::make_shared<Sprite>(configuracion.getTamanioJugador(), *spriteIt);
+			sprite->cargar(renderer);
+			sprites[spriteIt->estado] = sprite;
+			spriteIt++;
 		}
 
 		cicloPrincipal();
@@ -124,89 +132,144 @@ void Vista::actualizar() {
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 		SDL_RenderClear(renderer);
 
+		std::vector<Renderer*> renderers;
+
 		auto capa = capas.begin();
 		while (capa != capas.end()) {
-			(*capa)->aplicar(renderer, offsetVista);
+			renderers.push_back(new RendererCapa(capa->get(), offsetVista));
 			capa++;
 		}
 
 		auto it = estado.begin();
 		while (it != estado.end()) {
 			//info(it->toString(), true);
-
-			SDL_Rect rect;
-			rect.w = it->getTamanio().x;
-			rect.h = it->getTamanio().y;
-			rect.x = it->getPos().x;
-			rect.y = it->getPos().y;
-
-			if (it->getEstado() == Estado::Caminando)
-				SDL_SetRenderDrawColor(renderer, 0, 100, 0, 255);
-			if (it->getEstado() == Estado::Saltando)
-				SDL_SetRenderDrawColor(renderer, 0, 0, 100, 255);
-			if (it->getEstado() == Estado::Quieto)
-				SDL_SetRenderDrawColor(renderer, 100, 0, 0, 255);
-			if (it->getEstado() == Estado::Desconectado)
-			SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
-
-			SDL_RenderFillRect(renderer, &rect);
-
+			auto configSprite = sprites[it->getEstado()];
+			renderers.push_back(new RendererSprite(configSprite.get(), it->getPos(),
+					it->getFrame(), it->getOrientacion(), it->getId() == idJugador));
 			estado.erase(it);
 		}
+
+		//TODO sort by zindex
+		auto rendererIt = renderers.begin();
+		while (rendererIt != renderers.end()) {
+			(*rendererIt)->aplicar(renderer);
+			delete *rendererIt;
+			renderers.erase(rendererIt);
+		}
+
 		SDL_RenderPresent(renderer);
 	}
 
 	lockEstado.unlock();
 }
 
-Capa::Capa(){
+Imagen::Imagen(Punto tamanioDestino){
 	img = nullptr;
+	this->tamanioDestino = tamanioDestino;
 }
 
-Capa::~Capa(){
-	SDL_DestroyTexture(img);
+Imagen::~Imagen() {
+	if (img)
+		SDL_DestroyTexture(img);
 }
 
-void Capa::cargar(Punto ventana, int longitud, ConfigCapa& config, SDL_Renderer* renderer) {
-	this->ventana = ventana;
-	this->longitud = longitud;
-	std::string path = std::string(config.imagen.data());
-
+void Imagen::cargarImagen(SDL_Renderer* renderer, std::array<char, 512>& _path) {
+	std::string path = std::string(_path.data());
 	SDL_Surface* imagen = IMG_Load(path.c_str());
-	img = SDL_CreateTextureFromSurface(renderer, imagen);
-
-	if (imagen) {
-		tamanio.x = imagen->w;
-		tamanio.y = imagen->h;
-		escala = (double) tamanio.y / ventana.y;
-		zIndex = config.zIndex;
-		seccion.y = 0;
-		seccion.h = tamanio.y;
-		dest.y = 0;
-		dest.h = ventana.y;
-
-		img = SDL_CreateTextureFromSurface(renderer, imagen);
-		SDL_FreeSurface(imagen);
-	} else {
+	if (! imagen) {
 		error( "No se pudo cargar la imagen " + path + ". Error: " + std::string(IMG_GetError()), true);
+		//Crear imagen default
 	}
+	tamanio.x = imagen->w;
+	tamanio.y = imagen->h;
+
+	escala = (double) tamanio.y / tamanioDestino.y;
+
+	img = SDL_CreateTextureFromSurface(renderer, imagen);
+	SDL_FreeSurface(imagen);
 }
 
-void Capa::aplicar(SDL_Renderer* renderer, int offsetVista) {
+Capa::Capa(Punto ventana, int longitud, ConfigCapa& _config) : Imagen(ventana), config(_config) {
+	this->longitud = longitud;
+}
 
-	seccion.x = (int) tamanio.x * (double) offsetVista / longitud;
-	seccion.w = std::min<int>(ventana.x * escala, tamanio.x - seccion.x);
+void Capa::cargar(SDL_Renderer* renderer) {
+	cargarImagen(renderer, config.imagen);
+}
+
+int Capa::getZindex() {
+	return config.zIndex;
+}
+
+Sprite::Sprite(Punto tamanioObj, ConfigSprite& _config) : Imagen(tamanioObj), config(_config) {
+}
+
+void Sprite::cargar(SDL_Renderer* renderer) {
+	cargarImagen(renderer, config.imagen);
+}
+
+int Sprite::getZindex() {
+	return config.zIndex;
+}
+
+RendererCapa::RendererCapa(Capa* capa, int offsetVista) {
+	this->capa = capa;
+	this->offsetVista = offsetVista;
+
+	seccion.y = 0;
+	seccion.h = capa->tamanio.y;
+	dest.y = 0;
+	dest.h = capa->tamanioDestino.y;
+}
+
+int RendererCapa::getZindex() {
+	return capa->getZindex();
+}
+
+void RendererCapa::aplicar(SDL_Renderer* renderer) {
+	seccion.x = (int) capa->tamanio.x * (double) offsetVista / capa->longitud;
+	seccion.w = std::min<int>(capa->tamanioDestino.x * capa->escala, capa->tamanio.x - seccion.x);
 	dest.x = 0;
-	dest.w = seccion.w / escala;
+	dest.w = seccion.w / capa->escala;
 
-	SDL_RenderCopy(renderer, img, &seccion, &dest);
+	SDL_RenderCopy(renderer, capa->img, &seccion, &dest);
 
-	if (dest.w < ventana.x) {
+	if (dest.w < capa->tamanioDestino.x) {
 		seccion.x = 0;
-		seccion.w = ventana.x * escala - seccion.w;
+		seccion.w = capa->tamanioDestino.x * capa->escala - seccion.w;
 		dest.x = dest.w;
-		dest.w = seccion.w / escala;
+		dest.w = seccion.w / capa->escala;
 
-		SDL_RenderCopy(renderer, img, &seccion, &dest);
+		SDL_RenderCopy(renderer, capa->img, &seccion, &dest);
 	}
 }
+
+RendererSprite::RendererSprite(Sprite* sprite, Punto pos, int frame, bool orientacion, bool esJugador) {
+	this->sprite = sprite;
+	this->pos = pos;
+	this->frame = frame/10 % sprite->config.frames;
+	this->orientacion = orientacion;
+	this->esJugador = esJugador;
+}
+
+int RendererSprite::getZindex() {
+	return sprite->getZindex() + (esJugador ? 1 : 0);
+}
+
+void RendererSprite::aplicar(SDL_Renderer* renderer) {
+
+	SDL_Rect seccion;
+	seccion.x = (sprite->tamanio.x / sprite->config.frames) * frame;
+	seccion.y = 0;
+	seccion.w = sprite->tamanio.x / sprite->config.frames;
+	seccion.h = sprite->tamanio.y;
+
+	SDL_Rect rect;
+	rect.w = sprite->tamanioDestino.x;
+	rect.h = sprite->tamanioDestino.y;
+	rect.x = pos.x;
+	rect.y = pos.y;
+
+	SDL_RenderCopy(renderer, sprite->img, &seccion, &rect);
+}
+
