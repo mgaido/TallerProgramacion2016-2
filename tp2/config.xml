@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuracion>
+<ventana>
+	<ancho>1024</ancho>
+	<alto>768</alto>
+</ventana>
+<longitud>10000</longitud>
+<piso>600</piso>
 <maximo_numero_jugadores>4</maximo_numero_jugadores>
 <capas>
 	<capa>
-		<id>Mapa3</id> 
-		<z_index>25</z_index>
+		<imagen>img/Mapa3.png</imagen>
+		<zindex>5</z_index>
 	</capa>
 </capas>
 <sprites>
 	<sprite>
-		<id>Jugador</id>
-		<z_index>10</z_index>
-		<ancho>35</ancho>
-		<alto>70</alto>
+		<estado>caminando</estado>
+		<imagen>img/caminando.png</imagen>
+		<zindex>10</z_index>
+		<frames>8</frames>
 	</sprite>
 </sprites>
-</configuracion>

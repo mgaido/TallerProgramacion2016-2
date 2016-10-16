@@ -1,72 +1,160 @@
 #include "Config.h"
 
-void Config::parsearXML(std::string archivo) {//falta chequeo de archivo mal formado
-		rapidxml::file<> archivoConfigXML(archivo.c_str());
-		rapidxml::xml_document<> configuracion;
-		configuracion.parse<0>(archivoConfigXML.data());
+void Config::parsearXML(std::string archivo) {
 
-		std::string valorDelNodoXML = configuracion.first_node()->first_node()->value();
-		this->cantidadMaximaJugadores = std::stoi(valorDelNodoXML);
+	rapidxml::file<> archivoConfigXML(archivo.c_str());
+	rapidxml::xml_document<> root;
+	root.parse<0>(archivoConfigXML.data());
 
-		rapidxml::xml_node<>* node = configuracion.first_node("configuracion")->first_node()->next_sibling();
-		rapidxml::xml_node<> *child = node->first_node();
+	Nodo doc = Nodo(&root);
+	std::string valor;
 
-		while (child)
-		{
-			ConfigCapa nuevaConfigDeCapa;
-			nuevaConfigDeCapa.idCapa = child->first_node()->value();
-			nuevaConfigDeCapa.zIndexCapa = std::stoi(child->first_node()->next_sibling()->value());
-			this->configCapas.push_back(nuevaConfigDeCapa);
-			child = child->next_sibling();
-		}
+	Nodo nodo = doc.hijo("ventana");
+	valor = nodo.hijo("ancho").valor();
+	tamanioVentana.x = std::stoi(valor);
+	valor = nodo.hijo("alto").valor();
+	tamanioVentana.y = std::stoi(valor);
 
-		node = node->next_sibling();
-		child = node->first_node();
+	debug("Ventana " + std::to_string(tamanioVentana.x) + "x" + std::to_string(tamanioVentana.y));
 
-		while (child)
-		{
-			ConfigSprite nuevaCondifDeSprite;
-			nuevaCondifDeSprite.idSprite = child->first_node()->value();
-			nuevaCondifDeSprite.zIndexSprite = std::stoi(child->first_node()->next_sibling()->value());
-			nuevaCondifDeSprite.anchoSprite = std::stoi(child->first_node()->next_sibling()->next_sibling()->value());
-			nuevaCondifDeSprite.altoSprite = std::stoi(child->first_node()->next_sibling()->next_sibling()->next_sibling()->value());
-			this->configSprites.push_back(nuevaCondifDeSprite);
-			child = child->next_sibling();
-		}
-		/*
-		std::cout << "Cantidad: " << cantidadMaximaJugadores << std::endl;
-		std::cout << "IdMapa: " << configCapas.at(0).idCapa << std::endl;
-		std::cout << "zIndexMapa: " << configCapas.at(0).zIndexCapa << std::endl;
-		std::cout << "IdSprite: " << configSprites.at(0).idSprite << std::endl;
-		std::cout << "zSprite: " << configSprites.at(0).zIndexSprite << std::endl;
-		std::cout << "anchoSprite: " << configSprites.at(0).anchoSprite << std::endl;
-		std::cout << "altoSprite: " << configSprites.at(0).altoSprite << std::endl;
-		*/
+	valor = doc.hijo("longitud").valor();
+	longitud = std::stoi(valor);
+
+	debug("Longitud " + std::to_string(longitud));
+
+	valor = doc.hijo("piso").valor();
+	nivelPiso = std::stoi(valor);
+
+	debug("Nivel piso " + std::to_string(nivelPiso));
+
+	valor = doc.hijo("maximo_numero_jugadores").valor();
+	cantidadMaximaJugadores = std::stoi(valor);
+
+	debug("Cantidad maxima jugadores " + std::to_string(cantidadMaximaJugadores));
+
+	nodo = doc.hijo("capas").hijo("capa");
+
+	do {
+		ConfigCapa capa;
+
+		valor = nodo.hijo("imagen").valor();
+		valor.copy(capa.imagen.data(), capa.imagen.size());
+		capa.imagen[valor.size()] = '\0';
+
+		valor = nodo.hijo("zindex").valor();
+		capa.zIndex = std::stoi(valor);
+
+		debug("Capa imagen " + std::string(capa.imagen.data()) + " zindex " +  std::to_string(capa.zIndex));
+
+		this->configCapas.push_back(capa);
+	} while (nodo.siguiente());
+
+	nodo = doc.hijo("sprites").hijo("sprite");
+
+	do {
+		ConfigSprite sprite;
+		valor = nodo.hijo("imagen").valor();
+		valor.copy(sprite.imagen.data(), sprite.imagen.size());
+		sprite.imagen[valor.size()] = '\0';
+
+		valor = nodo.hijo("zindex").valor();
+		sprite.zIndex = std::stoi(valor);
+
+		valor = nodo.hijo("frames").valor();
+		sprite.frames = std::stoi(valor);
+
+		valor = nodo.hijo("estado").valor();
+		Estado estado;
+		if (valor == "Caminando")
+			estado = Estado::Caminando;
+
+		if (valor == "Saltando")
+			estado = Estado::Saltando;
+
+		if (valor == "Quieto")
+			estado = Estado::Quieto;
+
+		if (valor == "Desconectado")
+			estado = Estado::Desconectado;
+
+		sprite.estado = estado;
+
+		debug("Sprite imagen " + valor + " " + std::string(sprite.imagen.data()) + " zindex "
+				+ std::to_string(sprite.zIndex) + " frames " + std::to_string(sprite.frames));
+
+		this->configSprites.push_back(sprite);
+	} while (nodo.siguiente());
 }
 
 void Config::toBytes(Bytes & bytes) {
+	bytes.put(tamanioVentana);
+	bytes.put(cantidadMaximaJugadores);
+	bytes.put(nivelPiso);
+	bytes.put(longitud);
 	bytes.putAll(configCapas);
 	bytes.putAll(configSprites);
 }
 
 void Config::fromBytes(Bytes & bytes) {
+	bytes.get(tamanioVentana);
+	bytes.get(cantidadMaximaJugadores);
+	bytes.get(nivelPiso);
+	bytes.get(longitud);
 	bytes.getAll(configCapas);
 	bytes.getAll(configSprites);
 }
 
-
 void Config::defaultConfig() {
 	this->cantidadMaximaJugadores = 4;
+	this->tamanioVentana.x = 800;
+	this->tamanioVentana.y = 600;
+	this->longitud = this->tamanioVentana.x * 12;
+	this->nivelPiso = 400;
 }
 
-std::vector<ConfigCapa> Config::getConfigCapas(){
+std::vector<ConfigCapa> Config::getConfigCapas() {
 	return this->configCapas;
 }
 
-std::vector<ConfigSprite> Config::getConfigSprites(){
+std::vector<ConfigSprite> Config::getConfigSprites() {
 	return this->configSprites;
 }
 
 int Config::getCantidadMaximaJugadores() {
 	return this->cantidadMaximaJugadores;
 }
+
+Punto Config::getTamanioVentana() {
+	return tamanioVentana;
+}
+
+int Config::getNivelPiso() {
+	return nivelPiso;
+}
+
+int Config::getLongitud() {
+	return longitud;
+}
+
+Nodo::Nodo(){}
+
+Nodo::Nodo(rapidxml::xml_node<>* ptr) {
+	this->ptr = ptr;
+}
+
+Nodo Nodo::hijo(std::string nombre) {
+	auto child = ptr->first_node(nombre.c_str());
+	if (child == 0)
+		throw XmlException();
+	return Nodo(child);
+}
+
+std::string Nodo::valor() {
+	return ptr->value();
+}
+
+bool Nodo::siguiente() {
+	ptr = ptr->next_sibling();
+	return ptr != 0;
+}
+

@@ -9,25 +9,30 @@
 #define JUEGO_H_
 
 #include "Conexion.h"
+#include "Config.h"
 #include "Jugador.h"
 #include "Objeto.h"
 #include "Bytes.h"
 #include "Estado.h"
 #include "Logger.h"
+#include "Utils.h"
 
 class Juego {
 public:
-	Juego();
+	Juego(Config& configuracion);
 
 	Jugador* nuevoJugador(std::string nombre);
 	bool getEstado(Bytes& bytes);
 	bool estaIniciado();
 
 private:
+	Config& configuracion;
 	bool iniciado;
 	std::mutex lock;
 	int contador;
-	std::vector<Objeto*> objetos;
+	Escenario escenario;
+	std::vector<Jugador*> jugadores;
+	//std::vector<Objeto*> objetos; para TP3
 	bool cambios;
 };
 

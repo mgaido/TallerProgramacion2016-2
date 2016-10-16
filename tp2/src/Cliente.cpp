@@ -16,8 +16,7 @@ void Cliente::iniciar() {
 	conectar();
 	if (conectado) {
 		HandshakeRequest handshakeRequest;
-		usuario.copy(handshakeRequest.nombre, sizeof handshakeRequest.nombre);
-		handshakeRequest.nombre[usuario.size()] = '\0';
+		handshakeRequest.setNombre(usuario);
 
 		try {
 			Bytes bytes;
@@ -30,12 +29,9 @@ void Cliente::iniciar() {
 			HandshakeResponse handshakeResponse;
 			bytes.getSerializable(handshakeResponse);
 
-			if (handshakeResponse.aceptado) {
+			if (handshakeResponse.isAceptado()) {
 				debug("Usuario aceptado");
-				Bytes bytes;
-				bytes.put(INIT);
-				con.enviar(bytes);
-				vista = new Vista(eventosTeclado);
+				vista = new Vista(eventosTeclado, handshakeResponse.getIdJugador(), handshakeResponse.getConfiguracion());
 				t_enviarEventos = std::thread(&Cliente::enviarEventos, this);
 				t_recibirEstado = std::thread(&Cliente::recibirEstado, this);
 				vista->iniciar(); //Bloquea
@@ -73,19 +69,11 @@ void Cliente::recibirEstado() {
 			int comando;
 			bytes.get(comando);
 			if (comando == UPD) {
+				double desplazameinto;
+				bytes.get(desplazameinto);
 				std::vector<EstadoObj> estado;
 				bytes.getAll(estado);
-				vista->recibirEstado(estado);
-			} else if (comando == INIT) {
-				bytes.getSerializable(config);
-				/*
-				std::cout << "IdMapa: " << config.getConfigCapas().at(0).idCapa << std::endl;
-				std::cout << "zIndexMapa: " << config.getConfigCapas().at(0).zIndexCapa << std::endl;
-				std::cout << "IdSprite: " << config.getConfigSprites().at(0).idSprite << std::endl;
-				std::cout << "zSprite: " << config.getConfigSprites().at(0).zIndexSprite << std::endl;
-				std::cout << "anchoSprite: " << config.getConfigSprites().at(0).anchoSprite << std::endl;
-				std::cout << "altoSprite: " << config.getConfigSprites().at(0).altoSprite << std::endl;
-				*/
+				vista->nuevoEstado(desplazameinto, estado);
 			}
 		} catch (SocketException&) {
 			conectado = false;

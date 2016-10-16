@@ -9,6 +9,7 @@
 #define VISTA_H_
 
 #include "Conexion.h"
+#include "Config.h"
 #include "Estado.h"
 #include "Teclas.h"
 #include "Logger.h"
@@ -16,18 +17,14 @@
 
 #include "SDL.h"
 
-//Screen dimension constants
-const int SCREEN_WIDTH = 800;
-const int SCREEN_HEIGHT = 600;
-
 class Vista {
 public:
-	Vista(ColaBloqueante<int>& _eventosTeclado);
+	Vista(ColaBloqueante<int>& _eventosTeclado, int idJugador, Config& configuracion);
 	~Vista();
 
 	void iniciar();
 	void detener();
-	void recibirEstado(std::vector<EstadoObj>& estado);
+	void nuevoEstado(double desplazamiento, std::vector<EstadoObj>& estado);
 
 private:
 	void cicloPrincipal();
@@ -35,18 +32,19 @@ private:
 	void actualizar();
 
 	bool detenido;
+	int idJugador;
+	Config& configuracion;
 
 	Teclas teclas;
 	ColaBloqueante<int>& eventosTeclado;
 
 	std::mutex lockEstado;
+	double desplazamiento;
 	std::vector<EstadoObj> estado;
 
 	SDL_Window* ventana;
 	SDL_Renderer* renderer;
 	SDL_Surface* surface;
-
-	std::unordered_map<int, SDL_Rect> objs;
 };
 
 

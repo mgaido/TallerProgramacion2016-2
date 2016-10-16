@@ -70,11 +70,13 @@ bool Jugador::tieneCambios() {
 void Jugador::setConectado(bool conectado) {
 	if (estado == Estado::Desconectado && conectado) {
 		estado = Estado::Quieto;
+		frame = 0;
 		cambios = true;
 	}
 
 	if (estado != Estado::Desconectado && ! conectado) {
 		estado = Estado::Desconectado;
+		frame = 0;
 		cambios = true;
 	}
 }
@@ -120,8 +122,11 @@ bool Jugador::actualizar() {
 		else
 			estado = Estado::Quieto;
 
-		cambios |= estado != this->estado;
-		this->estado = estado;
+		if (estado != this->estado) {
+			this->estado = estado;
+			cambios = true;
+			frame = 0;
+		}
 	}
 
 	bool rv = cambios;

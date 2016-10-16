@@ -6,7 +6,6 @@ double tickDelay = 1000000.0/tickrate;
 Servidor::Servidor(int puerto, std::string archivo) {
 	this->puerto = puerto;
 	this->archivo = archivo;
-	config = nullptr;
 	juego = nullptr;
 	detenido = false;
 	socketD = INVALID_SOCKET;
@@ -16,18 +15,17 @@ Servidor::~Servidor() {
 }
 
 void Servidor::iniciar() {
-	config = new Config();
 	try {
-		config->parsearXML(archivo);
+		config.parsearXML(archivo);
 	} catch (...) {
-		config->defaultConfig();
+		config.defaultConfig();
 	}
 
 	int		response = crearSocket();
 	if (response < 0) {
 		std::cerr << "No se pudo iniciar la conexion" << std::endl;
 	} else {
-		juego = new Juego();
+		juego = new Juego(config);
 		t_aceptarConexiones = std::thread(&Servidor::aceptarConexiones, this);
 		t_procesarPeticiones = std::thread(&Servidor::procesarPeticiones, this);
 		t_juego = std::thread(&Servidor::avanzarJuego, this);
@@ -128,8 +126,8 @@ void Servidor::procesarPeticiones() {
 			Bytes bytes = con.recibir();
 			HandshakeRequest req;
 			bytes.get(req);
-			std::string nombre = std::string(req.nombre);
-			debug("Cliente '" + std::string(req.nombre) + "' conectado desde " + peticion.ip);
+			std::string nombre = req.getNombre();
+			debug("Cliente '" + nombre + "' conectado desde " + peticion.ip);
 
 			HandshakeResponse res;
 
@@ -156,7 +154,7 @@ void Servidor::procesarPeticiones() {
 					info("Existe jugador inactivo con nombre " + nombre, true);
 				}
 			} else {
-				if (sesiones.size() < (unsigned) config->getCantidadMaximaJugadores()) {
+				if (sesiones.size() < (unsigned) config.getCantidadMaximaJugadores()) {
 					info("Creando jugador con nombre " + nombre, true);
 					jugador = juego->nuevoJugador(nombre);
 				} else {
@@ -165,10 +163,12 @@ void Servidor::procesarPeticiones() {
 			}
 
 			if (jugador != nullptr) {
-				res.aceptado = true;
-				sesiones.push_back(new Sesion(peticion.socketD, peticion.ip, jugador, config));
+				res.setAceptado(true);
+				res.setIdJugador(jugador->getId());
+				res.setConfiguracion(config);
+				sesiones.push_back(new Sesion(peticion.socketD, peticion.ip, jugador));
 			} else {
-				res.aceptado = false;
+				res.setAceptado(false);
 			}
 
 			bytes = Bytes();
@@ -215,12 +215,4 @@ void Servidor::detener() {
 		}
 		info("Servidor detenido");
 	}
-}
-
-Juego * Servidor::getJuego() {
-	return juego;
-}
-
-Config *Servidor::getConfig() {
-	return config;
 }

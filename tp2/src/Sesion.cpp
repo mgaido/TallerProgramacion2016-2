@@ -7,11 +7,10 @@
 
 #include "Sesion.h"
 
-Sesion::Sesion(SOCKET socketD, std::string ip, Jugador* jugador, Config* config) {
+Sesion::Sesion(SOCKET socketD, std::string ip, Jugador* jugador) {
 	this->ip = ip;
 	this->activa=true;
 	this->jugador = jugador;
-	this->config = config;
 
 	con.setSocket(socketD);
 	this->t_atenderCliente = std::thread(&Sesion::atenderCliente, this);
@@ -44,10 +43,7 @@ void Sesion::atenderCliente() {
 				bytes.get(comando);
 				if (comando == KEY) {
 					eventoTeclado(bytes);
-				} else if (comando == INIT){
-					enviarConfiguraciones();
-				}
-				else if (comando == BYE) {
+				} else if (comando == BYE) {
 					info("Jugador '" + jugador->getNombre() + "' desconectado desde " + ip, true);
 					desconectar();
 				} else {
@@ -98,18 +94,6 @@ void Sesion::enviarEstado() {
 	}
 }
 
-void Sesion::enviarConfiguraciones() {
-	if (activa) {
-		try {
-			Bytes bytes;
-			bytes.put(INIT);
-			bytes.putSerializable(*config);
-			con.enviar(bytes);
-		} catch (SocketException&) {
-			desconectar();
-		}
-	}
-}
 
 void Sesion::desconectar() {
 	if (activa) {

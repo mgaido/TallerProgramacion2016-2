@@ -15,7 +15,7 @@
 
 class Sesion {
 public:
-	Sesion(SOCKET socketD, std::string ip, Jugador* jugador, Config* config);
+	Sesion(SOCKET socketD, std::string ip, Jugador* jugador);
 	~Sesion();
 
 	bool estaActiva();
@@ -34,7 +34,6 @@ private:
 
 	bool activa;
 	Jugador* jugador;
-	Config* config;
 	ColaBloqueante<Bytes> estados;
 
 	std::string ip;

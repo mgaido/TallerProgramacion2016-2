@@ -1,5 +1,5 @@
 /*
- * Estado.h
+ * Actualizacion.h
  *
  *  Created on: Oct 4, 2016
  *      Author: rodrigo
@@ -52,6 +52,24 @@ public:
 		this->tipo = tipo;
 	}
 
+	std::string getNombre() const {
+		return std::string(nombre.data());
+	}
+
+	void setNombre(std::string nombre) {
+		nombre.copy(this->nombre.data(), this->nombre.size());
+		this->nombre[std::min<int>(nombre.size(), this->nombre.size()-1)] = '\0';
+	}
+
+
+	inline int getFrame() const {
+		return frame;
+	}
+
+	inline void setFrame(int frame) {
+		this->frame = frame;
+	}
+
 	inline std::string toString() {
 		std::string estado;
 			switch (getEstado()){
@@ -86,13 +104,14 @@ public:
 			return ss.str();
 	}
 
-
 private:
 	int id;
 	Punto pos;
 	Punto tamanio;
 	Estado estado;
 	Tipo tipo;
+	std::array<char, 100> nombre;
+	int frame;
 };
 
 #endif /* ESTADO_H_ */

@@ -10,11 +10,12 @@
 int framerate = 60;
 double frameDelay = 1000000.0/framerate;
 
-Vista::Vista(ColaBloqueante<int>& _eventosTeclado) : eventosTeclado(_eventosTeclado) {
+Vista::Vista(ColaBloqueante<int>& _eventosTeclado, int idJugador, Config& _configuracion) : eventosTeclado(_eventosTeclado), configuracion(_configuracion) {
 	ventana = nullptr;
 	renderer = nullptr;
 	surface = nullptr;
 	detenido = false;
+	this->idJugador = idJugador;
 }
 
 Vista::~Vista() {
@@ -28,8 +29,8 @@ void Vista::iniciar() {
 		error("SDL could not initialize! SDL_Error: " + std::string(SDL_GetError()));
 	} else {
 		//Create window
-		ventana = SDL_CreateWindow("TP2", SDL_WINDOWPOS_CENTERED,
-				SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT,
+		ventana = SDL_CreateWindow("TP2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+				configuracion.getTamanioVentana().x, configuracion.getTamanioVentana().y,
 				SDL_WINDOW_SHOWN);
 		if (ventana == nullptr) {
 			error("Window could not be created! SDL_Error: " + std::string(SDL_GetError()));
@@ -55,8 +56,9 @@ void Vista::cicloPrincipal() {
 	}
 }
 
-void Vista::recibirEstado(std::vector<EstadoObj>& estado) {
+void Vista::nuevoEstado(double desplazamiento, std::vector<EstadoObj>& estado) {
 	lockEstado.lock();
+	this->desplazamiento = desplazamiento;
 	this->estado.clear();
 	this->estado = estado;
 	lockEstado.unlock();
@@ -102,17 +104,22 @@ void Vista::actualizar() {
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 		SDL_RenderClear(renderer);
 
+		info("Desplazamiento fondo " + std::to_string((int) (desplazamiento * 100)) +"%", true);
+
 		auto it = estado.begin();
 		while (it != estado.end()) {
-			info(it->toString(), true);
+			//info(it->toString(), true);
 
 			SDL_Rect rect;
 			rect.w = it->getTamanio().x;
 			rect.h = it->getTamanio().y;
 			rect.x = it->getPos().x;
-			rect.y = 400 - it->getPos().y;
+			rect.y = it->getPos().y;
 
-			SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+			if (it->getId() == idJugador)
+				SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
+			else
+				SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 			SDL_RenderFillRect(renderer, &rect);
 
 			estado.erase(it);

@@ -1,35 +1,16 @@
 #pragma once
 
 #include "Bytes.h"
-#include "Estado.h"
+#include "Config.h"
 #include "Utils.h"
 
 class HandshakeRequest {
 public:
-	char nombre[256];
-};
+	std::string getNombre();
+	void setNombre(std::string nombre);
 
-class Sprite {
-	Estado estado;
-	char nombre[512];
-	Punto tamanio;
-};
-
-class Fondo {
-	char nombre[512];
-	Punto tamanio;
-	int zIndex = 0;
-};
-
-class Configuracion : public Serializable {
-public:
-	virtual void toBytes(Bytes &bytes);
-	virtual void fromBytes(Bytes &bytes);
-
-	unsigned short maximoJugadores=6;
-	Punto ventana;
-	std::vector<Sprite> sprites;
-	std::vector<Fondo> fondos;
+private:
+	std::array<char, 100> nombre;
 };
 
 class HandshakeResponse : public Serializable {
@@ -39,8 +20,20 @@ public:
 	virtual void toBytes(Bytes &bytes);
 	virtual void fromBytes(Bytes &bytes);
 
+	bool isAceptado() const;
+	void setAceptado(bool aceptado);
+
+	int getIdJugador() const;
+	void setIdJugador(int idJugador);
+
+	Config& getConfiguracion();
+	void setConfiguracion(Config& configuracion);
+
+
+private:
 	bool aceptado;
-	Configuracion configuracion;
+	int idJugador;
+	Config configuracion;
 };
 
 

@@ -1,20 +1,22 @@
 #ifndef CONFIGURACION_H
 #define CONFIGURACION_H
 
-#include "Utils.h"
 #include "rapidxml.hpp"
 #include "rapidxml_utils.hpp"
 #include "Bytes.h"
+#include "Objeto.h"
+#include "Utils.h"
 
-typedef struct ConfigCapa {
-	std::string idCapa;
-	int zIndexCapa;
+struct ConfigCapa {
+	std::array<char, 512> imagen;
+	int zIndex;
 };
-typedef struct ConfigSprite {
-	std::string idSprite;
-	int zIndexSprite;
-	int anchoSprite;
-	int altoSprite;
+
+struct ConfigSprite {
+	Estado estado;
+	std::array<char, 512> imagen;
+	int zIndex;
+	int frames;
 };
 
 class Config : public Serializable {
@@ -23,15 +25,39 @@ public:
 	virtual void fromBytes(Bytes &bytes);
 
 	void parsearXML(std::string archivo);
+
 	int getCantidadMaximaJugadores();
+	Punto getTamanioVentana();
 	std::vector<ConfigCapa> getConfigCapas();
 	std::vector<ConfigSprite> getConfigSprites();
+	int getNivelPiso();
+	int getLongitud();
+
 	void defaultConfig();
 
 private:
+	Punto tamanioVentana;
 	int cantidadMaximaJugadores;
+	int longitud;
+	int nivelPiso;
 	std::vector<ConfigCapa> configCapas;
 	std::vector<ConfigSprite> configSprites;
+};
+
+class XmlException : public std::exception {
+public:
+	XmlException(){};
+};
+
+class Nodo {
+public:
+	Nodo();
+	Nodo(rapidxml::xml_node<>* ptr);
+	Nodo hijo(std::string nombre);
+	std::string valor();
+	bool siguiente();
+private:
+	rapidxml::xml_node<>* ptr;
 };
  
 #endif // CONFIGURACION_H

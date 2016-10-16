@@ -24,14 +24,11 @@ public:
 	void iniciar();
 	void detener();
 
-	Juego* getJuego();
-	Config* getConfig();
-
 private:
 	SOCKET socketD;
 	int puerto;
 	std::string archivo;
-	Config* config;
+	Config config;
 	bool detenido;
 
 	std::thread t_aceptarConexiones;
