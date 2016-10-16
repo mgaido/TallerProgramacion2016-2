@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ventana>
-	<ancho>1024</ancho>
-	<alto>768</alto>
+	<ancho>800</ancho>
+	<alto>600</alto>
 </ventana>
-<longitud>10000</longitud>
-<piso>600</piso>
+<longitud>5000</longitud>
+<piso>450</piso>
 <maximo_numero_jugadores>4</maximo_numero_jugadores>
 <capas>
 	<capa>
 		<imagen>img/Mapa3.png</imagen>
 		<zindex>5</z_index>
 	</capa>
+	<capa>
+		<imagen>img/lineas.png</imagen>
+		<zindex>5</z_index>
+	</capa>
 </capas>
 <sprites>
 	<sprite>
-		<estado>caminando</estado>
+		<estado>Caminando</estado>
 		<imagen>img/caminando.png</imagen>
 		<zindex>10</z_index>
 		<frames>8</frames>

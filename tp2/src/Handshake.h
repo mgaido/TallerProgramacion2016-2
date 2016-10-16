@@ -26,8 +26,8 @@ public:
 	int getIdJugador() const;
 	void setIdJugador(int idJugador);
 
-	Config& getConfiguracion();
-	void setConfiguracion(Config& configuracion);
+	Config getConfiguracion();
+	void setConfiguracion(Config configuracion);
 
 
 private:

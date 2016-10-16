@@ -37,7 +37,7 @@ bool Juego::getEstado(Bytes& bytes) {
 
 	lock.lock();
 
-	int loop = escenario.getLongitud() - escenario.getAnchoVista();
+	int loop = escenario.getLongitud();
 	if (escenario.getOffsetVista() <= loop)
 		loop = 0;
 	escenario.setOffsetVista(escenario.getOffsetVista() - loop);
@@ -51,7 +51,7 @@ bool Juego::getEstado(Bytes& bytes) {
 		obj->getPos().x -= loop;
 
 		if (obj->getPos().x < minX && obj->getEstado() != Estado::Desconectado)
-			minX = obj->getPos().x;
+			minX = obj->getPos().x + obj->getTamanio().x / 2;
 		it++;
 	}
 
@@ -108,8 +108,7 @@ bool Juego::getEstado(Bytes& bytes) {
 	lock.unlock();
 
 	if (rv) {
-		double desplazamiento = ((double)escenario.getOffsetVista()) / escenario.getLongitud();
-		bytes.put(desplazamiento);
+		bytes.put(escenario.getOffsetVista());
 		bytes.putAll(estado);
 	}
 	return rv;

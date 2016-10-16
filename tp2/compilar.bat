@@ -8,7 +8,7 @@ set LIB=..\SDL2-2.0.4\lib\x86;%programfiles(x86)%\Microsoft Visual Studio 14.0\V
 
 md obj
 
-cl /O2 /EHs /MD /MP4 /Fo.\obj\ src\*.cpp /link /out:tp2.exe ws2_32.lib SDL2.lib
+cl /O2 /EHs /MD /MP4 /Fo.\obj\ src\*.cpp /link /out:tp2.exe ws2_32.lib SDL2.lib SDL2_image.lib
 
 rmdir /S /Q obj
 

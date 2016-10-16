@@ -57,7 +57,7 @@ int main(int argc, char *argv[]) {
 		if (server) {
 			std::cout << "> Iniciado servidor en puerto " << std::to_string(puerto) << " y leyendo configuracion de " << archivo << std::endl;
 			servidor.iniciar();
-			//std::this_thread::sleep_for(std::chrono::milliseconds(100));
+			std::this_thread::sleep_for(std::chrono::milliseconds(200));
 		} 
 
 		if (client) {

@@ -15,22 +15,14 @@ void Config::parsearXML(std::string archivo) {
 	valor = nodo.hijo("alto").valor();
 	tamanioVentana.y = std::stoi(valor);
 
-	debug("Ventana " + std::to_string(tamanioVentana.x) + "x" + std::to_string(tamanioVentana.y));
-
 	valor = doc.hijo("longitud").valor();
 	longitud = std::stoi(valor);
-
-	debug("Longitud " + std::to_string(longitud));
 
 	valor = doc.hijo("piso").valor();
 	nivelPiso = std::stoi(valor);
 
-	debug("Nivel piso " + std::to_string(nivelPiso));
-
 	valor = doc.hijo("maximo_numero_jugadores").valor();
 	cantidadMaximaJugadores = std::stoi(valor);
-
-	debug("Cantidad maxima jugadores " + std::to_string(cantidadMaximaJugadores));
 
 	nodo = doc.hijo("capas").hijo("capa");
 
@@ -43,8 +35,6 @@ void Config::parsearXML(std::string archivo) {
 
 		valor = nodo.hijo("zindex").valor();
 		capa.zIndex = std::stoi(valor);
-
-		debug("Capa imagen " + std::string(capa.imagen.data()) + " zindex " +  std::to_string(capa.zIndex));
 
 		this->configCapas.push_back(capa);
 	} while (nodo.siguiente());
@@ -78,12 +68,10 @@ void Config::parsearXML(std::string archivo) {
 			estado = Estado::Desconectado;
 
 		sprite.estado = estado;
-
-		debug("Sprite imagen " + valor + " " + std::string(sprite.imagen.data()) + " zindex "
-				+ std::to_string(sprite.zIndex) + " frames " + std::to_string(sprite.frames));
-
 		this->configSprites.push_back(sprite);
 	} while (nodo.siguiente());
+
+	debug(toString(), true);
 }
 
 void Config::toBytes(Bytes & bytes) {
@@ -112,11 +100,54 @@ void Config::defaultConfig() {
 	this->nivelPiso = 400;
 }
 
-std::vector<ConfigCapa> Config::getConfigCapas() {
+std::string Config::toString() {
+	std::stringstream ss;
+
+	ss << "Ventana: " << tamanioVentana.x << "x" << tamanioVentana.y << "; ";
+	ss << "Longitud: " << longitud << "; ";
+	ss << "Nivel piso: " << nivelPiso << "; ";
+	ss << "Cantidad maxima jugadores: " << cantidadMaximaJugadores << "; ";
+
+	auto capa = configCapas.begin();
+	while (capa != configCapas.end()){
+		ss << "Capa " << std::string(capa->imagen.data()) << " zindex " << capa->zIndex << "; ";
+		capa++;
+	}
+
+	auto sprite = configSprites.begin();
+	while (sprite != configSprites.end()) {
+
+		std::string estado;
+		switch (sprite->estado) {
+		case Estado::Caminando:
+			estado = "Caminando";
+			break;
+		case Estado::Saltando:
+			estado = "Saltando";
+			break;
+		case Estado::Quieto:
+			estado = "Quiero";
+			break;
+		case Estado::Desconectado:
+			estado = "Desconectado";
+			break;
+		default:
+			estado = "????";
+		}
+
+		ss << "Sprite " << estado << " " << std::string(sprite->imagen.data()) << " zindex " << sprite->zIndex << " frames "<< sprite->frames << "; ";
+
+		sprite++;
+	}
+
+	return ss.str();
+}
+
+std::vector<ConfigCapa>& Config::getConfigCapas() {
 	return this->configCapas;
 }
 
-std::vector<ConfigSprite> Config::getConfigSprites() {
+std::vector<ConfigSprite>& Config::getConfigSprites() {
 	return this->configSprites;
 }
 

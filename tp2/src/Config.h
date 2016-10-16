@@ -28,12 +28,14 @@ public:
 
 	int getCantidadMaximaJugadores();
 	Punto getTamanioVentana();
-	std::vector<ConfigCapa> getConfigCapas();
-	std::vector<ConfigSprite> getConfigSprites();
+	std::vector<ConfigCapa>& getConfigCapas();
+	std::vector<ConfigSprite>& getConfigSprites();
 	int getNivelPiso();
 	int getLongitud();
 
 	void defaultConfig();
+
+	std::string toString();
 
 private:
 	Punto tamanioVentana;

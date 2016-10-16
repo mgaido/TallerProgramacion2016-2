@@ -33,11 +33,11 @@ void HandshakeResponse::setIdJugador(int idJugador) {
 }
 
 
-Config& HandshakeResponse::getConfiguracion() {
+Config HandshakeResponse::getConfiguracion() {
 	return configuracion;
 }
 
-void HandshakeResponse::setConfiguracion(Config& configuracion) {
+void HandshakeResponse::setConfiguracion(Config configuracion) {
 	this->configuracion = configuracion;
 }
 

@@ -107,6 +107,7 @@
 								<option id="org.eclipse.cdt.msvc.link.option.libraries.1575785390" name="Libraries" superClass="org.eclipse.cdt.msvc.link.option.libraries" useByScannerDiscovery="false" valueType="libs">
 									<listOptionValue builtIn="false" value="ws2_32.lib"/>
 									<listOptionValue builtIn="false" value="SDL2.lib"/>
+									<listOptionValue builtIn="false" value="SDL2_image.lib"/>
 								</option>
 								<option id="org.eclipse.cdt.msvc.link.option.libpath.901829730" name="Additional Libpath (/libpath)" superClass="org.eclipse.cdt.msvc.link.option.libpath" useByScannerDiscovery="false"/>
 								<option id="org.eclipse.cdt.msvc.link.option.others.1624548520" name="Other Options" superClass="org.eclipse.cdt.msvc.link.option.others" useByScannerDiscovery="false"/>

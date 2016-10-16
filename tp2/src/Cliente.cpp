@@ -31,7 +31,7 @@ void Cliente::iniciar() {
 
 			if (handshakeResponse.isAceptado()) {
 				debug("Usuario aceptado");
-				vista = new Vista(eventosTeclado, handshakeResponse.getIdJugador(), handshakeResponse.getConfiguracion());
+				vista = new Vista(eventosTeclado, usuario, handshakeResponse.getIdJugador(), handshakeResponse.getConfiguracion());
 				t_enviarEventos = std::thread(&Cliente::enviarEventos, this);
 				t_recibirEstado = std::thread(&Cliente::recibirEstado, this);
 				vista->iniciar(); //Bloquea
@@ -69,11 +69,11 @@ void Cliente::recibirEstado() {
 			int comando;
 			bytes.get(comando);
 			if (comando == UPD) {
-				double desplazameinto;
-				bytes.get(desplazameinto);
+				int offsetVista;
+				bytes.get(offsetVista);
 				std::vector<EstadoObj> estado;
 				bytes.getAll(estado);
-				vista->nuevoEstado(desplazameinto, estado);
+				vista->nuevoEstado(offsetVista, estado);
 			}
 		} catch (SocketException&) {
 			conectado = false;
