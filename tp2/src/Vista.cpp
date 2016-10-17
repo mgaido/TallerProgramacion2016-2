@@ -142,14 +142,16 @@ void Vista::actualizar() {
 
 		auto it = estado.begin();
 		while (it != estado.end()) {
-			//info(it->toString(), true);
 			auto configSprite = sprites[it->getEstado()];
 			renderers.push_back(new RendererSprite(configSprite.get(), it->getPos(),
 					it->getFrame(), it->getOrientacion(), it->getId() == idJugador));
 			estado.erase(it);
 		}
 
-		//TODO sort by zindex
+		sort(renderers.begin(), renderers.end(), [](Renderer* a, Renderer* b) -> bool {
+		    return a->getZindex() < b->getZindex();
+		});
+
 		auto rendererIt = renderers.begin();
 		while (rendererIt != renderers.end()) {
 			(*rendererIt)->aplicar(renderer);
@@ -247,7 +249,8 @@ void RendererCapa::aplicar(SDL_Renderer* renderer) {
 RendererSprite::RendererSprite(Sprite* sprite, Punto pos, int frame, bool orientacion, bool esJugador) {
 	this->sprite = sprite;
 	this->pos = pos;
-	this->frame = frame/10 % sprite->config.frames;
+	int divider = framerate / sprite->config.frames;
+	this->frame = frame/divider % sprite->config.frames;
 	this->orientacion = orientacion;
 	this->esJugador = esJugador;
 }
@@ -270,6 +273,9 @@ void RendererSprite::aplicar(SDL_Renderer* renderer) {
 	rect.x = pos.x;
 	rect.y = pos.y;
 
-	SDL_RenderCopy(renderer, sprite->img, &seccion, &rect);
+	if (orientacion)
+	    SDL_RenderCopyEx(renderer, sprite->img, &seccion, &rect, 0, 0, SDL_FLIP_HORIZONTAL);
+	else
+		SDL_RenderCopy(renderer, sprite->img, &seccion, &rect);
 }
 

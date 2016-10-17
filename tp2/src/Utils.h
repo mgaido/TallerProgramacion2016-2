@@ -2,6 +2,7 @@
 #define UTILS_H
 
 #include <array>
+#include <algorithm>
 #include <iostream>
 #include <fstream>
 #include <sstream>
