@@ -22,6 +22,8 @@ public:
 	void detenerse();
 	void saltar();
 
+	void reiniciar();
+
 	void setConectado(bool conectado);
 	std::string getNombre();
 
@@ -29,7 +31,7 @@ public:
 
 private:
 	bool actualizar();
-
+	bool reinicio;
 	bool cambios;
 	std::string nombre;
 	double velocCaminar, velocSaltoX, velocSaltoY;

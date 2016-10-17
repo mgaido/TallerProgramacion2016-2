@@ -14,7 +14,7 @@ double g = 0.0000000045;
 Jugador::Jugador(int id, std::string nombre) : Objeto(id) {
 	this->nombre = nombre;
 	velocCaminar = 0, velocSaltoX = 0, velocSaltoY = 0;
-
+	reinicio = false;
 	tiempoCaminando=0;
 	tiempoSalto=0;
 
@@ -58,6 +58,12 @@ void Jugador::saltar() {
 		velocSaltoX = velocCaminar;
 		tiempoSalto = tiempo();
 	}
+}
+
+void Jugador::reiniciar() {
+	std::unique_lock<std::mutex> lock(mutex);
+	pos.x = 0;
+	reinicio = true;
 }
 
 bool Jugador::tieneCambios() {
@@ -120,6 +126,8 @@ bool Jugador::actualizar() {
 			estado = Estado::Saltando;
 		else if (tiempoCaminando > 0)
 			estado = Estado::Caminando;
+		else if (reinicio == true)
+			estado = Estado::Reiniciar;
 		else
 			estado = Estado::Quieto;
 
@@ -129,7 +137,7 @@ bool Jugador::actualizar() {
 			frame = 0;
 		}
 	}
-
+	reinicio = false;
 	bool rv = cambios;
 	cambios = false;
 	return rv;

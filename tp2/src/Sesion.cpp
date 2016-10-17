@@ -74,7 +74,10 @@ void Sesion::eventoTeclado(Bytes& bytes) {
 	} else if (teclas.izq() && !teclas.der()) {
 		jugador->caminar(Direccion::IZQUIERDA);
 		debug(ip + " tecla izquierda");
-	}  else {
+	} else if (teclas.reset()) {
+		jugador->reiniciar();
+		debug(ip + " tecla r");
+	} else {
 		jugador->detenerse();
 		debug(ip + " sin teclas");
 	}

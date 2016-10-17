@@ -44,43 +44,60 @@ bool Juego::getEstado(Bytes& bytes) {
 		loop = 0;
 	escenario.setOffsetVista(escenario.getOffsetVista() - loop);
 
-	//Actualizar posiciones de jugadores y encontrar el minimo en X
-	int minX = escenario.getLongitud()*2;
 	auto it = jugadores.begin();
+	bool reinicio = false;
 	while (it != jugadores.end()) {
 		Jugador* obj = *it;
-		cambios |= obj->tieneCambios() || loop > 0;
-		obj->getPos().x -= loop;
+		cambios |= obj->tieneCambios();
+		if (obj->getEstado() == Estado::Reiniciar) {
+			reinicio = true;
+			auto it2 = jugadores.begin();
+			while (it2 != jugadores.end()) {
+				Jugador* obj2 = *it2;
+				obj2->getPos().x=0;
+				it2++;
+			}
+			escenario.setOffsetVista(0);
+		}
 
-		if (obj->getPos().x < minX && obj->getEstado() != Estado::Desconectado)
-			minX = obj->getPos().x + obj->getTamanio().x / 2;
 		it++;
 	}
 
-	//Actualizar el offset si es necesario
-	if (minX > escenario.getOffsetVista() + escenario.getAnchoVista()/2) {
-		cambios = true;
-		int offset = std::min<int>(minX - escenario.getAnchoVista()/2, escenario.getOffsetVista() + 10);
-		escenario.setOffsetVista(offset);
-	}
+		//Actualizar posiciones de jugadores y encontrar el minimo en X
+		int minX = escenario.getLongitud() * 2;
+		it = jugadores.begin();
+		while (it != jugadores.end()) {
+			Jugador* obj = *it;
+			cambios |= obj->tieneCambios() || loop > 0;
+			obj->getPos().x -= loop;
 
-	//Actualizar posiciones de jugadores para que no se salgan de pantalla
-	it = jugadores.begin();
-	while (it != jugadores.end()) {
-		Jugador* obj = *it;
-
-		if ((obj->getPos().x + obj->getTamanio().x) > (escenario.getOffsetVista() + escenario.getAnchoVista())) {
-			cambios = true;
-			obj->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista()- obj->getTamanio().x;
+			if (obj->getPos().x < minX && obj->getEstado() != Estado::Desconectado)
+				minX = obj->getPos().x + obj->getTamanio().x / 2;
+			it++;
 		}
 
-		if (obj->getPos().x < escenario.getOffsetVista()) {
+		//Actualizar el offset si es necesario
+		if (minX > escenario.getOffsetVista() + escenario.getAnchoVista() / 2) {
 			cambios = true;
-			obj->getPos().x = escenario.getOffsetVista();
+			int offset = std::min<int>(minX - escenario.getAnchoVista() / 2, escenario.getOffsetVista() + 10);
+			escenario.setOffsetVista(offset);
 		}
-		it++;
-	}
 
+		//Actualizar posiciones de jugadores para que no se salgan de pantalla
+		it = jugadores.begin();
+		while (it != jugadores.end()) {
+			Jugador* obj = *it;
+			if ((obj->getPos().x + obj->getTamanio().x) > (escenario.getOffsetVista() + escenario.getAnchoVista())) {
+				cambios = true;
+				obj->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista() - obj->getTamanio().x;
+			}
+
+			if (obj->getPos().x < escenario.getOffsetVista()) {
+				cambios = true;
+				obj->getPos().x = escenario.getOffsetVista();
+			}
+			it++;
+		}
 	//Generar estado para la vista
 	if (cambios) {
 		it = jugadores.begin();

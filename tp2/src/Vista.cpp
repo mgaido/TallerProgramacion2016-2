@@ -275,6 +275,19 @@ void RendererSprite::aplicar(SDL_Renderer* renderer) {
 	rect.x = pos.x;
 	rect.y = pos.y;
 
+	SDL_Rect rect2;
+	rect2.w = 20;
+	rect2.h = 20;
+	rect2.x = pos.x + 20 ;
+	rect2.y = pos.y - 20;
+
+	if (this->esJugador) {
+
+		SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+		SDL_RenderFillRect(renderer, &rect2);
+
+	}
+
 	if (orientacion)
 	    SDL_RenderCopyEx(renderer, sprite->img, &seccion, &rect, 0, 0, SDL_FLIP_HORIZONTAL);
 	else
