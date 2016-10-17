@@ -18,6 +18,7 @@ void Servidor::iniciar() {
 	try {
 		config.parsearXML(archivo);
 	} catch (...) {
+		warn("Ocurrio un problema leyendo " + archivo + ". Cargando escenario default.", true);
 		config.defaultConfig();
 	}
 

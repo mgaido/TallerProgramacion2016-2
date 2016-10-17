@@ -108,6 +108,39 @@ void Config::defaultConfig() {
 	this->tamanioJugador.y = 60;
 	this->longitud = this->tamanioVentana.x * 12;
 	this->nivelPiso = (int) tamanioVentana.y * 0.75;
+
+	ConfigSprite sprite;
+	sprite.estado = Estado::Caminando;
+	sprite.imagen[0] = '\0';
+	sprite.frames = 1;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
+	sprite = ConfigSprite();
+	sprite.estado = Estado::Saltando;
+	sprite.imagen[0] = '\0';
+	sprite.frames = 1;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
+	sprite = ConfigSprite();
+	sprite.estado = Estado::Quieto;
+	sprite.imagen[0] = '\0';
+	sprite.frames = 1;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
+	sprite = ConfigSprite();
+	sprite.estado = Estado::Desconectado;
+	sprite.imagen[0] = '\0';
+	sprite.frames = 1;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
+	ConfigCapa capa;
+	capa.imagen[0] = '\0';
+	capa.zIndex = 1;
+	this->configCapas.push_back(capa);
 }
 
 std::string Config::toString() {

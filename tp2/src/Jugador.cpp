@@ -7,7 +7,7 @@
 
 #include "Jugador.h"
 
-double vx = 0.00025;
+double vx = 0.0003;
 double vy = 0.0014;
 double g = 0.0000000045;
 

@@ -179,8 +179,10 @@ void Imagen::cargarImagen(SDL_Renderer* renderer, std::array<char, 512>& _path) 
 	std::string path = std::string(_path.data());
 	SDL_Surface* imagen = IMG_Load(path.c_str());
 	if (! imagen) {
-		error( "No se pudo cargar la imagen " + path + ". Error: " + std::string(IMG_GetError()), true);
-		//Crear imagen default
+		error( "No se pudo cargar la imagen \"" + path + "\". Error: " + std::string(IMG_GetError()), true);
+
+		SDL_RWops *rw = SDL_RWFromMem((void*) &IMAGE_DATA, sizeof IMAGE_DATA);
+		imagen = IMG_Load_RW(rw, 1);
 	}
 	tamanio.x = imagen->w;
 	tamanio.y = imagen->h;
