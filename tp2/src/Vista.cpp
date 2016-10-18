@@ -131,7 +131,6 @@ void Vista::actualizar() {
 	if (estado.size() > 0) {
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 		SDL_RenderClear(renderer);
-
 		std::vector<Renderer*> renderers;
 
 		auto capa = capas.begin();
@@ -184,6 +183,7 @@ void Imagen::cargarImagen(SDL_Renderer* renderer, std::array<char, 512>& _path) 
 		SDL_RWops *rw = SDL_RWFromMem((void*) &IMAGE_DATA, sizeof IMAGE_DATA);
 		imagen = IMG_Load_RW(rw, 1);
 	}
+	SDL_SetColorKey(imagen, SDL_TRUE, SDL_MapRGB(imagen->format, 0, 255, 255));
 	tamanio.x = imagen->w;
 	tamanio.y = imagen->h;
 
