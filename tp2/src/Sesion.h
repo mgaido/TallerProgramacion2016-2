@@ -13,9 +13,10 @@
 #include "Juego.h"
 #include "Servidor.h"
 
+class Servidor;
 class Sesion {
 public:
-	Sesion(SOCKET socketD, std::string ip, Jugador* jugador);
+	Sesion(SOCKET socketD, std::string ip, Servidor* servidor);
 	~Sesion();
 
 	bool estaActiva();
@@ -24,15 +25,19 @@ public:
 
 	Jugador* getJugador();
 	void cambioDeEstado(Bytes bytes);
+	void recargar();
 	void desconectar();
 
 private:
 	void atenderCliente();
+	void handshake(Bytes& bytes);
 	void eventoTeclado(Bytes& bytes);
 	void enviarEstado();
 	void enviarConfiguraciones();
 
-	bool activa;
+
+	bool activa, enJuego;
+	Servidor* servidor;
 	Jugador* jugador;
 	ColaBloqueante<Bytes> estados;
 

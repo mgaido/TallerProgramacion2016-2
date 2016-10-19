@@ -20,6 +20,7 @@
 class Juego {
 public:
 	Juego(Config& configuracion);
+	~Juego();
 
 	Jugador* nuevoJugador(std::string nombre);
 	bool getEstado(Bytes& bytes);

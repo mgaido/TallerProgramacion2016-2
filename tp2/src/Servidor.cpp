@@ -1,7 +1,6 @@
 #include "Servidor.h"
 
-int tickrate = 60;
-double tickDelay = 1000000.0/tickrate;
+double tickDelay;
 
 Servidor::Servidor(int puerto, std::string archivo) {
 	this->puerto = puerto;
@@ -15,38 +14,44 @@ Servidor::~Servidor() {
 }
 
 void Servidor::iniciar() {
-	try {
-		config.parsearXML(archivo);
-	} catch (...) {
-		warn("Ocurrio un problema leyendo " + archivo + ". Cargando escenario default.", true);
-		config.defaultConfig();
-	}
-
 	int	response = crearSocket();
 	if (response < 0) {
 		std::cerr << "No se pudo iniciar la conexion" << std::endl;
 	} else {
-		juego = new Juego(config);
+		crearJuego();
 		t_aceptarConexiones = std::thread(&Servidor::aceptarConexiones, this);
-		t_procesarPeticiones = std::thread(&Servidor::procesarPeticiones, this);
 		t_juego = std::thread(&Servidor::avanzarJuego, this);
 	}
+}
+
+void Servidor::crearJuego() {
+	config = Config();
+
+	try {
+		config.parsearXML(archivo);
+		tickDelay = 1000000.0/config.getFrameRate();
+	} catch (...) {
+		warn("Ocurrio un problema leyendo " + archivo, true);
+		config.defaultConfig();
+	}
+	juego = new Juego(config);
+	info("Juego creado");
 }
 
 void Servidor::avanzarJuego() {
 	while (! detenido) {
 		micros t = tiempo();
-		if (juego->estaIniciado()) {
-			Bytes bytes;
-			bytes.put(UPD);
-			if (juego->getEstado(bytes)) {
-				auto it = sesiones.begin();
-				while (it != sesiones.end()) {
-					(*it)->cambioDeEstado(bytes);
-					it++;
-				}
+		lockJuego.lock();
+		Bytes bytes;
+		bytes.put(UPD);
+		if (juego->getEstado(bytes)) {
+			auto it = sesiones.begin();
+			while (it != sesiones.end()) {
+				(*it)->cambioDeEstado(bytes);
+				it++;
 			}
 		}
+		lockJuego.unlock();
 		t = (micros) (tickDelay - (tiempo() - t));
 		if (t > 0)
 			std::this_thread::sleep_for(std::chrono::milliseconds((long) t/1000));
@@ -71,11 +76,10 @@ int Servidor::crearSocket() {
 		serverAddress.sin_port = htons(puerto);
 
 		funcion = "bind";
-		response = bind(socketD, (struct sockaddr*) &serverAddress,
-				sizeof(serverAddress));
+		response = bind(socketD, (struct sockaddr*) &serverAddress, sizeof(serverAddress));
 		if (response == 0) {
 			funcion = "listen";
-			response = listen(socketD, 4);				//config->getCantidadMaximaJugadores()
+			response = listen(socketD, 10);
 		}
 	}
 
@@ -99,8 +103,7 @@ void Servidor::aceptarConexiones() {
 		if (newSocketD != INVALID_SOCKET) {
 			char ip[INET_ADDRSTRLEN];
 			inet_ntop(AF_INET, &(clientAddress.sin_addr), ip, INET_ADDRSTRLEN);
-			Peticion peticion {newSocketD, ip};
-			peticiones.encolar(peticion);
+			sesiones.push_back(new Sesion(newSocketD, ip, this));
 		} else if (!detenido)
 			response = -1;
 
@@ -115,72 +118,64 @@ void Servidor::aceptarConexiones() {
 	}
 }
 
-void Servidor::procesarPeticiones() {
+Jugador* Servidor::nuevaConexion(Sesion* reqSesion, std::string nombre) {
 
-	while (!detenido) {
-		try {
-			Peticion peticion = peticiones.desencolar();
+	bool encontrado = false;
+	Jugador* jugador = nullptr;
 
-			Conexion con;
-			con.setSocket(peticion.socketD);
+	lockJuego.lock();
 
-			Bytes bytes = con.recibir();
-			HandshakeRequest req;
-			bytes.get(req);
-			std::string nombre = req.getNombre();
-			debug("Cliente '" + nombre + "' conectado desde " + peticion.ip);
-
-			HandshakeResponse res;
-
-			bool encontrado = false;
-			Jugador* jugador = nullptr;
-
-			auto it = sesiones.begin();
-			while (it != sesiones.end() && !encontrado) {
-				Sesion* sesion = *it;
-				encontrado = sesion->getJugador()->getNombre() == nombre;
-				if (encontrado && !sesion->estaActiva()) {
-					jugador = sesion->getJugador();
-					sesiones.erase(it);
-					sesion->desconectar();
-					delete sesion;
-				} else
-					it++;
-			}
-
-			if (encontrado) {
-				if (jugador == nullptr) {
-					info("Ya existe jugador activo con nombre " + nombre, true);
-				} else {
-					info("Existe jugador inactivo con nombre " + nombre, true);
-				}
-			} else {
-				if (sesiones.size() < (unsigned) config.getCantidadMaximaJugadores()) {
-					info("Creando jugador con nombre " + nombre, true);
-					jugador = juego->nuevoJugador(nombre);
-				} else {
-					info("Ya existen demasiados jugadores, no se puede agregar a " + nombre, true);
-				}
-			}
-
-			if (jugador != nullptr) {
-				res.setAceptado(true);
-				res.setIdJugador(jugador->getId());
-				res.setConfiguracion(config);
-				sesiones.push_back(new Sesion(peticion.socketD, peticion.ip, jugador));
-			} else {
-				res.setAceptado(false);
-			}
-
-			bytes = Bytes();
-			bytes.putSerializable(res);
-			con.enviar(bytes);
-
-		} catch (ColaCerrada&) {
-			break;
-		} catch (SocketException&) { }
+	auto it = sesiones.begin();
+	while (it != sesiones.end() && !encontrado) {
+		Sesion* sesion = *it;
+		if (sesion != reqSesion && sesion->getJugador() != nullptr) {
+			encontrado = sesion->getJugador()->getNombre() == nombre;
+			if (encontrado && !sesion->estaActiva()) {
+				jugador = sesion->getJugador();
+				sesiones.erase(it);
+				sesion->desconectar();
+				delete sesion;
+			} else
+				it++;
+		} else
+			it++;
 	}
 
+	if (encontrado) {
+		if (jugador == nullptr) {
+			info("Ya existe jugador activo con nombre " + nombre, true);
+		} else {
+			info("Existe jugador inactivo con nombre " + nombre, true);
+		}
+	} else {
+		if (sesiones.size() < (unsigned) config.getCantidadMaximaJugadores()) {
+			info("Creando jugador con nombre " + nombre, true);
+			jugador = juego->nuevoJugador(nombre);
+		} else {
+			info("Ya existen demasiados jugadores, no se puede agregar a " + nombre, true);
+		}
+	}
+
+	lockJuego.unlock();
+
+	return jugador;
+}
+
+void Servidor::recargar() {
+	info("Recargando escenario", true);
+	lockJuego.lock();
+	auto it = sesiones.begin();
+	while (it != sesiones.end()) {
+		(*it)->recargar();
+		it++;
+	}
+
+	if (juego != nullptr)
+		delete juego;
+
+	crearJuego();
+
+	lockJuego.unlock();
 }
 
 void Servidor::detener() {
@@ -196,11 +191,6 @@ void Servidor::detener() {
 			t_aceptarConexiones.join();
 			debug("Thread aceptarConexiones termino");
 
-			peticiones.cerrar();
-			debug("Esperando que termine thread procesarPeticiones");
-			t_procesarPeticiones.join();
-			debug("Thread procesarPeticiones termino");
-
 			debug("Esperando que termine thread juego");
 			t_juego.join();
 			debug("Thread juego termino");
@@ -212,8 +202,17 @@ void Servidor::detener() {
 				sesiones.erase(it);;
 			}
 			sesiones.clear();
-			delete juego;
+			if (juego != nullptr)
+				delete juego;
 		}
 		info("Servidor detenido");
 	}
+}
+
+Config& Servidor::getConfiguracion() {
+	return config;
+}
+
+Juego* Servidor::getJuego() {
+	return juego;
 }

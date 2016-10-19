@@ -2,11 +2,16 @@
 
 void Config::parsearXML(std::string archivo) {
 
+	if (archivo.size() == 0) {
+		defaultConfig();
+		return;
+	}
+
 	rapidxml::file<> archivoConfigXML(archivo.c_str());
 	rapidxml::xml_document<> root;
 	root.parse<0>(archivoConfigXML.data());
 
-	Nodo doc = Nodo(&root);
+	Nodo doc = Nodo(&root).hijo("configuracion");
 	std::string valor;
 
 	Nodo nodo = doc.hijo("ventana");
@@ -21,11 +26,22 @@ void Config::parsearXML(std::string archivo) {
 	valor = nodo.hijo("alto").valor();
 	tamanioJugador.y = std::stoi(valor);
 
+	nodo = doc.hijo("velocidad");
+	velocX = std::stod(nodo.hijo("x").valor())/1000000.0;
+	velocY = std::stod(nodo.hijo("y").valor())/1000000.0;
+	gravedad = std::stod(nodo.hijo("g").valor())/1000000000000.0;
+
+	valor = doc.hijo("fps").valor();
+	framerate = std::stoi(valor);
+
 	valor = doc.hijo("longitud").valor();
 	longitud = std::stoi(valor);
 
 	valor = doc.hijo("piso").valor();
 	nivelPiso = std::stoi(valor);
+
+	valor = doc.hijo("minimo_numero_jugadores").valor();
+	cantidadMinimaJugadores = std::stoi(valor);
 
 	valor = doc.hijo("maximo_numero_jugadores").valor();
 	cantidadMaximaJugadores = std::stoi(valor);
@@ -36,8 +52,7 @@ void Config::parsearXML(std::string archivo) {
 		ConfigCapa capa;
 
 		valor = nodo.hijo("imagen").valor();
-		valor.copy(capa.imagen.data(), capa.imagen.size());
-		capa.imagen[valor.size()] = '\0';
+		setCharArray(valor, capa.imagen);
 
 		valor = nodo.hijo("zindex").valor();
 		capa.zIndex = std::stoi(valor);
@@ -50,14 +65,16 @@ void Config::parsearXML(std::string archivo) {
 	do {
 		ConfigSprite sprite;
 		valor = nodo.hijo("imagen").valor();
-		valor.copy(sprite.imagen.data(), sprite.imagen.size());
-		sprite.imagen[valor.size()] = '\0';
+		setCharArray(valor, sprite.imagen);
 
 		valor = nodo.hijo("zindex").valor();
 		sprite.zIndex = std::stoi(valor);
 
 		valor = nodo.hijo("frames").valor();
 		sprite.frames = std::stoi(valor);
+
+		valor = nodo.hijo("tiempo").valor();
+		sprite.tiempo = std::stoi(valor);
 
 		valor = nodo.hijo("estado").valor();
 		Estado estado;
@@ -82,8 +99,16 @@ void Config::parsearXML(std::string archivo) {
 
 void Config::toBytes(Bytes & bytes) {
 	bytes.put(tamanioVentana);
+	bytes.put(framerate);
+
 	bytes.put(tamanioJugador);
+	bytes.put(velocX);
+	bytes.put(velocY);
+	bytes.put(gravedad);
+
+	bytes.put(cantidadMinimaJugadores);
 	bytes.put(cantidadMaximaJugadores);
+
 	bytes.put(nivelPiso);
 	bytes.put(longitud);
 	bytes.putAll(configCapas);
@@ -92,8 +117,16 @@ void Config::toBytes(Bytes & bytes) {
 
 void Config::fromBytes(Bytes & bytes) {
 	bytes.get(tamanioVentana);
+	bytes.get(framerate);
+
 	bytes.get(tamanioJugador);
+	bytes.get(velocX);
+	bytes.get(velocY);
+	bytes.get(gravedad);
+
+	bytes.get(cantidadMinimaJugadores);
 	bytes.get(cantidadMaximaJugadores);
+
 	bytes.get(nivelPiso);
 	bytes.get(longitud);
 	bytes.getAll(configCapas);
@@ -101,45 +134,61 @@ void Config::fromBytes(Bytes & bytes) {
 }
 
 void Config::defaultConfig() {
+	info("Cargando escenario default");
+
+	this->cantidadMaximaJugadores = 1;
 	this->cantidadMaximaJugadores = 4;
 	this->tamanioVentana.x = 800;
 	this->tamanioVentana.y = 600;
 	this->tamanioJugador.x = 100;
-	this->tamanioJugador.y = 60;
-	this->longitud = this->tamanioVentana.x * 12;
+	this->tamanioJugador.y = 180;
+	this->velocX = tamanioVentana.x/4000000.0;
+	this->velocY = velocX * 4;
+	this->gravedad = 2*velocY/1000000;
+	this->framerate = 30;
+	this->longitud = this->tamanioVentana.x * 8;
 	this->nivelPiso = (int) tamanioVentana.y * 0.75;
 
-	ConfigSprite sprite;
+	ConfigSprite sprite = ConfigSprite();
 	sprite.estado = Estado::Caminando;
-	sprite.imagen[0] = '\0';
-	sprite.frames = 1;
+	setCharArray("img/caminando.png", sprite.imagen);
+	sprite.frames = 6;
+	sprite.tiempo = 1200;
 	sprite.zIndex = 10;
 	this->configSprites.push_back(sprite);
 
 	sprite = ConfigSprite();
 	sprite.estado = Estado::Saltando;
-	sprite.imagen[0] = '\0';
+	setCharArray("img/saltando.png", sprite.imagen);
 	sprite.frames = 1;
+	sprite.tiempo = 1000;
 	sprite.zIndex = 10;
 	this->configSprites.push_back(sprite);
 
 	sprite = ConfigSprite();
 	sprite.estado = Estado::Quieto;
-	sprite.imagen[0] = '\0';
+	setCharArray("img/quieto.png", sprite.imagen);
 	sprite.frames = 1;
+	sprite.tiempo = 1000;
 	sprite.zIndex = 10;
 	this->configSprites.push_back(sprite);
 
 	sprite = ConfigSprite();
 	sprite.estado = Estado::Desconectado;
-	sprite.imagen[0] = '\0';
+	setCharArray("img/desconectado.png", sprite.imagen);
 	sprite.frames = 1;
+	sprite.tiempo = 1000;
 	sprite.zIndex = 10;
 	this->configSprites.push_back(sprite);
 
-	ConfigCapa capa;
-	capa.imagen[0] = '\0';
+	ConfigCapa capa = ConfigCapa();
+	setCharArray("img/cielo.png", capa.imagen);
 	capa.zIndex = 1;
+	this->configCapas.push_back(capa);
+
+	capa = ConfigCapa();
+	setCharArray("img/fondo.png", capa.imagen);
+	capa.zIndex = 2;
 	this->configCapas.push_back(capa);
 }
 
@@ -147,11 +196,14 @@ std::string Config::toString() {
 	std::stringstream ss;
 
 	ss << "Ventana: " << tamanioVentana.x << "x" << tamanioVentana.y << "; ";
+	ss << "FPS: " << framerate << "; ";
 	ss << "Jugador: " << tamanioJugador.x << "x" << tamanioJugador.y << "; ";
+	ss << "Veloc x: " << velocX << " Veloc y:" << velocX << "Gravedad: " << gravedad << "; ";
 
 	ss << "Longitud: " << longitud << "; ";
 	ss << "Nivel piso: " << nivelPiso << "; ";
 	ss << "Cantidad maxima jugadores: " << cantidadMaximaJugadores << "; ";
+	ss << "Cantidad minima jugadores: " << cantidadMinimaJugadores << "; ";
 
 	auto capa = configCapas.begin();
 	while (capa != configCapas.end()){
@@ -196,8 +248,28 @@ std::vector<ConfigSprite>& Config::getConfigSprites() {
 	return this->configSprites;
 }
 
-int Config::getCantidadMaximaJugadores() {
+unsigned int Config::getCantidadMaximaJugadores() {
 	return this->cantidadMaximaJugadores;
+}
+
+unsigned int Config::getCantidadMinimaJugadores() {
+	return this->cantidadMinimaJugadores;
+}
+
+double Config::getVelocidadX() {
+	return velocX;
+}
+
+double Config::getVelocidadY() {
+	return velocY;
+}
+
+double Config::getGravedad() {
+	return gravedad;
+}
+
+unsigned int Config::getFrameRate() {
+	return this->framerate;
 }
 
 Punto Config::getTamanioVentana() {
@@ -208,15 +280,17 @@ Punto Config::getTamanioJugador() {
 	return tamanioJugador;
 }
 
-int Config::getNivelPiso() {
+unsigned int Config::getNivelPiso() {
 	return nivelPiso;
 }
 
-int Config::getLongitud() {
+unsigned int Config::getLongitud() {
 	return longitud;
 }
 
-Nodo::Nodo(){}
+Nodo::Nodo(){
+	this->ptr = nullptr;
+}
 
 Nodo::Nodo(rapidxml::xml_node<>* ptr) {
 	this->ptr = ptr;
@@ -224,8 +298,10 @@ Nodo::Nodo(rapidxml::xml_node<>* ptr) {
 
 Nodo Nodo::hijo(std::string nombre) {
 	auto child = ptr->first_node(nombre.c_str());
-	if (child == 0)
+	if (child == 0) {
+		error("No existe nodo con nombre " + nombre, true);
 		throw XmlException();
+	}
 	return Nodo(child);
 }
 
@@ -237,4 +313,3 @@ bool Nodo::siguiente() {
 	ptr = ptr->next_sibling();
 	return ptr != 0;
 }
-

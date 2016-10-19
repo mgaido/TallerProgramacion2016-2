@@ -7,7 +7,12 @@
 
 #include "Objeto.h"
 
-Escenario::Escenario(){}
+Escenario::Escenario(){
+	this->longitud = 0;
+	this->anchoVista = 0;
+	this->nivelPiso = 0;
+	this->offsetVista = 0;
+}
 
 Escenario::Escenario(int longitud, int anchoVista, int nivelPiso) {
 	this->longitud = longitud;

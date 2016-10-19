@@ -72,10 +72,12 @@ void Logger::encolar(Nivel nivel, std::string texto, bool aConsola) {
 	else
 		loguear(log);
 	if (aConsola) {
+		coutLock.lock();
 		if (nivel == _ERROR)
 			std::cerr << texto << std::endl;
 		else
 			std::cout << texto << std::endl;
+		coutLock.unlock();
 	}
 }
 

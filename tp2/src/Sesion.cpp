@@ -7,15 +7,16 @@
 
 #include "Sesion.h"
 
-Sesion::Sesion(SOCKET socketD, std::string ip, Jugador* jugador) {
+Sesion::Sesion(SOCKET socketD, std::string ip, Servidor* servidor) {
 	this->ip = ip;
 	this->activa=true;
-	this->jugador = jugador;
+	this->enJuego=false;
+	this->servidor = servidor;
+	this->jugador = nullptr;
 
 	con.setSocket(socketD);
 	this->t_atenderCliente = std::thread(&Sesion::atenderCliente, this);
 	this->t_enviarEstado = std::thread(&Sesion::enviarEstado, this);
-	jugador->setConectado(true);
 }
 
 Sesion::~Sesion(){
@@ -38,20 +39,22 @@ void Sesion::atenderCliente() {
 	while (activa) {
 		try {
 			Bytes bytes = con.recibir();
-			if ( bytes.size() > 0) {
+			if (bytes.size() > 0) {
 				int comando;
 				bytes.get(comando);
-				if (comando == KEY) {
+				if (comando == HSK_REQ) {
+					handshake(bytes);
+				} else if (enJuego && comando == KEY) {
 					eventoTeclado(bytes);
 				} else if (comando == BYE) {
-					info("Jugador '" + jugador->getNombre() + "' desconectado desde " + ip, true);
+					info("Jugador '" + jugador->getNombre()	+ "' desconectado desde " + ip, true);
 					desconectar();
 				} else {
 					warn("Comando invalido: " + std::to_string(comando));
 				}
 			}
 		} catch (SocketException&) {
-			if (activa) {
+			if (con.getPuedeRecibir()) {
 				error("Error de conexion con " + ip);
 				desconectar();
 			}
@@ -59,11 +62,44 @@ void Sesion::atenderCliente() {
 	}
 }
 
+void Sesion::handshake(Bytes& bytes) {
+	HandshakeRequest req;
+	bytes.get(req);
+	std::string nombre = req.getNombre();
+	debug("Cliente '" + nombre + "' conectado desde " + ip);
+
+	jugador = servidor->nuevaConexion(this, nombre);
+
+	HandshakeResponse res;
+
+	if (jugador != nullptr) {
+		res.setAceptado(true);
+		res.setIdJugador(jugador->getId());
+		res.setConfiguracion(servidor->getConfiguracion());
+		jugador->setConectado(servidor->getJuego()->estaIniciado());
+	} else
+		res.setAceptado(false);
+
+	activa = res.isAceptado();
+	bytes = Bytes();
+	bytes.put(HSK_RES);
+	bytes.putSerializable(res);
+	con.enviar(bytes);
+
+	debug("Respuesta a handshake enviada");
+	enJuego = activa;
+}
+
 void Sesion::eventoTeclado(Bytes& bytes) {
 	int estado=0;
 	bytes.get(estado);
 	Teclas teclas;
 	teclas.setEstado(estado);
+
+	if (teclas.recargar()) {
+		servidor->recargar();
+		return;
+	}
 
 	if (teclas.arriba()) {
 		jugador->saltar();
@@ -74,9 +110,6 @@ void Sesion::eventoTeclado(Bytes& bytes) {
 	} else if (teclas.izq() && !teclas.der()) {
 		jugador->caminar(Direccion::IZQUIERDA);
 		debug(ip + " tecla izquierda");
-	} else if (teclas.reset()) {
-		jugador->reiniciar();
-		debug(ip + " tecla r");
 	} else {
 		jugador->detenerse();
 		debug(ip + " sin teclas");
@@ -85,6 +118,10 @@ void Sesion::eventoTeclado(Bytes& bytes) {
 
 void Sesion::enviarEstado() {
 	while (activa) {
+		if (! enJuego) {
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+			continue;
+		}
 		try {
 			Bytes bytes = estados.desencolar();
 			con.enviar(bytes);
@@ -97,6 +134,17 @@ void Sesion::enviarEstado() {
 	}
 }
 
+void Sesion::recargar() {
+	Bytes bytes;
+	bytes.put(RLD);
+	try {
+		con.enviar(bytes);
+	} catch (SocketException&) {
+		desconectar();
+	}
+	jugador->setConectado(false);
+	enJuego = false;
+}
 
 void Sesion::desconectar() {
 	if (activa) {

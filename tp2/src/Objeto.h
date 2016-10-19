@@ -11,7 +11,7 @@
 #include "Utils.h"
 
 enum class Tipo { Jugador };
-enum class Estado { Quieto, Caminando, Saltando, Desconectado, Reiniciar};
+enum class Estado { Quieto, Caminando, Saltando, Desconectado };
 
 
 class Punto {

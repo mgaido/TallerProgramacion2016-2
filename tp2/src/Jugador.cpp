@@ -7,18 +7,14 @@
 
 #include "Jugador.h"
 
-double vx = 0.0003;
-double vy = 0.0014;
-double g = 0.0000000045;
-
-Jugador::Jugador(int id, std::string nombre) : Objeto(id) {
+Jugador::Jugador(int id, std::string nombre, Config& _configuracion) : Objeto(id), configuracion(_configuracion) {
 	this->nombre = nombre;
 	velocCaminar = 0, velocSaltoX = 0, velocSaltoY = 0;
-	reinicio = false;
+
 	tiempoCaminando=0;
 	tiempoSalto=0;
 
-	estado = Estado::Quieto;
+	estado = Estado::Desconectado;
 	tipo = Tipo::Jugador;
 
 	cambios = false;
@@ -35,9 +31,9 @@ void Jugador::caminar(Direccion direccion) {
 	std::unique_lock<std::mutex> lock(mutex);
 	
 	if (direccion == Direccion::IZQUIERDA)
-		velocCaminar = -vx;
+		velocCaminar = - configuracion.getVelocidadX();
 	else
-		velocCaminar = vx;
+		velocCaminar = configuracion.getVelocidadX();
 	
 	if (tiempoSalto == 0)
 		tiempoCaminando = tiempo();
@@ -54,16 +50,10 @@ void Jugador::saltar() {
 	std::unique_lock<std::mutex> lock(mutex);
 
 	if (tiempoSalto == 0) {
-		velocSaltoY=vy;
+		velocSaltoY=configuracion.getVelocidadY();
 		velocSaltoX = velocCaminar;
 		tiempoSalto = tiempo();
 	}
-}
-
-void Jugador::reiniciar() {
-	std::unique_lock<std::mutex> lock(mutex);
-	pos.x = 0;
-	reinicio = true;
 }
 
 bool Jugador::tieneCambios() {
@@ -85,6 +75,7 @@ void Jugador::setConectado(bool conectado) {
 	}
 }
 
+
 bool Jugador::actualizar() {
 	if (estado != Estado::Desconectado) {
 
@@ -94,7 +85,7 @@ bool Jugador::actualizar() {
 		if (tiempoSalto > 0) {
 			vx = velocSaltoX;
 			t = tiempo() - tiempoSalto;
-			velocSaltoY -= t*g;
+			velocSaltoY -= t*configuracion.getGravedad();
 			tiempoSalto += t;
 		} else if (tiempoCaminando > 0) {
 			vx = velocCaminar;
@@ -109,7 +100,8 @@ bool Jugador::actualizar() {
 
 		pos.x += (int) round(vx*t);
 		pos.y += (int) round(velocSaltoY*t);
-		if (tiempoSalto > 0 && pos.y <= 0) {
+
+		if (tiempoSalto > 0 && velocSaltoY < 0 &&  pos.y <= 0) {
 			pos.y = 0;
 			velocSaltoX = 0;
 			velocSaltoY = 0;
@@ -126,8 +118,6 @@ bool Jugador::actualizar() {
 			estado = Estado::Saltando;
 		else if (tiempoCaminando > 0)
 			estado = Estado::Caminando;
-		else if (reinicio == true)
-			estado = Estado::Reiniciar;
 		else
 			estado = Estado::Quieto;
 
@@ -137,9 +127,8 @@ bool Jugador::actualizar() {
 			frame = 0;
 		}
 	}
-	reinicio = false;
+
 	bool rv = cambios;
 	cambios = false;
 	return rv;
 }
-

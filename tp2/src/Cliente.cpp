@@ -10,31 +10,44 @@ Cliente::Cliente(std::string cHost, int cPuerto, std::string usuario) {
 }
 
 Cliente::~Cliente() {
+	if (vista != nullptr)
+		delete vista;
 }
 
 void Cliente::iniciar() {
 	conectar();
-	if (conectado) {
+	t_enviarEventos = std::thread(&Cliente::enviarEventos, this);
+	t_recibirEstado = std::thread(&Cliente::recibirEstado, this);
+
+	if (conectado) do {
+		reconectar = false;
+
 		HandshakeRequest handshakeRequest;
 		handshakeRequest.setNombre(usuario);
-
 		try {
 			Bytes bytes;
+			bytes.put(HSK_REQ);
 			bytes.put(handshakeRequest);
-			debug("Enviando handshake");
 			con.enviar(bytes);
+			debug("Handshake enviado");
 
-			debug("Recibiendo respuesta a handshake");
-			bytes = con.recibir();
+			int comando = -1;
+			do {
+				bytes = con.recibir();
+				bytes.get(comando);
+			} while (comando != HSK_RES);
+
 			HandshakeResponse handshakeResponse;
 			bytes.getSerializable(handshakeResponse);
+			debug("Respuesta a handshake recibida");
 
 			if (handshakeResponse.isAceptado()) {
 				debug("Usuario aceptado");
 				vista = new Vista(eventosTeclado, usuario, handshakeResponse.getIdJugador(), handshakeResponse.getConfiguracion());
-				t_enviarEventos = std::thread(&Cliente::enviarEventos, this);
-				t_recibirEstado = std::thread(&Cliente::recibirEstado, this);
 				vista->iniciar(); //Bloquea
+				info("Vista cerrada");
+				delete vista;
+				vista = nullptr;
 			} else {
 				conectado = false;
 				error("El servidor no acepto un nuevo usuario", true);
@@ -43,7 +56,7 @@ void Cliente::iniciar() {
 			conectado = false;
 			error("Error de conexion durante el handshake");
 		}
-	}
+	} while (reconectar);
 }
 
 void Cliente::enviarEventos() {
@@ -64,6 +77,11 @@ void Cliente::enviarEventos() {
 
 void Cliente::recibirEstado() {
 	while (conectado) {
+		if (vista == nullptr || reconectar) {
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+			continue;
+		}
+
 		try {
 			Bytes bytes = con.recibir();
 			int comando;
@@ -74,10 +92,19 @@ void Cliente::recibirEstado() {
 				std::vector<EstadoObj> estado;
 				bytes.getAll(estado);
 				vista->nuevoEstado(offsetVista, estado);
+			} else if (comando == RLD) {
+				info("Reiniciando vista");
+				reconectar = true;
+				vista->detener();
+			} else {
+				warn("Comando invalido: " + std::to_string(comando));
 			}
 		} catch (SocketException&) {
-			conectado = false;
-			vista->detener();
+			if (! reconectar) {
+				conectado = false;
+				if (vista != nullptr)
+					vista->detener();
+			}
 		}
 	}
 }
@@ -143,11 +170,6 @@ void Cliente::desconectar() {
 			debug("Esperando que termine thread recibirEstado");
 			t_recibirEstado.join();
 			debug("Thread recibirEstado termino");
-		}
-
-		if (vista != nullptr) {
-			vista->detener();
-			delete vista;
 		}
 
 		con.cerrar();

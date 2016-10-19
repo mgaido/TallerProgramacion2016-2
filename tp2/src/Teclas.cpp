@@ -24,7 +24,7 @@ bool Teclas::der() {
 	return (estado & (1 << DER)) != 0;
 }
 
-bool Teclas::reset() {
+bool Teclas::recargar() {
 	return (estado & (1 << R)) != 0;
 }
 

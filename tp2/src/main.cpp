@@ -8,11 +8,12 @@ Logger* logger;
 #undef main
 
 int main(int argc, char *argv[]) {
-	bool client = true;
-	bool server = true;
+	bool server = false;
+	bool client = false;
+
 	std::string host = "127.0.0.1";
-	std::string usuario = "player1";
-	std::string archivo = "config.xml";
+	std::string usuario = "Jugador 1";
+	std::string archivo;
 	int puerto = 10000;
 
 	for (int i = 1; i < argc; ++i) {
@@ -21,9 +22,13 @@ int main(int argc, char *argv[]) {
 			if (param.length() == 2) {
 				switch (param[1]) {
 				case 'h':
-					server = false;
-					if (i + 1 < argc)
-						host = std::string(argv[++i]);
+					if (server) {
+						error("Opcion incompatible con modo servidor", true);
+					} else {
+						client = true;
+						if (i + 1 < argc)
+							host = std::string(argv[++i]);
+					}
 					break;
 				case 'p':
 					if (i + 1 < argc) {
@@ -32,16 +37,22 @@ int main(int argc, char *argv[]) {
 					}
 					break;
 				case 'u':
-					if (i + 1 < argc) {
-						usuario = std::string(argv[++i]);
-					}
-				case 'c':
-					if (i + 1 < argc) {
-						archivo = std::string(argv[++i]);
+					if (server) {
+						error("Opcion incompatible con modo servidor", true);
+					} else {
+						client = true;
+						if (i + 1 < argc)
+							usuario = std::string(argv[++i]);
 					}
 					break;
-				case 's':
-					client = false;
+				case 'e':
+					if (client) {
+						error("Opcion incompatible con modo cliente", true);
+					} else {
+						server = true;
+						if (i + 1 < argc)
+							archivo = std::string(argv[++i]);
+					}
 					break;
 				default:
 					break;
@@ -50,35 +61,66 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
+	if (! server && ! client)
+		server = true;
+
 	initSockets();
-	logger = new Logger("tp2.log");
-	{
+
+	if (server) {
+		logger = new Logger("servidor.log");
+		info("Iniciado servidor en puerto " + std::to_string(puerto) + (archivo.size() == 0 ? "" : " y leyendo configuracion de " + archivo), true);
+
 		Servidor servidor(puerto, archivo);
-		if (server) {
-			std::cout << "> Iniciado servidor en puerto " << std::to_string(puerto) << " y leyendo configuracion de " << archivo << std::endl;
-			servidor.iniciar();
-			std::this_thread::sleep_for(std::chrono::milliseconds(200));
-		} 
+		servidor.iniciar();
 
-		if (client) {
-			std::cout << "> Iniciando cliente - Se conectara a: " << host << ':' << std::to_string(puerto) << std::endl;
-			Cliente cliente(host, puerto, usuario);
-			cliente.iniciar();
-			cliente.desconectar();
-			debug("> Cliente finalizado", true);
-		}
+		std::cout << "Presione enter para detener el servidor" << std::endl;
+		std::string s;
+		getline(std::cin, s);
 
-		if (server) {
-			if (! client) {
-				std::cout << "Presione enter para detener el servidor" << std::endl;
-				std::string s;
-				getline(std::cin, s);
-			}
-
-			servidor.detener();
-			debug("> Servidor finalizado", true);
-		}
+		servidor.detener();
+		info("Servidor finalizado", true);
 	}
+
+
+	if (client) {
+		logger = new Logger("cliente.log");
+		info("Iniciando cliente - Se conectara a: " + host + ':'+ std::to_string(puerto), true);
+
+		Cliente cliente(host, puerto, usuario);
+		cliente.iniciar();
+
+		cliente.desconectar();
+		info("Cliente finalizado", true);
+	}
+
+	delete logger;
+
+	return 0;
+}
+
+int main_(int argc, char *argv[]) {
+	std::string host = "127.0.0.1";
+	std::string usuario = "Jugador 1";
+	std::string archivo = "parallax.xml";
+	int puerto = 10000;
+
+	initSockets();
+
+	logger = new Logger("tp2.log");
+
+	info("Iniciado servidor en puerto " + std::to_string(puerto) + (archivo.size() == 0 ? "" : " y leyendo configuracion de " + archivo), true);
+	Servidor servidor(puerto, archivo);
+	servidor.iniciar();
+
+	info("Iniciando cliente - Se conectara a: " + host + ':'+ std::to_string(puerto), true);
+	Cliente cliente(host, puerto, usuario);
+	cliente.iniciar();
+
+	cliente.desconectar();
+	info("Cliente finalizado", true);
+
+	servidor.detener();
+	info("Servidor finalizado", true);
 
 	delete logger;
 

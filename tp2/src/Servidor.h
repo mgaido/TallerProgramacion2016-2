@@ -10,11 +10,6 @@
 
 class Sesion;
 
-struct Peticion {
-	SOCKET socketD;
-	std::string ip;
-};
-
 class Servidor {
 
 public:
@@ -22,7 +17,12 @@ public:
 	~Servidor();
 
 	void iniciar();
+	Jugador* nuevaConexion(Sesion* sesion, std::string nombre);
+	void recargar();
 	void detener();
+
+	Config& getConfiguracion();
+	Juego* getJuego();
 
 private:
 	SOCKET socketD;
@@ -32,16 +32,14 @@ private:
 	bool detenido;
 
 	std::thread t_aceptarConexiones;
-	ColaBloqueante<Peticion> peticiones;
-	std::thread t_juego;
-
-	Juego* juego;
-	std::thread t_procesarPeticiones;
 	std::vector<Sesion*> sesiones;
+	std::thread t_juego;
+	Juego* juego;
+	std::mutex lockJuego;
 
 	int crearSocket();
+	void crearJuego();
 	void aceptarConexiones();
-	void procesarPeticiones();
 	void avanzarJuego();
 };
 

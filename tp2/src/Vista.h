@@ -43,6 +43,7 @@ public:
 
 private:
 	ConfigSprite& config;
+	double divider;
 };
 
 class RendererCapa;
@@ -54,11 +55,13 @@ public:
 	virtual int getZindex();
 private:
 	ConfigCapa& config;
+	int tiles;
 	int longitud;
 };
 
 class Renderer {
 public:
+	virtual ~Renderer();
 	virtual int getZindex() = 0;
 	virtual void aplicar(SDL_Renderer* renderer) = 0;
 };
@@ -120,7 +123,9 @@ private:
 	SDL_Window* ventana;
 	SDL_Renderer* renderer;
 	std::vector<std::shared_ptr<Capa>> capas;
-	std::unordered_map<Estado, std::shared_ptr<Sprite>> sprites;
+	HashMap<Estado, std::shared_ptr<Sprite>> sprites;
+
+	std::vector<Renderer*> renderers;
 };
 
 

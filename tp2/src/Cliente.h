@@ -24,6 +24,7 @@ private:
 	std::string host;
 	int puerto;
 	Conexion con;
+	bool reconectar;
 	bool conectado;
 	bool cerrado;
 	std::string usuario;
@@ -34,6 +35,7 @@ private:
 
 	std::thread t_enviarEventos;
 	std::thread t_recibirEstado;
+	std::mutex vistaLock;
 };
 
 #endif // CLIENTE_H

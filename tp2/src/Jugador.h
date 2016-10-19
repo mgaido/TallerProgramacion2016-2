@@ -9,20 +9,19 @@
 #define JUGADOR_H_
 
 #include "Logger.h"
+#include "Config.h"
 #include "Objeto.h"
 
 enum class Direccion { IZQUIERDA, DERECHA };
 
 class Jugador : public Objeto {
 public:
-	Jugador(int id, std::string nombre);
+	Jugador(int id, std::string nombre, Config& configuracion);
 	~Jugador();
 
 	void caminar(Direccion direccion);
 	void detenerse();
 	void saltar();
-
-	void reiniciar();
 
 	void setConectado(bool conectado);
 	std::string getNombre();
@@ -31,7 +30,8 @@ public:
 
 private:
 	bool actualizar();
-	bool reinicio;
+
+	Config& configuracion;
 	bool cambios;
 	std::string nombre;
 	double velocCaminar, velocSaltoX, velocSaltoY;

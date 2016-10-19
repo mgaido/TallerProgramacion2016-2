@@ -6,11 +6,10 @@
 #include "Logger.h"
 #include "Utils.h"
 
-extern const int KEY;
 extern const int HSK_REQ;
 extern const int HSK_RES;
 extern const int KEY;
-extern const int INIT;
+extern const int RLD;
 extern const int UPD;
 extern const int BYE;
 
@@ -22,7 +21,10 @@ public:
 	void enviar(Bytes &msg);
 	Bytes recibir();
 
+	void habilitarRecepcion();
 	void cancelarRecepcion();
+	bool getPuedeRecibir();
+
 	void cerrar();
 private:
 	SOCKET socketD;

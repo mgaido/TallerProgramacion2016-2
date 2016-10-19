@@ -47,6 +47,7 @@ private:
 	ColaBloqueante<Log> logs;
 	std::ofstream archivo;
 	std::thread ciclo;
+	std::mutex coutLock;
 
 	void desencolar();
 	void loguear(Log& log);

@@ -17,6 +17,7 @@ struct ConfigSprite {
 	std::array<char, 512> imagen;
 	int zIndex;
 	int frames;
+	int tiempo;
 };
 
 class Config : public Serializable {
@@ -26,13 +27,19 @@ public:
 
 	void parsearXML(std::string archivo);
 
-	int getCantidadMaximaJugadores();
 	Punto getTamanioVentana();
 	Punto getTamanioJugador();
+	double getVelocidadX();
+	double getVelocidadY();
+	double getGravedad();
+	unsigned int getCantidadMinimaJugadores();
+	unsigned int getCantidadMaximaJugadores();
+	unsigned int getFrameRate();
+	unsigned int getNivelPiso();
+	unsigned int getLongitud();
+
 	std::vector<ConfigCapa>& getConfigCapas();
 	std::vector<ConfigSprite>& getConfigSprites();
-	int getNivelPiso();
-	int getLongitud();
 
 	void defaultConfig();
 
@@ -41,9 +48,14 @@ public:
 private:
 	Punto tamanioVentana;
 	Punto tamanioJugador;
-	int cantidadMaximaJugadores;
-	int longitud;
-	int nivelPiso;
+	unsigned int cantidadMinimaJugadores;
+	unsigned int cantidadMaximaJugadores;
+	unsigned int longitud;
+	unsigned int nivelPiso;
+	unsigned int framerate;
+	double velocX;
+	double velocY;
+	double gravedad;
 	std::vector<ConfigCapa> configCapas;
 	std::vector<ConfigSprite> configSprites;
 };

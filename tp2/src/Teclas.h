@@ -21,7 +21,7 @@ public:
 	bool arriba();
 	bool izq();
 	bool der();
-	bool reset();
+	bool recargar();
 
 	int getEstado();
 	void setEstado(int estado);
