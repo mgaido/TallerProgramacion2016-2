@@ -128,9 +128,6 @@
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
 		<project id="tp2.org.eclipse.cdt.msvc.projectType.exe.5903341" name="Executable" projectType="org.eclipse.cdt.msvc.projectType.exe"/>
 	</storageModule>
-	<storageModule moduleId="scannerConfiguration">
-		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="refreshScope" versionNumber="2">
 		<configuration configurationName="Linux"/>
@@ -140,4 +137,13 @@
 		</configuration>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
+	<storageModule moduleId="scannerConfiguration">
+		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.release.739598041.1821864817;cdt.managedbuild.config.gnu.exe.release.739598041.1821864817.;org.eclipse.cdt.msvc.cl.c.dll.debug.974119636;org.eclipse.cdt.msvc.cl.inputType.c.1172167268">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.msw.build.clScannerInfo"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.release.739598041.1821864817;cdt.managedbuild.config.gnu.exe.release.739598041.1821864817.;org.eclipse.cdt.msvc.cl.dll.debug.192008026;org.eclipse.cdt.msvc.cl.inputType.675745533">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.msw.build.clScannerInfo"/>
+		</scannerConfigBuildInfo>
+	</storageModule>
 </cproject>

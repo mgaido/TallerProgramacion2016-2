@@ -7,12 +7,46 @@ Logger* logger;
 
 #undef main
 
+
+int both() {
+	std::string host = "127.0.0.1";
+	std::string usuario = "Jugador 1";
+	std::string archivo = "parallax.xml";
+	int puerto = 10000;
+
+	initSockets();
+
+	logger = new Logger("tp2.log");
+
+	info("Iniciado servidor en puerto " + std::to_string(puerto) + (archivo.size() == 0 ? "" : " y leyendo configuracion de " + archivo), true);
+	Servidor servidor(puerto, archivo);
+	servidor.iniciar();
+
+	info("Iniciando cliente - Se conectara a: " + host + ':'+ std::to_string(puerto), true);
+	Cliente cliente(host, puerto, usuario);
+	cliente.iniciar();
+
+	cliente.desconectar();
+	info("Cliente finalizado", true);
+
+	servidor.detener();
+	info("Servidor finalizado", true);
+
+	delete logger;
+
+	return 0;
+}
+
 int main(int argc, char *argv[]) {
+
+	if (argc == 1)
+		return both();
+
 	bool server = false;
 	bool client = false;
 
 	std::string host = "127.0.0.1";
-	std::string usuario = "Jugador 1";
+	std::string usuario = "player1";
 	std::string archivo;
 	int puerto = 10000;
 
@@ -83,7 +117,7 @@ int main(int argc, char *argv[]) {
 
 
 	if (client) {
-		logger = new Logger("cliente.log");
+		logger = new Logger(usuario + ".log");
 		info("Iniciando cliente - Se conectara a: " + host + ':'+ std::to_string(puerto), true);
 
 		Cliente cliente(host, puerto, usuario);
@@ -92,35 +126,6 @@ int main(int argc, char *argv[]) {
 		cliente.desconectar();
 		info("Cliente finalizado", true);
 	}
-
-	delete logger;
-
-	return 0;
-}
-
-int main_(int argc, char *argv[]) {
-	std::string host = "127.0.0.1";
-	std::string usuario = "Jugador 1";
-	std::string archivo = "parallax.xml";
-	int puerto = 10000;
-
-	initSockets();
-
-	logger = new Logger("tp2.log");
-
-	info("Iniciado servidor en puerto " + std::to_string(puerto) + (archivo.size() == 0 ? "" : " y leyendo configuracion de " + archivo), true);
-	Servidor servidor(puerto, archivo);
-	servidor.iniciar();
-
-	info("Iniciando cliente - Se conectara a: " + host + ':'+ std::to_string(puerto), true);
-	Cliente cliente(host, puerto, usuario);
-	cliente.iniciar();
-
-	cliente.desconectar();
-	info("Cliente finalizado", true);
-
-	servidor.detener();
-	info("Servidor finalizado", true);
 
 	delete logger;
 

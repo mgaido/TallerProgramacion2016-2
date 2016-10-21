@@ -125,21 +125,30 @@ Jugador* Servidor::nuevaConexion(Sesion* reqSesion, std::string nombre) {
 
 	lockJuego.lock();
 
+	debug("Buscando jugador");
+
 	auto it = sesiones.begin();
 	while (it != sesiones.end() && !encontrado) {
 		Sesion* sesion = *it;
+		debug("AAA");
 		if (sesion != reqSesion && sesion->getJugador() != nullptr) {
-			encontrado = sesion->getJugador()->getNombre() == nombre;
+			debug("AAB");
+			encontrado = sesion->getNombre() == nombre;
+			debug("AAC");
 			if (encontrado && !sesion->estaActiva()) {
+				debug("AAD");
 				jugador = sesion->getJugador();
+				debug("AAE");
 				sesiones.erase(it);
-				sesion->desconectar();
-				delete sesion;
+				//sesion->desconectar();
+				//delete sesion;
 			} else
 				it++;
 		} else
 			it++;
 	}
+
+	debug("Jugador " + std::string((encontrado ? "" : "no ")) + "encontrado");
 
 	if (encontrado) {
 		if (jugador == nullptr) {
@@ -148,7 +157,7 @@ Jugador* Servidor::nuevaConexion(Sesion* reqSesion, std::string nombre) {
 			info("Existe jugador inactivo con nombre " + nombre, true);
 		}
 	} else {
-		if (sesiones.size() < (unsigned) config.getCantidadMaximaJugadores()) {
+		if (juego->getCantdadJugadores() < (unsigned) config.getCantidadMaximaJugadores()) {
 			info("Creando jugador con nombre " + nombre, true);
 			jugador = juego->nuevoJugador(nombre);
 		} else {

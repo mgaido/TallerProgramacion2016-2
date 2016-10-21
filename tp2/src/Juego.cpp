@@ -26,6 +26,10 @@ Juego::~Juego() {
 	}
 }
 
+int Juego::getCantdadJugadores(){
+	return jugadores.size();
+}
+
 bool Juego::estaIniciado() {
 	return iniciado;
 }

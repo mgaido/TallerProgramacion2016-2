@@ -42,6 +42,7 @@ private:
 	ColaBloqueante<Bytes> estados;
 
 	std::string ip;
+	std::string nombre;
 	Conexion con;
 
 	std::thread t_atenderCliente;

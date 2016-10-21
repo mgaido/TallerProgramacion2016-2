@@ -25,6 +25,7 @@ public:
 	Jugador* nuevoJugador(std::string nombre);
 	bool getEstado(Bytes& bytes);
 	bool estaIniciado();
+	int getCantdadJugadores();
 
 private:
 	Config& configuracion;

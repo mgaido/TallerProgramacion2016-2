@@ -30,6 +30,10 @@ Jugador* Sesion::getJugador() {
 	return jugador;
 }
 
+std::string Sesion::getNombre() {
+	return nombre;
+}
+
 void Sesion::cambioDeEstado(Bytes bytes) {
 	if (activa)
 		estados.encolar(bytes);
@@ -65,7 +69,7 @@ void Sesion::atenderCliente() {
 void Sesion::handshake(Bytes& bytes) {
 	HandshakeRequest req;
 	bytes.get(req);
-	std::string nombre = req.getNombre();
+	nombre = req.getNombre();
 	debug("Cliente '" + nombre + "' conectado desde " + ip);
 
 	jugador = servidor->nuevaConexion(this, nombre);
