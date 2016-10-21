@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Cliente.cpp" />
+    <ClCompile Include="src\Conexion.cpp" />
+    <ClCompile Include="src\Config.cpp" />
+    <ClCompile Include="src\Handshake.cpp" />
+    <ClCompile Include="src\Juego.cpp" />
+    <ClCompile Include="src\Jugador.cpp" />
+    <ClCompile Include="src\Logger.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Objeto.cpp" />
+    <ClCompile Include="src\Servidor.cpp" />
+    <ClCompile Include="src\Sesion.cpp" />
+    <ClCompile Include="src\Sockets.cpp" />
+    <ClCompile Include="src\Teclas.cpp" />
+    <ClCompile Include="src\Vista.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Estado.h" />
+    <ClInclude Include="src\Bytes.h" />
+    <ClInclude Include="src\Cliente.h" />
+    <ClInclude Include="src\ColaBloqueante.h" />
+    <ClInclude Include="src\Conexion.h" />
+    <ClInclude Include="src\Config.h" />
+    <ClInclude Include="src\Handshake.h" />
+    <ClInclude Include="src\Juego.h" />
+    <ClInclude Include="src\Jugador.h" />
+    <ClInclude Include="src\Logger.h" />
+    <ClInclude Include="src\NoImage.h" />
+    <ClInclude Include="src\Objeto.h" />
+    <ClInclude Include="src\Servidor.h" />
+    <ClInclude Include="src\Sesion.h" />
+    <ClInclude Include="src\Sockets.h" />
+    <ClInclude Include="src\Teclas.h" />
+    <ClInclude Include="src\Utils.h" />
+    <ClInclude Include="src\Vista.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{F67D4806-7983-4729-A3CC-F62296CA4ABB}</ProjectGuid>
+    <RootNamespace>tp3</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>$(SolutionDir)SDL2-2.0.4\include;$(SolutionDir)SDL2_image-2.0.1\include;$(SolutionDir)rapidxml-1.13;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)SDL2_image-2.0.1\lib\x86;$(SolutionDir)SDL2-2.0.4\lib\x86;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Ws2_32.lib;SDL2.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
