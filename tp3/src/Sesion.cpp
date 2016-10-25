@@ -156,6 +156,12 @@ void Sesion::desconectar() {
 		estados.cerrar();
 		con.cancelarRecepcion();
 		jugador->setConectado(false);
+
+		Bytes bytes;
+		bytes.put(BYE);
+		try {
+			con.enviar(bytes);
+		} catch (SocketException&) {}
 	}
 
 	if (t_enviarEstado.joinable() && t_enviarEstado.get_id() != std::this_thread::get_id()) {

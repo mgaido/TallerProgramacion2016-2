@@ -26,7 +26,7 @@ Juego::~Juego() {
 	}
 }
 
-int Juego::getCantdadJugadores(){
+unsigned int Juego::getCantdadJugadores(){
 	return jugadores.size();
 }
 
@@ -77,7 +77,7 @@ bool Juego::getEstado(Bytes& bytes) {
 	if (minX > escenario.getOffsetVista() + escenario.getAnchoVista()/2) {
 		cambios = true;
 		int offset = std::min<int>(minX - escenario.getAnchoVista()/2, escenario.getOffsetVista() + maxOffsetDelta);
-		offset = std::min<int>(offset, escenario.getLongitud() - escenario.getAnchoVista());
+		offset = std::min<int>(offset, escenario.getLongitud());
 		escenario.setOffsetVista(offset);
 	}
 

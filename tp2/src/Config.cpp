@@ -136,24 +136,24 @@ void Config::fromBytes(Bytes & bytes) {
 void Config::defaultConfig() {
 	info("Cargando escenario default");
 
-	this->cantidadMaximaJugadores = 1;
+	this->cantidadMinimaJugadores = 1;
 	this->cantidadMaximaJugadores = 4;
-	this->tamanioVentana.x = 800;
+	this->tamanioVentana.x = 1024;
 	this->tamanioVentana.y = 600;
 	this->tamanioJugador.x = 100;
 	this->tamanioJugador.y = 180;
-	this->velocX = tamanioVentana.x/4000000.0;
-	this->velocY = velocX * 4;
-	this->gravedad = 2*velocY/1000000;
+	this->velocX = 0.0003;
+	this->velocY = 0.0008;
+	this->gravedad = 2*this->velocY/1000000;
 	this->framerate = 30;
-	this->longitud = this->tamanioVentana.x * 8;
-	this->nivelPiso = (int) tamanioVentana.y * 0.75;
+	this->longitud = this->tamanioVentana.y * 10;
+	this->nivelPiso = (int) tamanioVentana.y * 0.833;
 
 	ConfigSprite sprite = ConfigSprite();
 	sprite.estado = Estado::Caminando;
 	setCharArray("img/caminando.png", sprite.imagen);
 	sprite.frames = 6;
-	sprite.tiempo = 1200;
+	sprite.tiempo = 1000;
 	sprite.zIndex = 10;
 	this->configSprites.push_back(sprite);
 
@@ -190,6 +190,8 @@ void Config::defaultConfig() {
 	setCharArray("img/fondo.png", capa.imagen);
 	capa.zIndex = 2;
 	this->configCapas.push_back(capa);
+
+	debug(toString());
 }
 
 std::string Config::toString() {
@@ -198,7 +200,7 @@ std::string Config::toString() {
 	ss << "Ventana: " << tamanioVentana.x << "x" << tamanioVentana.y << "; ";
 	ss << "FPS: " << framerate << "; ";
 	ss << "Jugador: " << tamanioJugador.x << "x" << tamanioJugador.y << "; ";
-	ss << "Veloc x: " << velocX << " Veloc y:" << velocX << "Gravedad: " << gravedad << "; ";
+	ss << "Veloc x: " << velocX << " Veloc y:  " << velocY << " Gravedad: " << gravedad << "; ";
 
 	ss << "Longitud: " << longitud << "; ";
 	ss << "Nivel piso: " << nivelPiso << "; ";

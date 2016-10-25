@@ -26,7 +26,7 @@ Juego::~Juego() {
 	}
 }
 
-int Juego::getCantdadJugadores(){
+unsigned int Juego::getCantdadJugadores(){
 	return jugadores.size();
 }
 
@@ -61,7 +61,7 @@ bool Juego::getEstado(Bytes& bytes) {
 
 	lock.lock();
 
-	int loop = 0; //escenario.getLongitud();
+	int loop = escenario.getLongitud();
 	if (escenario.getOffsetVista() <= loop)
 		loop = 0;
 	escenario.setOffsetVista(escenario.getOffsetVista() - loop);

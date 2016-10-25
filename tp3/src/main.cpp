@@ -11,12 +11,12 @@ Logger* logger;
 int both() {
 	std::string host = "127.0.0.1";
 	std::string usuario = "Jugador 1";
-	std::string archivo = "mapa.xml";
+	std::string archivo = "menu.xml";
 	int puerto = 10000;
 
 	initSockets();
 
-	logger = new Logger("tp2.log");
+	logger = new Logger("tp3.log");
 
 	info("Iniciado servidor en puerto " + std::to_string(puerto) + (archivo.size() == 0 ? "" : " y leyendo configuracion de " + archivo), true);
 	Servidor servidor(puerto, archivo);

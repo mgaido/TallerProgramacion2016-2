@@ -211,13 +211,12 @@ void Imagen::cargarImagen(SDL_Renderer* renderer, std::array<char, 512>& _path) 
 
 Capa::Capa(Punto ventana, int longitud, ConfigCapa& _config) : Imagen(ventana), config(_config) {
 	this->longitud = longitud;
-	this->tiles = 0;
+	this->tiles = 1;
 }
 
 void Capa::cargar(SDL_Renderer* renderer) {
 	cargarImagen(renderer, config.imagen);
-	this->tiles = 1;
-	if (tamanioDestino.x > tamanio.x)
+	if (tamanioDestino.x * escala > tamanio.x)
 		this->tiles = ceil(tamanioDestino.x / (double) tamanio.x);
 }
 

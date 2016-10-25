@@ -96,6 +96,10 @@ void Cliente::recibirEstado() {
 				info("Reiniciando vista");
 				reconectar = true;
 				vista->detener();
+			} else if (comando == BYE) {
+				info("Cerrando vista");
+				conectado = false;
+				vista->detener();
 			} else {
 				warn("Comando invalido: " + std::to_string(comando));
 			}

@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuracion>
 	<ventana>
-		<ancho>800</ancho>
+		<ancho>1024</ancho>
 		<alto>600</alto>
 	</ventana>
+	<piso>500</piso>
 	<jugador>
 		<ancho>100</ancho>
 		<alto>180</alto>
 	</jugador>
 	<velocidad>
-		<x>200</x>
+		<x>300</x>
 		<y>800</y>
-		<g>1500</g>
+		<g>1600</g> <!-- 2*y/(tiempo salto en segs) -->
 	</velocidad>
 	<fps>30</fps>
-	<longitud>6400</longitud>
-	<piso>450</piso>
+	<longitud>6000</longitud>
 	<minimo_numero_jugadores>1</minimo_numero_jugadores>
 	<maximo_numero_jugadores>4</maximo_numero_jugadores>
 	<capas>
@@ -29,7 +29,7 @@
 		</capa>
 		<capa>
 			<imagen>img/lineas.png</imagen>
-			<zindex>25</zindex>
+			<zindex>20</zindex>
 		</capa>
 	</capas>
 	<sprites>
@@ -38,7 +38,7 @@
 			<imagen>img/caminando.png</imagen>
 			<zindex>10</zindex>
 			<frames>6</frames>
-			<tiempo>1200</tiempo>
+			<tiempo>1000</tiempo>
 		</sprite>
 		<sprite>
 			<estado>Saltando</estado>
@@ -59,7 +59,7 @@
 			<imagen>img/desconectado.png</imagen>
 			<zindex>10</zindex>
 			<frames>1</frames>
-			<tiempo>1000</tiempo>
+			<tiempo>750</tiempo>
 		</sprite>
 	</sprites>
 </configuracion>
