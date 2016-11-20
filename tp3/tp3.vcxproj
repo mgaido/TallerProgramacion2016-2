@@ -7,6 +7,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Enemigo.cpp" />
+    <ClCompile Include="PickUp.cpp" />
+    <ClCompile Include="Bonus.cpp" />
     <ClCompile Include="src\Cliente.cpp" />
     <ClCompile Include="src\Conexion.cpp" />
     <ClCompile Include="src\Config.cpp" />
@@ -23,6 +26,10 @@
     <ClCompile Include="src\Vista.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Enemigo.h" />
+    <ClInclude Include="Arma.h" />
+    <ClInclude Include="Bonus.h" />
+    <ClInclude Include="PickUp.h" />
     <ClInclude Include="src\Estado.h" />
     <ClInclude Include="src\Bytes.h" />
     <ClInclude Include="src\Cliente.h" />
