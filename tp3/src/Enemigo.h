@@ -2,8 +2,9 @@
 #ifndef ENEMIGO_H_
 #define ENEMIGO_H_
 
+#include "Personaje.h"
 
-class Enemigo {
+class Enemigo : public Personaje {
 public:
 
 private:

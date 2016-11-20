@@ -3,8 +3,9 @@
 #ifndef BONUS_H_
 #define BONUS_H_
 
+#include "PickUp.h"
 
-class Bonus {
+class Bonus : public PickUp {
 public:
 	
 private:

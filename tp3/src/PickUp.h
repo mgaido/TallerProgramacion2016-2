@@ -2,7 +2,9 @@
 #ifndef PICKUP_H
 #define PICKUP_H
 
-class PickUp {
+#include "Objeto.h"
+
+class PickUp : public Objeto {
 public:
 	
 private:

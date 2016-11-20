@@ -1,11 +1,9 @@
-#pragma once
-
 #ifndef ARMA_H_
 #define ARMA_H_
 
-#include "Objeto.h"
+#include "PickUp.h"
 
-class Arma {
+class Arma : public PickUp {
 public:
 	
 private:
