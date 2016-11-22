@@ -4,9 +4,10 @@
 
 #include "Proyectil.h"
 
+//Lanzamisiles
 class GunR : public Proyectil {
 public:
-
+	GunR();
 private:
 
 

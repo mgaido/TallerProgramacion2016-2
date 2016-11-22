@@ -4,11 +4,16 @@
 
 #include "Objeto.h"
 
+
 class Personaje : public Objeto {
 public:
-
-private:
-
+	Personaje();
+	int getEnergia();
+	bool recibirDanio(int a); //Devuelve True si se la Energia llega a 0
+	void cambiarArma(Proyectil);
+protected:
+	int energia;
+	Proyectil arma;
 };
 
 #endif /* PERSONAJE_H_ */

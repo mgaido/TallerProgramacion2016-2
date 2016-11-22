@@ -4,9 +4,10 @@
 
 #include "Proyectil.h"
 
+//Arma Basica
 class GunH : public Proyectil {
 public:
-
+	GunH();
 private:
 
 

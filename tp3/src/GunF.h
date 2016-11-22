@@ -4,9 +4,10 @@
 
 #include "Proyectil.h"
 
+//LanzaLlamas
 class GunF : public Proyectil {
 public:
-
+	GunF();
 private:
 
 

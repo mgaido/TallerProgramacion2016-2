@@ -4,9 +4,10 @@
 
 #include "Proyectil.h"
 
+//Misiles que siguen al Jugador
 class GunC : public Proyectil {
 public:
-
+	GunC();
 private:
 
 

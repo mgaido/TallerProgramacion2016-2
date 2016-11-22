@@ -24,7 +24,9 @@
     <ClCompile Include="src\Logger.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Objeto.cpp" />
+    <ClCompile Include="src\Pesonaje.cpp" />
     <ClCompile Include="src\PickUp.cpp" />
+    <ClCompile Include="src\Proyectil.cpp" />
     <ClCompile Include="src\Servidor.cpp" />
     <ClCompile Include="src\Sesion.cpp" />
     <ClCompile Include="src\Sockets.cpp" />

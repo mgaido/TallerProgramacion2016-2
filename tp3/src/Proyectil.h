@@ -6,9 +6,17 @@
 
 class Proyectil : public Objeto {
 public:
-
+	Proyectil();
+	void recargar();
+	int getPuntos();
+	bool disparar(); //Devuelve True si se pudo disparar, False si se quedo sin Balas.
 private:
 
+protected:
+	int danio;
+	int cantidad;
+	int cantidadRepuesto;
+	int puntosOtorgados;
 
 };
 
