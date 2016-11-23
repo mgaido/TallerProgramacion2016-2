@@ -7,7 +7,7 @@
 //Lanzamisiles
 class GunR : public Proyectil {
 public:
-	GunR();
+	GunR(int id);
 private:
 
 

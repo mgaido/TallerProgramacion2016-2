@@ -1,6 +1,6 @@
 #include "GunS.h"
 
-GunS::GunS() {
+GunS::GunS(int id) : Proyectil(id) {
 	this->danio = 50;
 	this->cantidad = 30;
 	this->cantidadRepuesto = 10;

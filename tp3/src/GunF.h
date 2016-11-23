@@ -7,7 +7,7 @@
 //LanzaLlamas
 class GunF : public Proyectil {
 public:
-	GunF();
+	GunF(int id);
 private:
 
 

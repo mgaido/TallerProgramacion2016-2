@@ -1,7 +1,7 @@
 #include "Proyectil.h"
 
-Proyectil::Proyectil() {
-
+Proyectil::Proyectil(int id) : Objeto(id) {
+	
 }
 
 void Proyectil::recargar() {
@@ -20,3 +20,6 @@ bool Proyectil::disparar() {
 	}
 	return dispara;
 }
+
+Proyectil::~Proyectil() {}
+

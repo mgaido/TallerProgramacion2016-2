@@ -7,7 +7,7 @@
 //Arma Basica
 class GunH : public Proyectil {
 public:
-	GunH();
+	GunH(int id);
 private:
 
 

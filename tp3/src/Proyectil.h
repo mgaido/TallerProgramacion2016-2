@@ -6,10 +6,11 @@
 
 class Proyectil : public Objeto {
 public:
-	Proyectil();
+	Proyectil(int id);
 	void recargar();
 	int getPuntos();
 	bool disparar(); //Devuelve True si se pudo disparar, False si se quedo sin Balas.
+	~Proyectil();
 private:
 
 protected:
