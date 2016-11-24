@@ -8,11 +8,11 @@
 #include "Juego.h"
 
 int maxOffsetDelta;
+int contador = 0;
 
 Juego::Juego(Config& _configuracion) : configuracion(_configuracion) {
 	iniciado = false;
 	cambios = true;
-	contador = 0;
 	escenario = Escenario(configuracion.getLongitud(), configuracion.getTamanioVentana().x, configuracion.getNivelPiso());
 	maxOffsetDelta = round(configuracion.getVelocidadX() * 2 * 1000000.0 / configuracion.getFrameRate());
 }
@@ -24,6 +24,7 @@ Juego::~Juego() {
 		delete obj;
 		jugadores.erase(it);
 	}
+
 }
 
 unsigned int Juego::getCantdadJugadores(){

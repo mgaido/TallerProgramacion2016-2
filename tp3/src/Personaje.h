@@ -12,7 +12,6 @@ public:
 	Personaje(int id, Config& _configuracion);
 	int getEnergia();
 	bool recibirDanio(int a); //Devuelve True si se la Energia llega a 0
-	void cambiarArma(Proyectil*);
 
 	void caminar(Direccion direccion);
 	void detenerse();

@@ -26,6 +26,11 @@ std::string Jugador::getNombre() {
 	return nombre;
 }
 
+void Jugador::cambiarArma(Proyectil *armaNueva) {
+	arma = armaNueva;
+}
+
+
 
 void Jugador::setConectado(bool conectado) {
 	if (estado == Estado::Desconectado && conectado) {

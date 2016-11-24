@@ -6,7 +6,7 @@
 
 class Enemigo : public Personaje {
 public:
-
+	
 private:
 	
 };

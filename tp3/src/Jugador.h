@@ -16,6 +16,8 @@ class Jugador : public Personaje {
 public:
 	Jugador(int id, std::string nombre, Config& configuracion);
 	~Jugador();
+	void cambiarArma(Proyectil*);
+
 		
 	void setConectado(bool conectado);
 	std::string getNombre();

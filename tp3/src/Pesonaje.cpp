@@ -4,7 +4,7 @@
 
 Personaje::Personaje(int id, Config & _configuracion) : Objeto(id), configuracion(_configuracion) {
 	energia = 1000;
-	arma =  new GunH(46);  //agregar id 
+	arma =  new GunH(++contador);  //agregar id 
 }
 
 int Personaje::getEnergia() {
@@ -22,9 +22,6 @@ bool Personaje::recibirDanio(int danio) {
 	return muerto;
 }
 
-void Personaje::cambiarArma(Proyectil *armaNueva) {
-	arma = armaNueva;
-}
 
 void Personaje::caminar(Direccion direccion) {
 	std::unique_lock<std::mutex> lock(mutex);

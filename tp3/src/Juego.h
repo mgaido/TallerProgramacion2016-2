@@ -16,6 +16,8 @@
 #include "Estado.h"
 #include "Logger.h"
 #include "Utils.h"
+#include "Proyectil.h"
+#include "PickUp.h"
 
 class Juego {
 public:
@@ -31,9 +33,10 @@ private:
 	Config& configuracion;
 	bool iniciado;
 	std::mutex lock;
-	int contador;
 	Escenario escenario;
 	std::vector<Jugador*> jugadores;
+	std::vector<Proyectil*> proyectiles;
+	std::vector<PickUp*> pickups;
 	//std::vector<Objeto*> objetos; para TP3
 	bool cambios;
 };

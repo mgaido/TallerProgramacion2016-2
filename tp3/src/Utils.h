@@ -17,6 +17,8 @@
 
 using micros = double;
 
+extern 	int contador;
+
 inline std::vector<std::string> split(std::string s, char delim) {
 	std::vector<std::string> parts;
 
