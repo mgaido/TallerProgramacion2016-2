@@ -63,7 +63,7 @@ void Vista::iniciar() {
 			capaIt++;
 		}
 
-		auto spriteIt = configuracion.getConfigSprites().begin();
+		auto spriteIt = configuracion.getConfigSprites().begin();			//modificar xml para gregar config de sprites de enemigos y proyectiles 
 		while (spriteIt != configuracion.getConfigSprites().end()) {
 			std::shared_ptr<Sprite> sprite = std::make_shared<Sprite>(configuracion.getTamanioJugador(), *spriteIt);
 			sprite->cargar(renderer);

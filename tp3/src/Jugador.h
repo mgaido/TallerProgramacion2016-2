@@ -11,13 +11,12 @@
 #include "Logger.h"
 #include "Personaje.h"
 
-
 class Jugador : public Personaje {
 public:
 	Jugador(int id, std::string nombre, Config& configuracion);
 	~Jugador();
 	void cambiarArma(Proyectil*);
-
+	virtual bool esEnemigo();
 		
 	void setConectado(bool conectado);
 	std::string getNombre();

@@ -202,8 +202,10 @@ void Servidor::detener() {
 				sesiones.erase(it);;
 			}
 			sesiones.clear();
-			if (juego != nullptr)
+			if (juego != nullptr) {
+				juego->detener();
 				delete juego;
+			}
 		}
 		info("Servidor detenido");
 	}

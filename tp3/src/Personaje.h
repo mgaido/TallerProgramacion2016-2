@@ -5,8 +5,6 @@
 #include "Proyectil.h"
 #include "Config.h"
 
-enum class Direccion { IZQUIERDA, DERECHA };
-
 class Personaje : public Objeto {
 public:
 	Personaje(int id, Config& _configuracion);
@@ -16,8 +14,10 @@ public:
 	void caminar(Direccion direccion);
 	void detenerse();
 	void saltar();
-
+	bool disparar();
 	virtual bool tieneCambios();
+	virtual bool esEnemigo() = 0;
+	bool estaMuerto();
 
 protected:
 	bool actualizar();

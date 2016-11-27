@@ -17,7 +17,10 @@
 #include "Logger.h"
 #include "Utils.h"
 #include "Proyectil.h"
+#include "Enemigo.h"
 #include "PickUp.h"
+
+
 
 class Juego {
 public:
@@ -28,8 +31,11 @@ public:
 	bool getEstado(Bytes& bytes);
 	bool estaIniciado();
 	unsigned int getCantdadJugadores();
+	void spawnEnemigo();
+	void detener();
 
 private:
+	bool detenido;
 	Config& configuracion;
 	bool iniciado;
 	std::mutex lock;
@@ -37,8 +43,11 @@ private:
 	std::vector<Jugador*> jugadores;
 	std::vector<Proyectil*> proyectiles;
 	std::vector<PickUp*> pickups;
+	std::vector<Enemigo*> enemigos;
 	//std::vector<Objeto*> objetos; para TP3
 	bool cambios;
+	std::thread t_chequearColisiones;
+	void chequearColisiones();
 };
 
 #endif /* JUEGO_H_ */

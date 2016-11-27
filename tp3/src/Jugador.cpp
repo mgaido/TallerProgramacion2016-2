@@ -30,7 +30,9 @@ void Jugador::cambiarArma(Proyectil *armaNueva) {
 	arma = armaNueva;
 }
 
-
+bool Jugador::esEnemigo() {
+	return false;
+}
 
 void Jugador::setConectado(bool conectado) {
 	if (estado == Estado::Desconectado && conectado) {

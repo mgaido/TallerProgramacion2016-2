@@ -18,6 +18,7 @@
 using micros = double;
 
 extern 	int contador;
+enum class Direccion { IZQUIERDA, DERECHA };
 
 inline std::vector<std::string> split(std::string s, char delim) {
 	std::vector<std::string> parts;

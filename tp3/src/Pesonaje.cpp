@@ -22,6 +22,9 @@ bool Personaje::recibirDanio(int danio) {
 	return muerto;
 }
 
+bool Personaje::disparar() {
+	return arma->disparar();
+}
 
 void Personaje::caminar(Direccion direccion) {
 	std::unique_lock<std::mutex> lock(mutex);
@@ -55,6 +58,11 @@ void Personaje::saltar() {
 bool Personaje::tieneCambios() {
 	std::unique_lock<std::mutex> lock(mutex);
 	return actualizar();
+}
+
+bool Personaje::estaMuerto()
+{
+	return (energia <= 0);
 }
 
 bool Personaje::actualizar() {
