@@ -124,6 +124,7 @@ private:
 	SDL_Renderer* renderer;
 	std::vector<std::shared_ptr<Capa>> capas;
 	HashMap<Estado, std::shared_ptr<Sprite>> sprites;
+	HashMap<Tipo, HashMap<Estado, std::shared_ptr<Sprite>>> spritess;
 
 	std::vector<Renderer*> renderers;
 };

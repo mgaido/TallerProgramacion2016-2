@@ -68,6 +68,7 @@ void Vista::iniciar() {
 			std::shared_ptr<Sprite> sprite = std::make_shared<Sprite>(configuracion.getTamanioJugador(), *spriteIt);
 			sprite->cargar(renderer);
 			sprites[spriteIt->estado] = sprite;
+			spritess[spriteIt->tipo][spriteIt->estado] = sprite;
 			spriteIt++;
 		}
 
@@ -156,7 +157,7 @@ void Vista::actualizar() {
 
 		auto it = estado.begin();
 		while (it != estado.end()) {
-			auto configSprite = sprites[it->getEstado()];
+			auto configSprite = spritess[it->getTipo()][it->getEstado()];
 			renderers.push_back(new RendererSprite(configSprite.get(), it->getPos(),
 					it->getFrame(), it->getOrientacion(), it->getId() == idJugador));
 			estado.erase(it);

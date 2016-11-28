@@ -90,7 +90,18 @@ void Config::parsearXML(std::string archivo) {
 		if (valor == "Desconectado")
 			estado = Estado::Desconectado;
 
+		valor = nodo.hijo("elemento").valor();
+		Tipo tipo;
+		if (valor == "Jugador")
+			tipo = Tipo::Jugador;
+
+		if (valor == "Enemigo")
+			tipo = Tipo::Enemigo;
+
+
 		sprite.estado = estado;
+		sprite.tipo = tipo;
+
 		this->configSprites.push_back(sprite);
 	} while (nodo.siguiente());
 
@@ -151,23 +162,26 @@ void Config::defaultConfig() {
 
 	ConfigSprite sprite = ConfigSprite();
 	sprite.estado = Estado::Caminando;
-	setCharArray("img/caminando.png", sprite.imagen);
-	sprite.frames = 6;
+	sprite.tipo = Tipo::Jugador;
+	setCharArray("img/Personaje.png", sprite.imagen);
+	sprite.frames = 12;
 	sprite.tiempo = 1000;
 	sprite.zIndex = 10;
 	this->configSprites.push_back(sprite);
 
 	sprite = ConfigSprite();
 	sprite.estado = Estado::Saltando;
-	setCharArray("img/saltando.png", sprite.imagen);
-	sprite.frames = 1;
+	sprite.tipo = Tipo::Jugador;
+	setCharArray("img/Personaje-Saltando.png", sprite.imagen);
+	sprite.frames = 12;
 	sprite.tiempo = 1000;
 	sprite.zIndex = 10;
 	this->configSprites.push_back(sprite);
 
 	sprite = ConfigSprite();
 	sprite.estado = Estado::Quieto;
-	setCharArray("img/quieto.png", sprite.imagen);
+	setCharArray("img/PersonajeQuieto.png", sprite.imagen);
+	sprite.tipo = Tipo::Jugador;
 	sprite.frames = 1;
 	sprite.tiempo = 1000;
 	sprite.zIndex = 10;
@@ -175,7 +189,35 @@ void Config::defaultConfig() {
 
 	sprite = ConfigSprite();
 	sprite.estado = Estado::Desconectado;
-	setCharArray("img/desconectado.png", sprite.imagen);
+	setCharArray("img/PersonajeDesconectado.png", sprite.imagen);
+	sprite.tipo = Tipo::Jugador;
+	sprite.frames = 1;
+	sprite.tiempo = 1000;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
+	sprite = ConfigSprite();
+	sprite.estado = Estado::Caminando;
+	sprite.tipo = Tipo::Enemigo;
+	setCharArray("img/EnemigoCaminando.png", sprite.imagen);
+	sprite.frames = 16;
+	sprite.tiempo = 1000;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
+	sprite = ConfigSprite();
+	sprite.estado = Estado::Saltando;
+	sprite.tipo = Tipo::Enemigo;
+	setCharArray("img/EnemigoSaltando.png", sprite.imagen);
+	sprite.frames = 1;
+	sprite.tiempo = 1000;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
+	sprite = ConfigSprite();
+	sprite.estado = Estado::Quieto;
+	setCharArray("img/EnemigoDisparando.png", sprite.imagen);
+	sprite.tipo = Tipo::Enemigo;
 	sprite.frames = 1;
 	sprite.tiempo = 1000;
 	sprite.zIndex = 10;

@@ -158,6 +158,7 @@ bool Juego::getEstado(Bytes& bytes) {
 			estadoObj.setId(obj->getId());
 			estadoObj.setTipo(obj->getTipo());
 			estadoObj.setEstado(obj->getEstado());
+			estadoObj.setTipo(Tipo::Jugador);
 			Punto pos;
 			pos.x = obj->getPos().x - escenario.getOffsetVista();
 			pos.y = escenario.getNivelPiso() - obj->getTamanio().y - obj->getPos().y;
@@ -181,6 +182,8 @@ bool Juego::getEstado(Bytes& bytes) {
 			estadoObj.setId(obj->getId());
 			estadoObj.setTipo(obj->getTipo());
 			estadoObj.setEstado(obj->getEstado());
+			estadoObj.setTipo(Tipo::Enemigo);
+
 			Punto pos;
 			pos.x = obj->getPos().x - escenario.getOffsetVista();
 			pos.y = escenario.getNivelPiso() - obj->getTamanio().y - obj->getPos().y;
