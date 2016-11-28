@@ -4,7 +4,7 @@
 
 Personaje::Personaje(int id, Config & _configuracion) : Objeto(id), configuracion(_configuracion) {
 	energia = 1000;
-	arma =  new GunC(++contador);  //agregar id 
+	arma =  new GunC(++contador);  //agregar id  //La por default es GunH Cambiar
 }
 
 int Personaje::getEnergia() {
