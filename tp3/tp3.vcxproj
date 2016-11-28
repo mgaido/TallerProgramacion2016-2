@@ -8,7 +8,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Arma.cpp" />
-    <ClCompile Include="src\Bonus.cpp" />
     <ClCompile Include="src\Boss.cpp" />
     <ClCompile Include="src\Cliente.cpp" />
     <ClCompile Include="src\Conexion.cpp" />
@@ -37,7 +36,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Arma.h" />
-    <ClInclude Include="src\Bonus.h" />
     <ClInclude Include="src\Enemigo.h" />
     <ClInclude Include="src\Estado.h" />
     <ClInclude Include="src\Bytes.h" />

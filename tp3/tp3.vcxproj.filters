@@ -60,9 +60,6 @@
     <ClCompile Include="src\Arma.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Bonus.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Enemigo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -153,9 +150,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Arma.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Bonus.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Enemigo.h">

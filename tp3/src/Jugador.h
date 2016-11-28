@@ -10,6 +10,7 @@
 
 #include "Logger.h"
 #include "Personaje.h"
+#include "PickUp.h"
 
 class Jugador : public Personaje {
 public:
@@ -20,9 +21,10 @@ public:
 		
 	void setConectado(bool conectado);
 	std::string getNombre();
-
+	void recibirBonus(PickUp* unPickUp);
 
 private:
+	bool killAll;
 	std::string nombre;
 };
 

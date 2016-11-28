@@ -3,6 +3,7 @@
 #define ENEMIGO_H_
 
 #include "Personaje.h"
+#include "PickUp.h"
 #include <cstdlib>
 
 class Enemigo : public Personaje {
@@ -10,7 +11,7 @@ public:
 	Enemigo(int id, Config& _configuracion);
 	~Enemigo();
 	virtual bool esEnemigo();
-	bool spawnPickUp();
+	PickUp* spawnPickUp();
 	//void caminar(Direccion direc);
 
 protected:

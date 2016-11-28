@@ -3,12 +3,21 @@
 #define PICKUP_H
 
 #include "Objeto.h"
+#include "GunC.h"
+#include "GunH.h"
+#include "GunR.h"
+#include "GunS.h"
 
+enum class Bonus {GunH, GunC, GunS, GunR, Vida, KillAll};
 class PickUp : public Objeto {
 public:
-	
+	PickUp(int id);
+	Proyectil* getArma();
+	void setPos(Punto pos);
+	int getEnergiaACurar();
 private:
-	
+	Proyectil* arma;
+	int energiaACurar;
 };
 
 #endif // PICKUP_H

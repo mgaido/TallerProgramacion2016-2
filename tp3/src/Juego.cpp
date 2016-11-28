@@ -147,12 +147,31 @@ bool Juego::getEstado(Bytes& bytes) {
 	//Actualizar posiciones de jugadores y encontrar el minimo en X
 	int minX = 0;
 	auto it = jugadores.begin();
-	while (it != jugadores.end()) {
-		Jugador* obj = *it;
-		cambios |= obj->tieneCambios();
+	 
+	for (auto it = jugadores.begin(); it != jugadores.end();) {
+		Jugador* unJugador = *it;
+		cambios |= unJugador->tieneCambios();
+		bool colisionan = false;
+		if ((minX == 0 || unJugador->getPos().x < minX) && unJugador->getEstado() != Estado::Desconectado)
+			minX = unJugador->getPos().x + unJugador->getTamanio().x / 2;
 
-		if ((minX == 0 || obj->getPos().x < minX) && obj->getEstado() != Estado::Desconectado)
-			minX = obj->getPos().x + obj->getTamanio().x / 2;
+		auto it4 = pickups.begin();
+		while ((it4 != pickups.end()) && !colisionan) {
+			PickUp *unPickUp = *it4;
+			if (((unJugador->getPos().x + unJugador->getTamanio().x) < (unPickUp->getPos().x)) || (unJugador->getPos().x > unPickUp->getPos().x + unPickUp->getTamanio().x)) {
+				colisionan = false;
+			}
+			else if (((unJugador->getPos().y + unJugador->getTamanio().y) < (unPickUp->getPos().y)) || (unJugador->getPos().y > unPickUp->getPos().y + unPickUp->getTamanio().y)) {
+				colisionan = false;
+			}
+			else { colisionan = true; }
+
+			if (colisionan) {
+				unJugador->recibirBonus(unPickUp);
+				pickups.erase(it4);
+			}
+			it4++;
+		}
 		it++;
 	}
 	
@@ -181,6 +200,9 @@ bool Juego::getEstado(Bytes& bytes) {
 			if (colisionan) {
 				bool estaMuerto = unEnemigo->recibirDanio(unProyectil->getDanio());
 				if (estaMuerto) {
+					PickUp* nuevoPickup = unEnemigo->spawnPickUp();
+					if (nuevoPickup != NULL)
+						pickups.push_back(nuevoPickup);
 					enemigos.erase(it2);
 				}
 			}
@@ -285,6 +307,26 @@ bool Juego::getEstado(Bytes& bytes) {
 
 			estado.push_back(estadoObj);
 			it3++;
+		}
+
+		auto it4 = pickups.begin();
+		while (it4 != pickups.end()) {
+			Objeto* obj = *it4;
+
+			EstadoObj estadoObj;
+  			estadoObj.setId(obj->getId());
+			estadoObj.setTipo(obj->getTipo());
+			estadoObj.setEstado(obj->getEstado());
+			Punto pos;
+			pos.x = obj->getPos().x - escenario.getOffsetVista();
+			pos.y = escenario.getNivelPiso() - obj->getTamanio().y - obj->getPos().y;
+			estadoObj.setPos(pos);
+			estadoObj.setTamanio(obj->getTamanio());
+			estadoObj.setFrame(obj->getFrame());
+			estadoObj.setOrientacion(obj->getOrientacion());
+
+			estado.push_back(estadoObj);
+			it4++;
 		}
 	}
 

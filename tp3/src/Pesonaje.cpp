@@ -65,11 +65,6 @@ bool Personaje::tieneCambios() {
 	return actualizar();
 }
 
-bool Personaje::estaMuerto()
-{
-	return (energia <= 0);
-}
-
 bool Personaje::actualizar() {
 	if (estado != Estado::Desconectado) {
 

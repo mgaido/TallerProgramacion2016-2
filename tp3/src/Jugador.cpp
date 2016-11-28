@@ -12,6 +12,7 @@ Jugador::Jugador(int id, std::string nombre, Config& _configuracion) : Personaje
 	velocCaminar = 0, velocSaltoX = 0, velocSaltoY = 0;
 	tiempoCaminando=0;
 	tiempoSalto=0;
+	killAll = false;
 
 	estado = Estado::Desconectado;
 	tipo = Tipo::Jugador;
@@ -24,6 +25,16 @@ Jugador::~Jugador() {
 
 std::string Jugador::getNombre() {
 	return nombre;
+}
+
+void Jugador::recibirBonus(PickUp* unPickUp){
+	if ((unPickUp->getArma() != NULL))
+		this->arma = unPickUp->getArma();
+	else if (unPickUp->getEnergiaACurar() != 0)
+		energia += unPickUp->getEnergiaACurar();
+	else
+		killAll = true;
+
 }
 
 void Jugador::cambiarArma(Proyectil *armaNueva) {

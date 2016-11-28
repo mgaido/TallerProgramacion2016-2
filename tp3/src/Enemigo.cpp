@@ -19,9 +19,14 @@ bool Enemigo::esEnemigo() {
 	return true;
 }
 
-bool Enemigo::spawnPickUp() {
+PickUp* Enemigo::spawnPickUp() {
 	int valor = rand() % 100;
-	return (valor < 30);  //30% de prob q tire pickup al morir 
+	PickUp* nuevoPickup = NULL;
+	if (valor < 200) {				//30% dropear bonus al morir 
+		nuevoPickup = new PickUp(++contador);
+		nuevoPickup->setPos(this->pos);
+	}
+	return nuevoPickup;
 }
 
 //void Enemigo::caminar(Direccion direccion) {

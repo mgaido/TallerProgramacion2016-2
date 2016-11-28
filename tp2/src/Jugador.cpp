@@ -14,6 +14,8 @@ Jugador::Jugador(int id, std::string nombre, Config& _configuracion) : Objeto(id
 	tiempoCaminando=0;
 	tiempoSalto=0;
 
+	killAll = false;
+
 	estado = Estado::Desconectado;
 	tipo = Tipo::Jugador;
 
