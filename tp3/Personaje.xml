@@ -5,8 +5,8 @@
 		<alto>600</alto>
 	</ventana>
 	<jugador>
-		<ancho>170</ancho>
-		<alto>400</alto>
+		<ancho>75</ancho>
+		<alto>126</alto>
 	</jugador>
 	<velocidad>
 		<x>200</x>
@@ -15,7 +15,7 @@
 	</velocidad>
 	<fps>30</fps>
 	<longitud>6400</longitud>
-	<piso>500</piso>
+	<piso>550</piso>
 	<minimo_numero_jugadores>1</minimo_numero_jugadores>
 	<maximo_numero_jugadores>4</maximo_numero_jugadores>
 	<capas>
