@@ -35,9 +35,9 @@
 	<sprites>
 		<sprite>
 			<estado>Caminando</estado>
-			<imagen>img/caminando.png</imagen>
+			<imagen>img/Personaje.png</imagen>
 			<zindex>10</zindex>
-			<frames>6</frames>
+			<frames>12</frames>
 			<tiempo>1200</tiempo>
 		</sprite>
 		<sprite>

@@ -14,6 +14,7 @@ struct ConfigCapa {
 
 struct ConfigSprite {
 	Estado estado;
+	Tipo tipo;
 	std::array<char, 512> imagen;
 	int zIndex;
 	int frames;

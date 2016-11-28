@@ -5,8 +5,8 @@
 		<alto>600</alto>
 	</ventana>
 	<jugador>
-		<ancho>170</ancho>
-		<alto>400</alto>
+		<ancho>70</ancho>
+		<alto>126</alto>
 	</jugador>
 	<velocidad>
 		<x>200</x>
@@ -31,21 +31,21 @@
 	<sprites>
 		<sprite>
 			<estado>Caminando</estado>
-			<imagen>img/Personaje.png</imagen>
+			<imagen>img/EnemigoCaminando.png</imagen>
 			<zindex>10</zindex>
-			<frames>12</frames>
+			<frames>16</frames>
 			<tiempo>1200</tiempo>
 		</sprite>
 		<sprite>
 			<estado>Saltando</estado>
-			<imagen>img/Personaje-Saltando.png</imagen>
+			<imagen>img/EnemigoSaltando.png</imagen>
 			<zindex>10</zindex>
-			<frames>12</frames>
+			<frames>1</frames>
 			<tiempo>1000</tiempo>
 		</sprite>
 		<sprite>
 			<estado>Quieto</estado>
-			<imagen>img/PersonajeQuieto.png</imagen>
+			<imagen>img/EnemigoDisparando.png</imagen>
 			<zindex>10</zindex>
 			<frames>1</frames>
 			<tiempo>1000</tiempo>
