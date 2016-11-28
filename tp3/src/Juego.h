@@ -40,6 +40,7 @@ private:
 	Config& configuracion;
 	bool iniciado;
 	std::mutex lock;
+	std::mutex lockColisiones;
 	Escenario escenario;
 	std::vector<Jugador*> jugadores;
 	std::vector<Proyectil*> proyectiles;

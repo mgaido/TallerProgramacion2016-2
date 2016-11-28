@@ -169,7 +169,7 @@ void Config::defaultConfig() {
 	this->tamanioVentana.x = 1024;
 	this->tamanioVentana.y = 600;
 	this->tamanioJugador.x = 75;
-	this->tamanioJugador.y = 126;
+	this->tamanioJugador.y = 150;
 	this->velocX = 0.0003;
 	this->velocY = 0.0008;
 	this->gravedad = 2*this->velocY/1000000;

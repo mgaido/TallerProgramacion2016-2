@@ -38,6 +38,23 @@ void Juego::updateWorld() {
 }
 
 void Juego::chequearColisiones() {
+	while (!detenido) {
+		//solo se chequean misiles con enemigos por ahora
+		/*auto it = proyectiles.begin();
+		while (it != proyectiles.end()) {
+			Proyectil* unProyectil = *it;
+			bool colisionan = false;
+			auto it2 = enemigos.begin();
+			while ((it2 != enemigos.end()) && !colisionan) {
+				Enemigo* unEnemigo = *it2;
+				
+				if (colisionan) {
+					
+				}
+			}
+
+		}*/
+	}
 
 }
 
@@ -146,11 +163,33 @@ bool Juego::getEstado(Bytes& bytes) {
 		it2++;
 	}
 
-	auto it3 = proyectiles.begin();
-	while (it3 != proyectiles.end()) {
-		Proyectil* obj = *it3;
-		cambios |= obj->tieneCambios();
-		it3++;
+	for(auto it3 = proyectiles.begin(); it3 != proyectiles.end();) {
+		Proyectil* unProyectil = *it3;
+		cambios |= unProyectil->tieneCambios();
+		bool colisionan = false;
+		it2 = enemigos.begin();
+		while ((it2 != enemigos.end()) && !colisionan) {
+			Enemigo *unEnemigo = *it2;
+			if (((unProyectil->getPos().x + unProyectil->getTamanio().x) < (unEnemigo->getPos().x)) || (unProyectil->getPos().x > unEnemigo->getPos().x + unEnemigo->getTamanio().x)) {
+				colisionan = false;
+			}
+			else if (((unProyectil->getPos().y + unProyectil->getTamanio().y) < (unEnemigo->getPos().y)) || (unProyectil->getPos().y > unEnemigo->getPos().y + unEnemigo->getTamanio().y)) {
+				colisionan = false;
+			}
+			else { colisionan = true; }
+
+			if (colisionan) {
+				bool estaMuerto = unEnemigo->recibirDanio(unProyectil->getDanio());
+				if (estaMuerto) {
+					enemigos.erase(it2);
+				}
+			}
+			it2++;
+		}
+		if(colisionan)
+			it3 = proyectiles.erase(it3);
+		else
+			it3++;
 	}
 
 	//Actualizar el offset si es necesario
@@ -228,7 +267,7 @@ bool Juego::getEstado(Bytes& bytes) {
 			it2++;
 		}
 
-		it3 = proyectiles.begin();
+		auto it3 = proyectiles.begin();
 		while (it3 != proyectiles.end()) {
 			Objeto* obj = *it3;
 

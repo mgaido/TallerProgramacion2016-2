@@ -18,7 +18,6 @@ public:
 	virtual bool tieneCambios();
 	virtual bool esEnemigo() = 0;
 	bool estaMuerto();
-
 protected:
 	bool actualizar();
 	bool dispara;

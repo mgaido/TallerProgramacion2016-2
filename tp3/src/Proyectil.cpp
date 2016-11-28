@@ -35,6 +35,10 @@ void Proyectil::setOrientacion(bool nuevaOrientacion) {
 		velocidadProyectil = 0.0004;
 }
 
+int Proyectil::getDanio(){
+	return danio;
+}
+
 void Proyectil::trayectoria() {
 	micros t = 0;
 	double vx = 0;
@@ -67,5 +71,5 @@ bool Proyectil::tieneCambios() {
 
 void Proyectil::setPos(Punto nuevaPosicion) {
 	this->pos.x = nuevaPosicion.x;
-	this->pos.y = nuevaPosicion.y + 90;
+	this->pos.y = nuevaPosicion.y + 140;
 }

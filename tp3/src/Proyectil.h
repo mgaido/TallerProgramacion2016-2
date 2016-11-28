@@ -3,7 +3,6 @@
 #define PROYECTIL_H_
 
 #include "Objeto.h"
-
 class Proyectil : public Objeto {
 public:
 	Proyectil(int id);
@@ -15,6 +14,7 @@ public:
 	~Proyectil();
 	void trayectoria();
 	void setOrientacion(bool nuevaOrientacion);
+	int getDanio();
 private:
 
 protected:
