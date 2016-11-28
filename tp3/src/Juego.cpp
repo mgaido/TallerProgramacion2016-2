@@ -14,6 +14,7 @@ Juego::Juego(Config& _configuracion) : configuracion(_configuracion) {
 	iniciado = false;
 	cambios = true;
 	detenido = false;
+	contadorEnemigosSpawneados = 0;
 	escenario = Escenario(configuracion.getLongitud(), configuracion.getTamanioVentana().x, configuracion.getNivelPiso());
 	maxOffsetDelta = round(configuracion.getVelocidadX() * 2 * 1000000.0 / configuracion.getFrameRate());
 	t_chequearColisiones = std::thread(&Juego::chequearColisiones, this);
@@ -76,19 +77,40 @@ Jugador* Juego::nuevoJugador(std::string nombre) {
 }
 
 void Juego::spawnEnemigo(){
-	Enemigo* nuevoEnemigo = new Enemigo(++contador, configuracion);
-	nuevoEnemigo->getTamanio().x = configuracion.getTamanioJugador().x;				//configurar para enemigo 
-	nuevoEnemigo->getTamanio().y = configuracion.getTamanioJugador().y;				//configurar para enemigo
-	nuevoEnemigo->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista();
-	lock.lock();
-	nuevoEnemigo->caminar(Direccion::IZQUIERDA);
-	enemigos.push_back(nuevoEnemigo);
-	
-	lock.unlock();
+	if (contadorEnemigosSpawneados % 5 != 4) {
+		Enemigo* nuevoEnemigo = new Enemigo(++contador, configuracion);
+		nuevoEnemigo->getTamanio().x = configuracion.getTamanioJugador().x;				//configurar para enemigo 
+		nuevoEnemigo->getTamanio().y = configuracion.getTamanioJugador().y;				//configurar para enemigo
+		nuevoEnemigo->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista();
+		nuevoEnemigo->setTipo(Tipo::Enemigo);
+		contadorEnemigosSpawneados++;
+		lock.lock();
+		nuevoEnemigo->caminar(Direccion::IZQUIERDA);
+		enemigos.push_back(nuevoEnemigo);
 
-	cambios = true;
-	
-	info("Enemigo creado");
+		lock.unlock();
+
+		cambios = true;
+
+		info("Enemigo creado");
+	}
+	else { //Se crea el Boss
+		Enemigo* nuevoEnemigo = new Enemigo(++contador, configuracion);
+		nuevoEnemigo->getTamanio().x = 150;				//configurar para enemigo 
+		nuevoEnemigo->getTamanio().y = 300;				//configurar para enemigo
+		nuevoEnemigo->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista();
+		nuevoEnemigo->setTipo(Tipo::Boss);
+		contadorEnemigosSpawneados++;
+		lock.lock();
+		nuevoEnemigo->caminar(Direccion::IZQUIERDA);
+		enemigos.push_back(nuevoEnemigo);
+
+		lock.unlock();
+
+		cambios = true;
+
+		info("Boss creado");
+	}
 }
 
 bool Juego::getEstado(Bytes& bytes) {
@@ -182,7 +204,9 @@ bool Juego::getEstado(Bytes& bytes) {
 			estadoObj.setId(obj->getId());
 			estadoObj.setTipo(obj->getTipo());
 			estadoObj.setEstado(obj->getEstado());
-			estadoObj.setTipo(Tipo::Enemigo);
+			estadoObj.setEstado(obj->getEstado());
+			estadoObj.setTipo(obj->getTipo());
+
 
 			Punto pos;
 			pos.x = obj->getPos().x - escenario.getOffsetVista();

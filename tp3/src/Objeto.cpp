@@ -82,3 +82,6 @@ bool Objeto::getOrientacion() {
 	return orientacion;
 }
 
+void Objeto::setTipo(Tipo tipo) {
+	this->tipo = tipo;
+}

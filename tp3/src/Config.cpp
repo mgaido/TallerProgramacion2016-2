@@ -101,8 +101,25 @@ void Config::parsearXML(std::string archivo) {
 
 		sprite.estado = estado;
 		sprite.tipo = tipo;
-
 		this->configSprites.push_back(sprite);
+
+	} while (nodo.siguiente());
+
+	nodo = doc.hijo("plataformas").hijo("plataforma");
+
+	do {	//Plataformas
+		Plataformas plataforma;
+		valor = nodo.hijo("y").valor();
+		plataforma.punto.y = std::stoi(valor);
+
+		valor = nodo.hijo("x").valor();
+		plataforma.punto.x = std::stoi(valor);
+
+		valor = nodo.hijo("ancho").valor();
+		plataforma.ancho = std::stoi(valor);
+
+		this->plataformas.push_back(plataforma);
+
 	} while (nodo.siguiente());
 
 	debug(toString());
@@ -151,8 +168,8 @@ void Config::defaultConfig() {
 	this->cantidadMaximaJugadores = 4;
 	this->tamanioVentana.x = 1024;
 	this->tamanioVentana.y = 600;
-	this->tamanioJugador.x = 100;
-	this->tamanioJugador.y = 180;
+	this->tamanioJugador.x = 75;
+	this->tamanioJugador.y = 126;
 	this->velocX = 0.0003;
 	this->velocY = 0.0008;
 	this->gravedad = 2*this->velocY/1000000;
@@ -218,6 +235,24 @@ void Config::defaultConfig() {
 	sprite.estado = Estado::Quieto;
 	setCharArray("img/EnemigoDisparando.png", sprite.imagen);
 	sprite.tipo = Tipo::Enemigo;
+	sprite.frames = 1;
+	sprite.tiempo = 1000;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
+	sprite = ConfigSprite();
+	sprite.estado = Estado::Caminando;
+	sprite.tipo = Tipo::Boss;
+	setCharArray("img/Enemigo HiDo.png", sprite.imagen);
+	sprite.frames = 1;
+	sprite.tiempo = 1000;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
+	sprite = ConfigSprite();
+	sprite.estado = Estado::Quieto;
+	setCharArray("img/Enemigo HiDo.png", sprite.imagen);
+	sprite.tipo = Tipo::Boss;
 	sprite.frames = 1;
 	sprite.tiempo = 1000;
 	sprite.zIndex = 10;

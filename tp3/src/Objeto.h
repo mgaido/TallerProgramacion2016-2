@@ -10,7 +10,7 @@
 
 #include "Utils.h"
 
-enum class Tipo { Jugador, Enemigo };
+enum class Tipo { Jugador, Enemigo, Boss};
 enum class Estado { Quieto, Caminando, Saltando, Desconectado };
 
 
@@ -52,6 +52,7 @@ public:
 	Punto& getTamanio();
 	Estado getEstado();
 	Tipo getTipo();
+	void setTipo(Tipo tipo);
 	int getFrame();
 	bool getOrientacion();
 

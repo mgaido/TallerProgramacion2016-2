@@ -11,8 +11,9 @@ public:
 	~Enemigo();
 	virtual bool esEnemigo();
 	bool spawnPickUp();
+	//void caminar(Direccion direc);
 
-private:
+protected:
 	
 };
 

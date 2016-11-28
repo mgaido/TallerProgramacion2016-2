@@ -21,6 +21,12 @@ struct ConfigSprite {
 	int tiempo;
 };
 
+struct Plataformas {
+	Tipo tipo;
+	Punto punto;
+	int ancho;
+};
+
 class Config : public Serializable {
 public:
 	virtual void toBytes(Bytes &bytes);
@@ -41,6 +47,7 @@ public:
 
 	std::vector<ConfigCapa>& getConfigCapas();
 	std::vector<ConfigSprite>& getConfigSprites();
+	//std::vector<Plataformas>& getplataformas();
 
 	void defaultConfig();
 
@@ -59,6 +66,7 @@ private:
 	double gravedad;
 	std::vector<ConfigCapa> configCapas;
 	std::vector<ConfigSprite> configSprites;
+	std::vector<Plataformas> plataformas;
 };
 
 class XmlException : public std::exception {

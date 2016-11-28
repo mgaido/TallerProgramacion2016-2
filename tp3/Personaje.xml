@@ -31,6 +31,7 @@
 	<sprites>
 		<sprite>
 			<estado>Caminando</estado>
+			<elemento>Jugador</elemento>
 			<imagen>img/Personaje.png</imagen>
 			<zindex>10</zindex>
 			<frames>12</frames>
@@ -38,6 +39,7 @@
 		</sprite>
 		<sprite>
 			<estado>Saltando</estado>
+			<elemento>Jugador</elemento>
 			<imagen>img/Personaje-Saltando.png</imagen>
 			<zindex>10</zindex>
 			<frames>12</frames>
@@ -45,6 +47,7 @@
 		</sprite>
 		<sprite>
 			<estado>Quieto</estado>
+			<elemento>Jugador</elemento>
 			<imagen>img/PersonajeQuieto.png</imagen>
 			<zindex>10</zindex>
 			<frames>1</frames>
@@ -52,10 +55,23 @@
 		</sprite>
 		<sprite>
 			<estado>Desconectado</estado>
+			<elemento>Jugador</elemento>
 			<imagen>img/PersonajeDesconectado.png</imagen>
 			<zindex>10</zindex>
 			<frames>1</frames>
 			<tiempo>1000</tiempo>
 		</sprite>
 	</sprites>
+	<plataformas>
+		<plataforma>
+			<y>80</y>
+			<x>80</x>
+			<ancho>80</ancho>
+		</plataforma>
+		<plataforma>
+			<y>80</y>
+			<x>200</x>
+			<ancho>80</ancho>
+		</plataforma>
+	</plataformas>
 </configuracion>

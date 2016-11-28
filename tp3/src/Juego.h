@@ -48,6 +48,7 @@ private:
 	bool cambios;
 	std::thread t_chequearColisiones;
 	void chequearColisiones();
+	int contadorEnemigosSpawneados; //Para el tema de los Boss
 };
 
 #endif /* JUEGO_H_ */
