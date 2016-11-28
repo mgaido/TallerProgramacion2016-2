@@ -1,10 +1,10 @@
 #include "Personaje.h"
-#include "GunH.h"
+#include "GunC.h"
 
 
 Personaje::Personaje(int id, Config & _configuracion) : Objeto(id), configuracion(_configuracion) {
 	energia = 1000;
-	arma =  new GunH(++contador);  //agregar id 
+	arma =  new GunC(++contador);  //agregar id 
 }
 
 int Personaje::getEnergia() {
@@ -22,8 +22,13 @@ bool Personaje::recibirDanio(int danio) {
 	return muerto;
 }
 
-bool Personaje::disparar() {
-	return arma->disparar();
+Proyectil* Personaje::disparar() {
+	Proyectil* nuevoProyectil = arma->disparar();
+	if (nuevoProyectil != NULL) {
+		nuevoProyectil->setPos(this->getPos());
+		nuevoProyectil->setOrientacion(orientacion);
+	}
+	return nuevoProyectil;
 }
 
 void Personaje::caminar(Direccion direccion) {

@@ -9,6 +9,8 @@ class GunS : public Proyectil {
 public:
 	GunS(int id);
 private:
+protected:
+	virtual Proyectil* crearProyectil();
 
 
 };

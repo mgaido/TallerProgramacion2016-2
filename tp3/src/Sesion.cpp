@@ -114,6 +114,11 @@ void Sesion::eventoTeclado(Bytes& bytes) {
 	} else if (teclas.izq() && !teclas.der()) {
 		jugador->caminar(Direccion::IZQUIERDA);
 		debug(ip + " tecla izquierda");
+	} else if (teclas.disparar()) {
+		Proyectil* nuevoProyectil = jugador->disparar();
+		if(nuevoProyectil != NULL)
+			servidor->enviarProyectilAJuego(nuevoProyectil);
+		debug(ip + " disparar ");
 	} else {
 		jugador->detenerse();
 		debug(ip + " sin teclas");

@@ -218,3 +218,7 @@ Config& Servidor::getConfiguracion() {
 Juego* Servidor::getJuego() {
 	return juego;
 }
+
+void Servidor::enviarProyectilAJuego(Proyectil * nuevoProyectil){
+	juego->agregarProyectil(nuevoProyectil);
+}

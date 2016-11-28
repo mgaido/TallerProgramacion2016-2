@@ -11,8 +11,8 @@
 const char ARRIBA = 0;
 const char IZQ = 1;
 const char DER = 2;
-
 const char R = 4;
+const char SPACE = 5;
 
 class Teclas {
 public:
@@ -22,6 +22,7 @@ public:
 	bool izq();
 	bool der();
 	bool recargar();
+	bool disparar();
 
 	int getEstado();
 	void setEstado(int estado);

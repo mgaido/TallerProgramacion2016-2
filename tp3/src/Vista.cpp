@@ -122,6 +122,10 @@ void Vista::enviarEventos() {
 			case SDLK_r:
 				cambio = teclas.evento(R, evento.type == SDL_KEYDOWN);
 				break;
+			case SDLK_SPACE:
+				cambio = teclas.evento(SPACE, evento.type == SDL_KEYDOWN);
+				break;
+
 			/*case SDLK_q:
 				detener();
 				break;*/
@@ -164,7 +168,7 @@ void Vista::actualizar() {
 		}
 
 		sort(renderers.begin(), renderers.end(), [](Renderer* a, Renderer* b) -> bool {
-		    return a->getZindex() < b->getZindex();
+			return a->getZindex() < b->getZindex();
 		});
 	}
 

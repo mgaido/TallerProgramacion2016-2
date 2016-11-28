@@ -24,6 +24,10 @@ bool Teclas::der() {
 	return (estado & (1 << DER)) != 0;
 }
 
+bool Teclas::disparar() {
+	return (estado & (1 << SPACE)) != 0;
+}
+
 bool Teclas::recargar() {
 	return (estado & (1 << R)) != 0;
 }

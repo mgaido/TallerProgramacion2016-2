@@ -14,13 +14,14 @@ public:
 	void caminar(Direccion direccion);
 	void detenerse();
 	void saltar();
-	bool disparar();
+	Proyectil* disparar();
 	virtual bool tieneCambios();
 	virtual bool esEnemigo() = 0;
 	bool estaMuerto();
 
 protected:
 	bool actualizar();
+	bool dispara;
 	Config& configuracion;
 	bool cambios;
 	int energia;

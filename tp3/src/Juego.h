@@ -33,6 +33,7 @@ public:
 	unsigned int getCantdadJugadores();
 	void spawnEnemigo();
 	void detener();
+	void agregarProyectil(Proyectil* nuevoProyectil);
 
 private:
 	bool detenido;

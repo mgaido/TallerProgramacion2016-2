@@ -33,7 +33,7 @@ void Juego::chequearColisiones() {
 	while (!detenido) {
 		//tal vez haa q meter lock aca
 		//esto spawnea enemigos por ahora por mas del nombre q tiene
-		spawnEnemigo();
+		//spawnEnemigo();
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000 * (rand() % 7)));
 
 	}
@@ -45,6 +45,10 @@ void Juego::detener() {
 		t_chequearColisiones.join();
 		debug("Thread chequearColisiones termino");
 	}
+}
+
+void Juego::agregarProyectil(Proyectil * nuevoProyectil){
+	proyectiles.push_back(nuevoProyectil);
 }
 
 unsigned int Juego::getCantdadJugadores(){
