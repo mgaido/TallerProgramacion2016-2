@@ -17,6 +17,7 @@ Juego::Juego(Config& _configuracion) : configuracion(_configuracion) {
 	contadorEnemigosSpawneados = 0;
 	escenario = Escenario(configuracion.getLongitud(), configuracion.getTamanioVentana().x, configuracion.getNivelPiso());
 	maxOffsetDelta = round(configuracion.getVelocidadX() * 2 * 1000000.0 / configuracion.getFrameRate());
+	t_updateWorld = std::thread(&Juego::updateWorld, this);
 	t_chequearColisiones = std::thread(&Juego::chequearColisiones, this);
 }
 
@@ -29,19 +30,22 @@ Juego::~Juego() {
 	}
 }
 
-void Juego::chequearColisiones() {
+void Juego::updateWorld() {
 	while (!detenido) {
-		//tal vez haa q meter lock aca
-		//esto spawnea enemigos por ahora por mas del nombre q tiene
-		//spawnEnemigo();
+		spawnEnemigo();
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000 * (rand() % 7)));
-
 	}
+}
+
+void Juego::chequearColisiones() {
+
 }
 
 void Juego::detener() {
 	if (!detenido) {
 		detenido = true;
+		t_updateWorld.join();
+		debug("Thread updateWorld termino");
 		t_chequearColisiones.join();
 		debug("Thread chequearColisiones termino");
 	}

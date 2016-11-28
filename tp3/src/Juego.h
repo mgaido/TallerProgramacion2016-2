@@ -47,8 +47,10 @@ private:
 	std::vector<Enemigo*> enemigos;
 	//std::vector<Objeto*> objetos; para TP3
 	bool cambios;
+	std::thread t_updateWorld;
 	std::thread t_chequearColisiones;
 	void chequearColisiones();
+	void updateWorld();
 	int contadorEnemigosSpawneados; //Para el tema de los Boss
 };
 
