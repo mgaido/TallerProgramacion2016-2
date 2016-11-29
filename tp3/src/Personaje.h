@@ -5,6 +5,7 @@
 #include "Proyectil.h"
 #include "Config.h"
 #include "Plataforma.h"
+#include "GunC.h"
 class Personaje : public Objeto {
 public:
 	Personaje(int id, Config& _configuracion);
@@ -15,6 +16,7 @@ public:
 	void detenerse();
 	void saltar();
 	Proyectil* disparar();
+	Proyectil* dispararDirigido(Objeto* enemigoMasCercano);
 	virtual bool tieneCambios(std::vector<Plataforma*>* plataformas);
 	virtual bool esEnemigo() = 0;
 protected:

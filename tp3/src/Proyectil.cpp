@@ -28,6 +28,10 @@ Proyectil* Proyectil::disparar() {
 
 Proyectil::~Proyectil() {}
 
+Proyectil* Proyectil::dispararEspecial(Objeto* enemigoMasCercano) {
+	return NULL;
+}
+
 void Proyectil::setOrientacion(bool nuevaOrientacion) {
 	orientacion = nuevaOrientacion;
 	tiempoEnMovimiento = tiempo();

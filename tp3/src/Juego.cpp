@@ -162,6 +162,7 @@ bool Juego::getEstado(Bytes& bytes) {
 
 			if (colisionan) {
 				unJugador->recibirBonus(unPickUp);
+				//if(unJugador->getArma->getTipo() == Gunc)  buscarEnemigoMasCercano , setEnemigomas cercano
 				pickups.erase(it4);
 				if (unJugador->getKillAll()) {
 					auto it2 = enemigos.begin();
@@ -242,7 +243,7 @@ bool Juego::getEstado(Bytes& bytes) {
 			if (colisionan) {
 				bool estaMuerto = unJugador->recibirDanio(unProyectil->getDanio());
 				if (estaMuerto) {
-						//hacer algo
+						//hacer algo GAME OVER? ???  ? ? ? ? ? ? ? ?? ? ? ? ? ? ?? ? ? ? ? ? ? ? ? ? ? ? ??? ? '
 				}
 			}
 			it++;

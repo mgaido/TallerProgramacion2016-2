@@ -31,6 +31,15 @@ Proyectil* Personaje::disparar() {
 	return nuevoProyectil;
 }
 
+Proyectil* Personaje::dispararDirigido(Objeto* enemigoMasCercano) {
+	Proyectil* nuevoProyectil = arma->dispararEspecial(enemigoMasCercano);
+	if (nuevoProyectil != NULL) {
+		nuevoProyectil->setPos(this->getPos());
+		nuevoProyectil->setOrientacion(orientacion);
+	}
+	return nuevoProyectil;
+}
+
 void Personaje::caminar(Direccion direccion) {
 	std::unique_lock<std::mutex> lock(mutex);
 
