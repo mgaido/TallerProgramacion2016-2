@@ -78,7 +78,9 @@ void Jugador::cambiarArma(Proyectil *armaNueva) {
 }
 
 bool Jugador::getKillAll() {
-	return killAll;
+	bool kill = killAll;
+	killAll = false;
+	return kill;
 }
 bool Jugador::esEnemigo() {
 	return false;
