@@ -7,7 +7,7 @@
 //ShotGun
 class GunS : public Proyectil {
 public:
-	GunS(int id);
+	GunS(int id,int idJugador);
 private:
 protected:
 	virtual Proyectil* crearProyectil();

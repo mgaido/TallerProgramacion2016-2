@@ -7,7 +7,7 @@
 //Misiles que siguen al Jugador
 class GunC : public Proyectil {
 public:
-	GunC(int id);
+	GunC(int id, int idJugador);
 private:
 protected:
 	virtual Proyectil* crearProyectil();

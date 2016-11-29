@@ -7,7 +7,7 @@
 //Arma Basica
 class GunH : public Proyectil {
 public:
-	GunH(int id);
+	GunH(int id, int idJugador);
 private:
 protected:
 	virtual Proyectil* crearProyectil();

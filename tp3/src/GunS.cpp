@@ -1,6 +1,6 @@
 #include "GunS.h"
 
-GunS::GunS(int id) : Proyectil(id) {
+GunS::GunS(int id, int idJugador) : Proyectil(id, idJugador) {
 	this->danio = 50;
 	this->cantidad = 30;
 	this->cantidadRepuesto = 10;
@@ -14,5 +14,5 @@ GunS::GunS(int id) : Proyectil(id) {
 }
 
 Proyectil* GunS::crearProyectil() {
-	return new GunS(++contador);
+	return new GunS(++contador, idTirador);
 }

@@ -7,7 +7,7 @@
 //LanzaLlamas
 class GunF : public Proyectil {
 public:
-	GunF(int id);
+	GunF(int id,int idJugador);
 private:
 protected:
 	virtual Proyectil* crearProyectil();

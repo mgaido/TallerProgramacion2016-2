@@ -31,28 +31,28 @@ void Jugador::recibirBonus(PickUp* unPickUp) {
 	switch ((int)unPickUp->getBonus()) {
 	case (int)Bonus::GunH: {
 		if (unPickUp->getBonus() != (Bonus)arma->getTipo())
-			this->arma = new GunH(++contador);
+			this->arma = new GunH(++contador,id);
 		else
 			this->arma->recargar();
 		break;
 	}
 	case (int)Bonus::GunC: {
 		if (unPickUp->getBonus() != (Bonus) arma->getTipo())
-			this->arma = new GunC(++contador);
+			this->arma = new GunC(++contador,id);
 		else
 			this->arma->recargar();
 		break;
 	}
 	case (int)Bonus::GunS: {
 		if (unPickUp->getBonus() != (Bonus)arma->getTipo())
-			this->arma = new GunS(++contador);
+			this->arma = new GunS(++contador,id);
 		else
 			this->arma->recargar();
 		break;
 	}
 	case (int)Bonus::GunR: {
 		if (unPickUp->getBonus() != (Bonus)arma->getTipo())
-			this->arma = new GunR(++contador);
+			this->arma = new GunR(++contador,id);
 		else
 			this->arma->recargar();
 		break;
