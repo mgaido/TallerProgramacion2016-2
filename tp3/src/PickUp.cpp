@@ -1,10 +1,9 @@
 #include "PickUp.h"
 
 PickUp::PickUp(int id) : Objeto(id) {
-	this->tipo = Tipo::Jugador;
-	this->estado = Estado::Quieto;
-	this->tamanio.x = 10;
-	this->tamanio.y = 10;
+	this->estado = Estado::Bonus;
+	this->tamanio.x = 7;
+	this->tamanio.y = 7;
 	this->orientacion = false;
 	this->frame = 0;
 	energiaACurar = 0;
@@ -12,21 +11,27 @@ PickUp::PickUp(int id) : Objeto(id) {
 	switch (valor) {
 	case (int) Bonus::GunH:
 		arma = new GunH(++contador);
+		this->tipo = Tipo::BonusArma;
 		break;
 	case (int)Bonus::GunC:
 		arma = new GunC(++contador);
+		this->tipo = Tipo::BonusArma;
 		break;
 	case (int)Bonus::GunS:
 		arma = new GunS(++contador);
+		this->tipo = Tipo::BonusArma;
 		break;
 	case (int)Bonus::GunR:
 		arma = new GunR(++contador);
+		this->tipo = Tipo::BonusArma;
 		break;
 	case (int)Bonus::Vida:
-		arma = NULL;				
+		arma = NULL;
+		this->tipo = Tipo::BonusVida;
 		energiaACurar = 100;
 		break;
 	case(int)Bonus::KillAll:
+		this->tipo = Tipo::BonusKill;
 		arma = NULL;
 		break;
 	}

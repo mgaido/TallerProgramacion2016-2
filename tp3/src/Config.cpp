@@ -259,25 +259,16 @@ void Config::defaultConfig() {
 	this->configSprites.push_back(sprite);
 
 	sprite = ConfigSprite();
-	sprite.estado = Estado::Quieto;
+	sprite.estado = Estado::ProyectilEnMovimiento;
 	setCharArray("img/bala.png", sprite.imagen);
-	sprite.tipo = Tipo::GunC;
+	sprite.tipo = Tipo::GunH;
 	sprite.frames = 1;
 	sprite.tiempo = 1000;
 	sprite.zIndex = 10;
 	this->configSprites.push_back(sprite);
 
 	sprite = ConfigSprite();
-	sprite.estado = Estado::Caminando;
-	setCharArray("img/bala.png", sprite.imagen);
-	sprite.tipo = Tipo::GunC;
-	sprite.frames = 1;
-	sprite.tiempo = 1000;
-	sprite.zIndex = 10;
-	this->configSprites.push_back(sprite);
-
-	sprite = ConfigSprite();
-	sprite.estado = Estado::Caminando;
+	sprite.estado = Estado::ProyectilEnMovimiento;
 	setCharArray("img/bala3.png", sprite.imagen);
 	sprite.tipo = Tipo::GunR;
 	sprite.frames = 1;
@@ -286,7 +277,7 @@ void Config::defaultConfig() {
 	this->configSprites.push_back(sprite);
 
 	sprite = ConfigSprite();
-	sprite.estado = Estado::Caminando;
+	sprite.estado = Estado::ProyectilEnMovimiento;
 	setCharArray("img/bala2.png", sprite.imagen);
 	sprite.tipo = Tipo::GunS;
 	sprite.frames = 1;
@@ -294,10 +285,37 @@ void Config::defaultConfig() {
 	sprite.zIndex = 10;
 	this->configSprites.push_back(sprite);
 
-	sprite = ConfigSprite(); //Cambiar esta en realidad es la GunC
-	sprite.estado = Estado::Caminando;
+	sprite = ConfigSprite();
+	sprite.estado = Estado::ProyectilEnMovimiento;
 	setCharArray("img/bala4.png", sprite.imagen);
-	sprite.tipo = Tipo::GunH;
+	sprite.tipo = Tipo::GunC;
+	sprite.frames = 1;
+	sprite.tiempo = 1000;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
+	sprite = ConfigSprite(); 
+	sprite.estado = Estado::Bonus;
+	setCharArray("img/BonusEnergia.png", sprite.imagen);
+	sprite.tipo = Tipo::BonusVida;
+	sprite.frames = 1;
+	sprite.tiempo = 1000;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
+	sprite = ConfigSprite();
+	sprite.estado = Estado::Bonus;
+	setCharArray("img/BonusKill.png", sprite.imagen);
+	sprite.tipo = Tipo::BonusKill;
+	sprite.frames = 1;
+	sprite.tiempo = 1000;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
+	sprite = ConfigSprite();
+	sprite.estado = Estado::Bonus;
+	setCharArray("img/Armas.png", sprite.imagen);
+	sprite.tipo = Tipo::BonusArma;
 	sprite.frames = 1;
 	sprite.tiempo = 1000;
 	sprite.zIndex = 10;

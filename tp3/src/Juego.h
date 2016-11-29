@@ -31,7 +31,7 @@ public:
 	bool getEstado(Bytes& bytes);
 	bool estaIniciado();
 	unsigned int getCantdadJugadores();
-	void spawnEnemigo();
+	Enemigo* spawnEnemigo();
 	void detener();
 	void agregarProyectil(Proyectil* nuevoProyectil);
 

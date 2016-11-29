@@ -31,9 +31,15 @@ Juego::~Juego() {
 }
 
 void Juego::updateWorld() {
+	std::thread t_detenerEnemigoAnterior;
+	Enemigo* enemigoSpawneado;
 	while (!detenido) {
-		spawnEnemigo();
-		std::this_thread::sleep_for(std::chrono::milliseconds(1000 * (rand() % 7)));
+		enemigoSpawneado = spawnEnemigo();
+		std::this_thread::sleep_for(std::chrono::milliseconds(10 * (rand() % 300)));
+		enemigoSpawneado->detenerse();
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000 * (rand() % 6)));
+
+
 	}
 }
 
@@ -101,9 +107,9 @@ Jugador* Juego::nuevoJugador(std::string nombre) {
 	return jugador;
 }
 
-void Juego::spawnEnemigo(){
-	if (contadorEnemigosSpawneados % 5 != 4) {
-		Enemigo* nuevoEnemigo = new Enemigo(++contador, configuracion);
+Enemigo* Juego::spawnEnemigo(){
+	Enemigo* nuevoEnemigo = new Enemigo(++contador, configuracion);
+	if (contadorEnemigosSpawneados % 5 != 4) {		
 		nuevoEnemigo->getTamanio().x = configuracion.getTamanioJugador().x;				//configurar para enemigo 
 		nuevoEnemigo->getTamanio().y = configuracion.getTamanioJugador().y;				//configurar para enemigo
 		nuevoEnemigo->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista();
@@ -120,7 +126,6 @@ void Juego::spawnEnemigo(){
 		info("Enemigo creado");
 	}
 	else { //Se crea el Boss
-		Enemigo* nuevoEnemigo = new Enemigo(++contador, configuracion);
 		nuevoEnemigo->getTamanio().x = 150;				//configurar para enemigo 
 		nuevoEnemigo->getTamanio().y = 300;				//configurar para enemigo
 		nuevoEnemigo->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista();
@@ -136,6 +141,7 @@ void Juego::spawnEnemigo(){
 
 		info("Boss creado");
 	}
+	return nuevoEnemigo;
 }
 
 bool Juego::getEstado(Bytes& bytes) {

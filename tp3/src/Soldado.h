@@ -7,6 +7,7 @@
 class Soldado : public Enemigo {
 public:
 
+
 private:
 
 };

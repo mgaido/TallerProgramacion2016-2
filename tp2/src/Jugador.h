@@ -30,7 +30,7 @@ public:
 
 private:
 	bool actualizar();
-
+	bool killAll;
 	Config& configuracion;
 	bool cambios;
 	std::string nombre;
