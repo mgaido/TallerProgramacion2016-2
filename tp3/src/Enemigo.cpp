@@ -5,7 +5,7 @@ Enemigo::Enemigo(int id, Config& _configuracion) : Personaje(id, _configuracion)
 	tiempoCaminando = 0;
 	tiempoSalto = 0;
 	energia = 250;
-
+	puntosQueDaAlMorir = 50;				//chequear con tp la cantidad q piden
 	estado = Estado::Quieto;
 	tipo = Tipo::Enemigo;
 
@@ -28,5 +28,9 @@ PickUp* Enemigo::spawnPickUp() {
 		nuevoPickup->setPos(this->pos);
 	}
 	return nuevoPickup;
+}
+
+int Enemigo::getPuntos(){
+	return puntosQueDaAlMorir;
 }
 

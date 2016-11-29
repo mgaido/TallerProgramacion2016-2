@@ -13,9 +13,9 @@ public:
 	virtual bool esEnemigo();
 	PickUp* spawnPickUp();
 	//void caminar(Direccion direc);
-
+	int getPuntos();
 protected:
-	
+	int puntosQueDaAlMorir;
 };
 
 #endif /* ENEMIGO_H_ */

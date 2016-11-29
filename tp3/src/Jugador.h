@@ -22,10 +22,11 @@ public:
 	void setConectado(bool conectado);
 	std::string getNombre();
 	void recibirBonus(PickUp* unPickUp);
-
+	void recibirPuntos(int puntosObtenidos);
 private:
 	bool killAll;
 	std::string nombre;
+	int puntos;
 };
 
 #endif /* JUGADOR_H_ */

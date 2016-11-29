@@ -7,7 +7,7 @@
 
 class Proyectil : public Objeto {
 public:
-	Proyectil(int id);
+	Proyectil(int id, int idJugador);
 	void recargar();
 	int getPuntos();
 	void setPos(Punto nuevaPosicion);
@@ -18,9 +18,11 @@ public:
 	void setOrientacion(bool nuevaOrientacion);
 	int getDanio();
 	bool esVisible();
+	int getIdTirador();
 private:
 
 protected:
+	int idTirador;
 	std::mutex mutex;
 	bool visible;
 	virtual Proyectil* crearProyectil();

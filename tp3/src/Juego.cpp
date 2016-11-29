@@ -205,6 +205,14 @@ bool Juego::getEstado(Bytes& bytes) {
 					PickUp* nuevoPickup = unEnemigo->spawnPickUp();
 					if (nuevoPickup != NULL)
 						pickups.push_back(nuevoPickup);
+					it = jugadores.begin();
+					bool encontrado = false;
+					while ((it != jugadores.end()) && !encontrado) {
+						Jugador* jugadorQueEliminoAlEnemigo = *it;
+						if(unProyectil->getIdTirador() == jugadorQueEliminoAlEnemigo->getId())
+							jugadorQueEliminoAlEnemigo->recibirPuntos(unEnemigo->getPuntos());
+						it++;
+					}
 					enemigos.erase(it2);
 				}
 			}

@@ -1,11 +1,12 @@
 #include "Proyectil.h"
 
-Proyectil::Proyectil(int id) : Objeto(id) {
+Proyectil::Proyectil(int id, int idJugador) : Objeto(id) {
 	tiempoUltimoDisparo = 0;
 	cambios = false;
 	visible = true; 
 	velocidadProyectil = 200;
 	tiempoEnMovimiento = 0;
+	idTirador = idJugador;
 }
 
 void Proyectil::recargar() {
@@ -42,6 +43,10 @@ int Proyectil::getDanio(){
 
 bool Proyectil::esVisible(){
 	return visible;
+}
+
+int Proyectil::getIdTirador(){
+	return idTirador;
 }
 
 void Proyectil::trayectoria(std::vector<Plataforma*>* plataformas) {

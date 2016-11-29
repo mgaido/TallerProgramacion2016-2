@@ -13,7 +13,7 @@ Jugador::Jugador(int id, std::string nombre, Config& _configuracion) : Personaje
 	tiempoCaminando = 0;
 	tiempoSalto = 0;
 	killAll = false;
-
+	puntos = 0;
 	estado = Estado::Desconectado;
 	tipo = Tipo::Jugador;
 
@@ -71,6 +71,10 @@ void Jugador::recibirBonus(PickUp* unPickUp) {
 		break;
 	}
 	}
+}
+
+void Jugador::recibirPuntos(int puntosObtenidos){
+	puntos += puntosObtenidos;
 }
 
 void Jugador::cambiarArma(Proyectil *armaNueva) {
