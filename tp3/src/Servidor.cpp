@@ -220,5 +220,5 @@ Juego* Servidor::getJuego() {
 }
 
 void Servidor::enviarProyectilAJuego(Proyectil * nuevoProyectil){
-	juego->agregarProyectil(nuevoProyectil);
+	juego->agregarProyectilAliado(nuevoProyectil);
 }

@@ -12,11 +12,11 @@ enum class Bonus {GunH, GunC, GunS, GunR, Vida, KillAll};
 class PickUp : public Objeto {
 public:
 	PickUp(int id);
-	Proyectil* getArma();
 	void setPos(Punto pos);
 	int getEnergiaACurar();
+	Bonus getBonus();
 private:
-	Proyectil* arma;
+	Bonus bonus;
 	int energiaACurar;
 };
 

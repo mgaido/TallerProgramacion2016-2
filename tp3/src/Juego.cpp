@@ -15,10 +15,10 @@ Juego::Juego(Config& _configuracion) : configuracion(_configuracion) {
 	cambios = true;
 	detenido = false;
 	contadorEnemigosSpawneados = 0;
+	crearPlataformas();
 	escenario = Escenario(configuracion.getLongitud(), configuracion.getTamanioVentana().x, configuracion.getNivelPiso());
 	maxOffsetDelta = round(configuracion.getVelocidadX() * 2 * 1000000.0 / configuracion.getFrameRate());
 	t_updateWorld = std::thread(&Juego::updateWorld, this);
-	t_chequearColisiones = std::thread(&Juego::chequearColisiones, this);
 }
 
 Juego::~Juego() {
@@ -30,6 +30,15 @@ Juego::~Juego() {
 	}
 }
 
+void Juego::crearPlataformas() {
+	std::vector<Plataformas>* plataformasConfig = configuracion.getplataformas();
+	auto it = (*plataformasConfig).begin();
+	while (it != (*plataformasConfig).end()) {
+		Plataforma* nuevaPlataforma = new Plataforma(++contador, it->punto.x, it->punto.y, it->ancho);
+		plataformas.push_back(nuevaPlataforma);
+	}
+}
+
 void Juego::updateWorld() {
 	std::thread t_detenerEnemigoAnterior;
 	Enemigo* enemigoSpawneado;
@@ -38,30 +47,7 @@ void Juego::updateWorld() {
 		std::this_thread::sleep_for(std::chrono::milliseconds(10 * (rand() % 300)));
 		enemigoSpawneado->detenerse();
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000 * (rand() % 6)));
-
-
 	}
-}
-
-void Juego::chequearColisiones() {
-	while (!detenido) {
-		//solo se chequean misiles con enemigos por ahora
-		/*auto it = proyectiles.begin();
-		while (it != proyectiles.end()) {
-			Proyectil* unProyectil = *it;
-			bool colisionan = false;
-			auto it2 = enemigos.begin();
-			while ((it2 != enemigos.end()) && !colisionan) {
-				Enemigo* unEnemigo = *it2;
-				
-				if (colisionan) {
-					
-				}
-			}
-
-		}*/
-	}
-
 }
 
 void Juego::detener() {
@@ -69,13 +55,15 @@ void Juego::detener() {
 		detenido = true;
 		t_updateWorld.join();
 		debug("Thread updateWorld termino");
-		t_chequearColisiones.join();
-		debug("Thread chequearColisiones termino");
 	}
 }
 
-void Juego::agregarProyectil(Proyectil * nuevoProyectil){
-	proyectiles.push_back(nuevoProyectil);
+void Juego::agregarProyectilAliado(Proyectil * nuevoProyectil){
+	proyectilesAliados.push_back(nuevoProyectil);
+}
+
+void Juego::agregarProyectilEnemigo(Proyectil * nuevoProyectil) {
+	proyectilesEnemigos.push_back(nuevoProyectil);
 }
 
 unsigned int Juego::getCantdadJugadores(){
@@ -156,7 +144,7 @@ bool Juego::getEstado(Bytes& bytes) {
 	 
 	for (auto it = jugadores.begin(); it != jugadores.end();) {
 		Jugador* unJugador = *it;
-		cambios |= unJugador->tieneCambios();
+		cambios |= unJugador->tieneCambios(&plataformas);
 		bool colisionan = false;
 		if ((minX == 0 || unJugador->getPos().x < minX) && unJugador->getEstado() != Estado::Desconectado)
 			minX = unJugador->getPos().x + unJugador->getTamanio().x / 2;
@@ -175,6 +163,14 @@ bool Juego::getEstado(Bytes& bytes) {
 			if (colisionan) {
 				unJugador->recibirBonus(unPickUp);
 				pickups.erase(it4);
+				if (unJugador->getKillAll()) {
+					auto it2 = enemigos.begin();
+					while (it2 != enemigos.end()) {
+						Enemigo* obj = *it2;
+						delete (*it2);
+						enemigos.erase(it2);;
+					}
+				}
 			}
 			it4++;
 		}
@@ -184,13 +180,13 @@ bool Juego::getEstado(Bytes& bytes) {
 	auto it2 = enemigos.begin();
 	while (it2 != enemigos.end()) {
 		Enemigo* obj = *it2;
-		cambios |= obj->tieneCambios();
+		cambios |= obj->tieneCambios(&plataformas);
 		it2++;
 	}
 
-	for(auto it3 = proyectiles.begin(); it3 != proyectiles.end();) {
+	for(auto it3 = proyectilesAliados.begin(); it3 != proyectilesAliados.end();) {
 		Proyectil* unProyectil = *it3;
-		cambios |= unProyectil->tieneCambios();
+		cambios |= unProyectil->tieneCambios(&plataformas);
 		bool colisionan = false;
 		it2 = enemigos.begin();
 		while ((it2 != enemigos.end()) && !colisionan) {
@@ -214,10 +210,39 @@ bool Juego::getEstado(Bytes& bytes) {
 			}
 			it2++;
 		}
-		if(colisionan)
-			it3 = proyectiles.erase(it3);
+		if(colisionan || !unProyectil->esVisible())
+			it3 = proyectilesAliados.erase(it3);
 		else
 			it3++;
+	}
+
+	for (auto it6 = proyectilesEnemigos.begin(); it6 != proyectilesEnemigos.end();) {
+		Proyectil* unProyectil = *it6;
+		cambios |= unProyectil->tieneCambios(&plataformas);
+		bool colisionan = false;
+		it = jugadores.begin();
+		while ((it != jugadores.end()) && !colisionan) {
+			Jugador *unJugador = *it;
+			if (((unProyectil->getPos().x + unProyectil->getTamanio().x) < (unJugador->getPos().x)) || (unProyectil->getPos().x > unJugador->getPos().x + unJugador->getTamanio().x)) {
+				colisionan = false;
+			}
+			else if (((unProyectil->getPos().y + unProyectil->getTamanio().y) < (unJugador->getPos().y)) || (unProyectil->getPos().y > unJugador->getPos().y + unJugador->getTamanio().y)) {
+				colisionan = false;
+			}
+			else { colisionan = true; }
+
+			if (colisionan) {
+				bool estaMuerto = unJugador->recibirDanio(unProyectil->getDanio());
+				if (estaMuerto) {
+						//hacer algo
+				}
+			}
+			it++;
+		}
+		if (colisionan || !unProyectil->esVisible())
+			it6 = proyectilesEnemigos.erase(it6);
+		else
+			it6++;
 	}
 
 	//Actualizar el offset si es necesario
@@ -295,10 +320,10 @@ bool Juego::getEstado(Bytes& bytes) {
 			it2++;
 		}
 
-		auto it3 = proyectiles.begin();
-		while (it3 != proyectiles.end()) {
+		auto it3 = proyectilesAliados.begin();
+		while (it3 != proyectilesAliados.end()) {
 			Objeto* obj = *it3;
-
+			
 			EstadoObj estadoObj;
 			estadoObj.setId(obj->getId());
 			estadoObj.setTipo(obj->getTipo());
@@ -333,6 +358,46 @@ bool Juego::getEstado(Bytes& bytes) {
 
 			estado.push_back(estadoObj);
 			it4++;
+		}
+
+		auto it5 = plataformas.begin();
+		while (it5 != plataformas.end()) {
+			Objeto* obj = *it5;
+
+			EstadoObj estadoObj;
+			estadoObj.setId(obj->getId());
+			estadoObj.setTipo(obj->getTipo());
+			estadoObj.setEstado(obj->getEstado());
+			Punto pos;
+			pos.x = obj->getPos().x - escenario.getOffsetVista();
+			pos.y = escenario.getNivelPiso() - obj->getTamanio().y - obj->getPos().y;
+			estadoObj.setPos(pos);
+			estadoObj.setTamanio(obj->getTamanio());
+			estadoObj.setFrame(obj->getFrame());
+			estadoObj.setOrientacion(obj->getOrientacion());
+
+			estado.push_back(estadoObj);
+			it5++;
+		}
+
+		auto it6 = proyectilesEnemigos.begin();
+		while (it6 != proyectilesEnemigos.end()) {
+			Objeto* obj = *it6;
+
+			EstadoObj estadoObj;
+			estadoObj.setId(obj->getId());
+			estadoObj.setTipo(obj->getTipo());
+			estadoObj.setEstado(obj->getEstado());
+			Punto pos;
+			pos.x = obj->getPos().x - escenario.getOffsetVista();
+			pos.y = escenario.getNivelPiso() - obj->getTamanio().y - obj->getPos().y;
+			estadoObj.setPos(pos);
+			estadoObj.setTamanio(obj->getTamanio());
+			estadoObj.setFrame(obj->getFrame());
+			estadoObj.setOrientacion(obj->getOrientacion());
+
+			estado.push_back(estadoObj);
+			it6++;
 		}
 	}
 

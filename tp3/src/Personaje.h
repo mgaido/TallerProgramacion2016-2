@@ -4,7 +4,7 @@
 
 #include "Proyectil.h"
 #include "Config.h"
-
+#include "Plataforma.h"
 class Personaje : public Objeto {
 public:
 	Personaje(int id, Config& _configuracion);
@@ -15,10 +15,10 @@ public:
 	void detenerse();
 	void saltar();
 	Proyectil* disparar();
-	virtual bool tieneCambios();
+	virtual bool tieneCambios(std::vector<Plataforma*>* plataformas);
 	virtual bool esEnemigo() = 0;
 protected:
-	bool actualizar();
+	bool actualizar(std::vector<Plataforma*>* plataformas);
 	bool dispara;
 	Config& configuracion;
 	bool cambios;

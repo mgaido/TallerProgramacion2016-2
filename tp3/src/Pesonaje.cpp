@@ -45,7 +45,7 @@ void Personaje::caminar(Direccion direccion) {
 
 void Personaje::detenerse() {
 	std::unique_lock<std::mutex> lock(mutex);
-	actualizar();
+	actualizar(NULL);
 	velocCaminar = 0;
 	tiempoCaminando = 0;
 }
@@ -60,12 +60,12 @@ void Personaje::saltar() {
 	}
 }
 
-bool Personaje::tieneCambios() {
+bool Personaje::tieneCambios(std::vector<Plataforma*>* plataformas) {
 	std::unique_lock<std::mutex> lock(mutex);
-	return actualizar();
+	return actualizar(plataformas);
 }
 
-bool Personaje::actualizar() {
+bool Personaje::actualizar(std::vector<Plataforma*>* plataformas) {
 	if (estado != Estado::Desconectado) {
 
 		micros t = 0;
@@ -87,11 +87,32 @@ bool Personaje::actualizar() {
 
 		if (vx != 0)
 			orientacion = vx < 0;
+		if (plataformas != NULL) {
+			int nuevaPosX = pos.x + (int)round(vx*t);
+			int nuevaPosY = pos.y + (int)round(velocSaltoY*t);
 
-		pos.x += (int)round(vx*t);
-		pos.y += (int)round(velocSaltoY*t);
+			bool colisionan = false;
+			auto it = (*plataformas).begin();
+			while ((it != (*plataformas).end()) && !colisionan) {
+				Plataforma* unaPlataforma = *it;
+				if (((nuevaPosX + getTamanio().x) < (unaPlataforma->getPos().x)) || (nuevaPosX > unaPlataforma->getPos().x + unaPlataforma->getTamanio().x)) {
+					colisionan = false;
+				}
+				else if (((nuevaPosY + getTamanio().y) < (unaPlataforma->getPos().y)) || (nuevaPosY > unaPlataforma->getPos().y + unaPlataforma->getTamanio().y)) {
+					colisionan = false;
+				}
+				else { colisionan = true; }
+			}
 
-		if (tiempoSalto > 0 && velocSaltoY < 0 && pos.y <= 0) {
+			if (!colisionan) {
+				pos.x = nuevaPosX;
+				pos.y = nuevaPosY;
+			}
+		}else {		
+			pos.x += (int)round(vx*t);
+			pos.y += (int)round(velocSaltoY*t);
+		}
+		if	(tiempoSalto > 0 && velocSaltoY < 0 && pos.y <= 0) {
 			pos.y = 0;
 			velocSaltoX = 0;
 			velocSaltoY = 0;

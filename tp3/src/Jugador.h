@@ -18,7 +18,7 @@ public:
 	~Jugador();
 	void cambiarArma(Proyectil*);
 	virtual bool esEnemigo();
-		
+	bool getKillAll();
 	void setConectado(bool conectado);
 	std::string getNombre();
 	void recibirBonus(PickUp* unPickUp);

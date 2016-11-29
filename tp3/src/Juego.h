@@ -19,7 +19,7 @@
 #include "Proyectil.h"
 #include "Enemigo.h"
 #include "PickUp.h"
-
+#include "Plataforma.h"
 
 
 class Juego {
@@ -33,24 +33,26 @@ public:
 	unsigned int getCantdadJugadores();
 	Enemigo* spawnEnemigo();
 	void detener();
-	void agregarProyectil(Proyectil* nuevoProyectil);
+	void agregarProyectilAliado(Proyectil* nuevoProyectil);
+	void agregarProyectilEnemigo(Proyectil* nuevoProyectil);
 
 private:
+	void crearPlataformas();
 	bool detenido;
 	Config& configuracion;
 	bool iniciado;
 	std::mutex lock;
 	std::mutex lockColisiones;
 	Escenario escenario;
+	std::vector<Plataforma*> plataformas;
 	std::vector<Jugador*> jugadores;
-	std::vector<Proyectil*> proyectiles;
+	std::vector<Proyectil*> proyectilesAliados;
+	std::vector<Proyectil*> proyectilesEnemigos;
 	std::vector<PickUp*> pickups;
 	std::vector<Enemigo*> enemigos;
 	//std::vector<Objeto*> objetos; para TP3
 	bool cambios;
-	std::thread t_updateWorld;
-	std::thread t_chequearColisiones;
-	void chequearColisiones();
+	std::thread t_updateWorld;	
 	void updateWorld();
 	int contadorEnemigosSpawneados; //Para el tema de los Boss
 };

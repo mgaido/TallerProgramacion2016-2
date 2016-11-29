@@ -25,6 +25,7 @@
     <ClCompile Include="src\Objeto.cpp" />
     <ClCompile Include="src\Pesonaje.cpp" />
     <ClCompile Include="src\PickUp.cpp" />
+    <ClCompile Include="src\Plataforma.cpp" />
     <ClCompile Include="src\Proyectil.cpp" />
     <ClCompile Include="src\Servidor.cpp" />
     <ClCompile Include="src\Sesion.cpp" />
@@ -50,6 +51,7 @@
     <ClInclude Include="src\GunH.h" />
     <ClInclude Include="src\GunC.h" />
     <ClInclude Include="src\Boss.h" />
+    <ClInclude Include="src\Plataforma.h" />
     <ClInclude Include="src\Proyectil.h" />
     <ClInclude Include="src\Juego.h" />
     <ClInclude Include="src\Jugador.h" />

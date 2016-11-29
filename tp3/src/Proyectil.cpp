@@ -3,6 +3,7 @@
 Proyectil::Proyectil(int id) : Objeto(id) {
 	tiempoUltimoDisparo = 0;
 	cambios = false;
+	visible = true; 
 	velocidadProyectil = 200;
 	tiempoEnMovimiento = 0;
 }
@@ -39,7 +40,11 @@ int Proyectil::getDanio(){
 	return danio;
 }
 
-void Proyectil::trayectoria() {
+bool Proyectil::esVisible(){
+	return visible;
+}
+
+void Proyectil::trayectoria(std::vector<Plataforma*>* plataformas) {
 	micros t = 0;
 	double vx = 0;
 
@@ -54,18 +59,33 @@ void Proyectil::trayectoria() {
 	if (vx != 0)
 		orientacion = vx < 0;
 
-	pos.x += (int)round(vx*t);
+	int nuevaPos = pos.x + (int)round(vx*t);
+	bool colisionan = false;
+	auto it = (*plataformas).begin();
+	while ((it != (*plataformas).end()) && !colisionan) {
+		Plataforma* unaPlataforma = *it;
+		if (((nuevaPos + getTamanio().x) < (unaPlataforma->getPos().x)) || (nuevaPos > unaPlataforma->getPos().x + unaPlataforma->getTamanio().x)) {
+			colisionan = false;
+		}
+		else if (((getPos().y + getTamanio().y) < (unaPlataforma->getPos().y)) || (getPos().y > unaPlataforma->getPos().y + unaPlataforma->getTamanio().y)) {
+			colisionan = false;
+		}
+		else { colisionan = true; }
+	}
 	
-
+	if (!colisionan)
+		pos.x = nuevaPos;
+	else
+		visible = false;
 }
 
 Proyectil* Proyectil::crearProyectil(){
 	return NULL;
 }
 
-bool Proyectil::tieneCambios() {
+bool Proyectil::tieneCambios(std::vector<Plataforma*>* plataformas) {
 	std::unique_lock<std::mutex> lock(mutex);
-	trayectoria();
+	trayectoria(plataformas);
 	return cambios;
 }
 

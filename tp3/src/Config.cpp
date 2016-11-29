@@ -390,6 +390,10 @@ std::vector<ConfigSprite>& Config::getConfigSprites() {
 	return this->configSprites;
 }
 
+std::vector<Plataformas>* Config::getplataformas(){
+	return &plataformas;
+}
+
 unsigned int Config::getCantidadMaximaJugadores() {
 	return this->cantidadMaximaJugadores;
 }

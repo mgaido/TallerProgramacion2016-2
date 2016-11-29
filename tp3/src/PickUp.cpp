@@ -8,41 +8,36 @@ PickUp::PickUp(int id) : Objeto(id) {
 	this->frame = 0;
 	energiaACurar = 0;
 	int valor = rand() % 6;
-	switch (valor) {
+	bonus = (Bonus)valor;
+  	switch (valor) {
 	case (int) Bonus::GunH:
-		arma = new GunH(++contador);
 		this->tipo = Tipo::BonusArma;
 		break;
 	case (int)Bonus::GunC:
-		arma = new GunC(++contador);
 		this->tipo = Tipo::BonusArma;
 		break;
 	case (int)Bonus::GunS:
-		arma = new GunS(++contador);
 		this->tipo = Tipo::BonusArma;
 		break;
 	case (int)Bonus::GunR:
-		arma = new GunR(++contador);
 		this->tipo = Tipo::BonusArma;
 		break;
 	case (int)Bonus::Vida:
-		arma = NULL;
 		this->tipo = Tipo::BonusVida;
-		energiaACurar = 100;
+		energiaACurar = 1000;
 		break;
 	case(int)Bonus::KillAll:
 		this->tipo = Tipo::BonusKill;
-		arma = NULL;
 		break;
 	}
 }
 
+Bonus PickUp::getBonus() {
+	return bonus;
+}
 
 int PickUp::getEnergiaACurar() {
 	return energiaACurar;
-}
-Proyectil* PickUp::getArma() {
-	return arma;
 }
 
 void PickUp::setPos(Punto pos) {

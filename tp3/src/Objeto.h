@@ -10,7 +10,7 @@
 
 #include "Utils.h"
 
-enum class Tipo { Jugador, Enemigo, Boss, GunC, GunF, GunH, GunR, GunS, BonusVida, BonusKill, BonusArma};
+enum class Tipo {  GunH, GunC, GunS, GunR, GunF, Jugador, Enemigo, Boss, BonusVida, BonusKill, BonusArma, Plataforma};
 enum class Estado { Quieto, Caminando, Saltando, Desconectado, ProyectilEnMovimiento, Bonus};
 
 
