@@ -4,7 +4,8 @@ Proyectil::Proyectil(int id, int idJugador) : Objeto(id) {
 	tiempoUltimoDisparo = 0;
 	cambios = false;
 	visible = true; 
-	velocidadProyectil = 200;
+	velocidadProyectilX = 0;
+	velocidadProyectilY = 0;
 	tiempoEnMovimiento = 0;
 	idTirador = idJugador;
 }
@@ -36,9 +37,9 @@ void Proyectil::setOrientacion(bool nuevaOrientacion) {
 	orientacion = nuevaOrientacion;
 	tiempoEnMovimiento = tiempo();
 	if (orientacion)
-		velocidadProyectil = -0.0004;
+		velocidadProyectilX = -0.0004;
 	else
-		velocidadProyectil = 0.0004;
+		velocidadProyectilX = 0.0004;
 }
 
 int Proyectil::getDanio(){
@@ -53,12 +54,16 @@ int Proyectil::getIdTirador(){
 	return idTirador;
 }
 
+void Proyectil::setVelocidadY(double velocidadProyectilY){
+	this->velocidadProyectilY = velocidadProyectilY;
+}
+
 void Proyectil::trayectoria(std::vector<Plataforma*>* plataformas) {
 	micros t = 0;
 	double vx = 0;
 
 	if (tiempoEnMovimiento > 0) {
-		vx = velocidadProyectil;
+		vx = velocidadProyectilX;
 		t = tiempo() - tiempoEnMovimiento;
 		tiempoEnMovimiento += t;
 	}
@@ -68,23 +73,25 @@ void Proyectil::trayectoria(std::vector<Plataforma*>* plataformas) {
 	if (vx != 0)
 		orientacion = vx < 0;
 
-	int nuevaPos = pos.x + (int)round(vx*t);
+	int nuevaPosX = pos.x + (int)round(vx*t);
+	int nuevaPosY = pos.y + (int)round(velocidadProyectilY*t);
 	bool colisionan = false;
 	auto it = (*plataformas).begin();
 	while ((it != (*plataformas).end()) && !colisionan) {
 		Plataforma* unaPlataforma = *it;
-		if (((nuevaPos + getTamanio().x) < (unaPlataforma->getPos().x)) || (nuevaPos > unaPlataforma->getPos().x + unaPlataforma->getTamanio().x)) {
+		if (((nuevaPosX + getTamanio().x) < (unaPlataforma->getPos().x)) || (nuevaPosX > unaPlataforma->getPos().x + unaPlataforma->getTamanio().x)) {
 			colisionan = false;
 		}
-		else if (((getPos().y + getTamanio().y) < (unaPlataforma->getPos().y)) || (getPos().y > unaPlataforma->getPos().y + unaPlataforma->getTamanio().y)) {
+		else if (((nuevaPosY + getTamanio().y) < (unaPlataforma->getPos().y)) || (nuevaPosY > unaPlataforma->getPos().y + unaPlataforma->getTamanio().y)) {
 			colisionan = false;
 		}
 		else { colisionan = true; }
 	}
 	
-	if (!colisionan)
-		pos.x = nuevaPos;
-	else
+	if (!colisionan) {
+		pos.x = nuevaPosX;
+		pos.y = nuevaPosY;
+	} else
 		visible = false;
 }
 
