@@ -168,8 +168,8 @@ void Config::defaultConfig() {
 	this->cantidadMaximaJugadores = 4;
 	this->tamanioVentana.x = 1024;
 	this->tamanioVentana.y = 600;
-	this->tamanioJugador.x = 75;
-	this->tamanioJugador.y = 150;
+	this->tamanioJugador.x = 100;
+	this->tamanioJugador.y = 120;
 	this->velocX = 0.0003;
 	this->velocY = 0.0008;
 	this->gravedad = 2*this->velocY/1000000;
@@ -242,7 +242,7 @@ void Config::defaultConfig() {
 
 	sprite = ConfigSprite();
 	sprite.estado = Estado::Caminando;
-	sprite.tipo = Tipo::Boss;
+	sprite.tipo = Tipo::Boss1;
 	setCharArray("img/Enemigo HiDo.png", sprite.imagen);
 	sprite.frames = 1;
 	sprite.tiempo = 1000;
@@ -252,7 +252,43 @@ void Config::defaultConfig() {
 	sprite = ConfigSprite();
 	sprite.estado = Estado::Quieto;
 	setCharArray("img/Enemigo HiDo.png", sprite.imagen);
-	sprite.tipo = Tipo::Boss;
+	sprite.tipo = Tipo::Boss1;
+	sprite.frames = 1;
+	sprite.tiempo = 1000;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
+	sprite = ConfigSprite();
+	sprite.estado = Estado::Caminando;
+	sprite.tipo = Tipo::Boss2;
+	setCharArray("img/Enemigo AirbusterRiberts.png", sprite.imagen);
+	sprite.frames = 1;
+	sprite.tiempo = 1000;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
+	sprite = ConfigSprite();
+	sprite.estado = Estado::Quieto;
+	setCharArray("img/Enemigo AirbusterRiberts.png", sprite.imagen);
+	sprite.tipo = Tipo::Boss2;
+	sprite.frames = 1;
+	sprite.tiempo = 1000;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
+	sprite = ConfigSprite();
+	sprite.estado = Estado::Caminando;
+	sprite.tipo = Tipo::Boss3;
+	setCharArray("img/Enemigo Tani Oh.png", sprite.imagen);
+	sprite.frames = 1;
+	sprite.tiempo = 1000;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
+	sprite = ConfigSprite();
+	sprite.estado = Estado::Quieto;
+	setCharArray("img/Enemigo Tani Oh.png", sprite.imagen);
+	sprite.tipo = Tipo::Boss3;
 	sprite.frames = 1;
 	sprite.tiempo = 1000;
 	sprite.zIndex = 10;
@@ -320,6 +356,24 @@ void Config::defaultConfig() {
 	sprite.tiempo = 1000;
 	sprite.zIndex = 10;
 	this->configSprites.push_back(sprite);
+
+	//Plataformas	plataforma = Plataformas();
+	//plataforma.punto.y = 80;
+	//plataforma.punto.x = 80;
+	//plataforma.ancho = 80;
+	//this->plataformas.push_back(plataforma);
+	//
+	//plataforma = Plataformas();
+	//plataforma.punto.y = 80;
+	//plataforma.punto.x = 400;
+	//plataforma.ancho = 80;
+	//this->plataformas.push_back(plataforma);
+	//
+	//plataforma = Plataformas();
+	//plataforma.punto.y = 80;
+	//plataforma.punto.x = 800;
+	//plataforma.ancho = 200;
+	//this->plataformas.push_back(plataforma);
 
 	ConfigCapa capa = ConfigCapa();
 	setCharArray("img/cielo.png", capa.imagen);

@@ -14,8 +14,11 @@ public:
 	PickUp* spawnPickUp();
 	//void caminar(Direccion direc);
 	int getPuntos();
+	int getDistanciaPiso();
+	void setDistanciaPiso(int distancia);
 protected:
 	int puntosQueDaAlMorir;
+	int distanciaPiso;
 };
 
 #endif /* ENEMIGO_H_ */

@@ -97,11 +97,13 @@ Jugador* Juego::nuevoJugador(std::string nombre) {
 
 Enemigo* Juego::spawnEnemigo(){
 	Enemigo* nuevoEnemigo = new Enemigo(++contador, configuracion);
+	int queBOSS = rand() % 3;
 	if (contadorEnemigosSpawneados % 5 != 4) {		
 		nuevoEnemigo->getTamanio().x = configuracion.getTamanioJugador().x;				//configurar para enemigo 
 		nuevoEnemigo->getTamanio().y = configuracion.getTamanioJugador().y;				//configurar para enemigo
 		nuevoEnemigo->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista();
 		nuevoEnemigo->setTipo(Tipo::Enemigo);
+		nuevoEnemigo->setDistanciaPiso(-nuevoEnemigo->getTamanio().y - nuevoEnemigo->getPos().y);
 		contadorEnemigosSpawneados++;
 		lock.lock();
 		nuevoEnemigo->caminar(Direccion::IZQUIERDA);
@@ -113,14 +115,49 @@ Enemigo* Juego::spawnEnemigo(){
 
 		info("Enemigo creado");
 	}
-	else { //Se crea el Boss
-		nuevoEnemigo->getTamanio().x = 150;				//configurar para enemigo 
-		nuevoEnemigo->getTamanio().y = 300;				//configurar para enemigo
+	else if (queBOSS == 0) { //Se crea el Boss HI-DO
+		nuevoEnemigo->getTamanio().x = 200;				//configurar para enemigo 
+		nuevoEnemigo->getTamanio().y = 400;				//configurar para enemigo
 		nuevoEnemigo->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista();
-		nuevoEnemigo->setTipo(Tipo::Boss);
+		nuevoEnemigo->setTipo(Tipo::Boss1);
 		contadorEnemigosSpawneados++;
 		lock.lock();
 		nuevoEnemigo->caminar(Direccion::IZQUIERDA);
+		nuevoEnemigo->setDistanciaPiso(-400);
+		enemigos.push_back(nuevoEnemigo);
+
+		lock.unlock();
+
+		cambios = true;
+
+		info("Boss HI-DO creado");
+	}	
+	else if (queBOSS == 1) { //Se crea el Boss AirbusterRiberts
+		nuevoEnemigo->getTamanio().x = 400;				//configurar para enemigo 
+		nuevoEnemigo->getTamanio().y = 400;				//configurar para enemigo
+		nuevoEnemigo->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista();
+		nuevoEnemigo->setTipo(Tipo::Boss2);
+		contadorEnemigosSpawneados++;
+		lock.lock();
+		nuevoEnemigo->caminar(Direccion::IZQUIERDA);
+		nuevoEnemigo->setDistanciaPiso(-400);
+		enemigos.push_back(nuevoEnemigo);
+
+		lock.unlock();
+
+		cambios = true;
+
+		info("Boss creado");
+	}
+	else if (queBOSS == 2) { //Se crea el Boss TANI OH
+		nuevoEnemigo->getTamanio().x = 400;				//configurar para enemigo 
+		nuevoEnemigo->getTamanio().y = 400;				//configurar para enemigo
+		nuevoEnemigo->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista();
+		nuevoEnemigo->setTipo(Tipo::Boss3);
+		contadorEnemigosSpawneados++;
+		lock.lock();
+		nuevoEnemigo->caminar(Direccion::IZQUIERDA);
+		nuevoEnemigo->setDistanciaPiso(-180);
 		enemigos.push_back(nuevoEnemigo);
 
 		lock.unlock();
@@ -307,7 +344,7 @@ bool Juego::getEstado(Bytes& bytes) {
 
 		it2 = enemigos.begin();
 		while (it2 != enemigos.end()) {
-			Objeto* obj = *it2;
+			Enemigo* obj = *it2;
 
 			EstadoObj estadoObj;
 			estadoObj.setId(obj->getId());
@@ -319,7 +356,7 @@ bool Juego::getEstado(Bytes& bytes) {
 
 			Punto pos;
 			pos.x = obj->getPos().x - escenario.getOffsetVista();
-			pos.y = escenario.getNivelPiso() - obj->getTamanio().y - obj->getPos().y;
+			pos.y = escenario.getNivelPiso() + obj->getDistanciaPiso();
 			estadoObj.setPos(pos);
 			estadoObj.setTamanio(obj->getTamanio());
 			estadoObj.setFrame(obj->getFrame());

@@ -8,7 +8,7 @@ Enemigo::Enemigo(int id, Config& _configuracion) : Personaje(id, _configuracion)
 	puntosQueDaAlMorir = 50;				//chequear con tp la cantidad q piden
 	estado = Estado::Quieto;
 	tipo = Tipo::Enemigo;
-
+	distanciaPiso = 0;
 	cambios = false;
 }
 
@@ -30,7 +30,14 @@ PickUp* Enemigo::spawnPickUp() {
 	return nuevoPickup;
 }
 
-int Enemigo::getPuntos(){
+int Enemigo::getPuntos() {
 	return puntosQueDaAlMorir;
 }
 
+int Enemigo::getDistanciaPiso() {
+	return distanciaPiso;
+}
+
+void Enemigo::setDistanciaPiso(int distancia) {
+	this->distanciaPiso = distancia;
+}
