@@ -90,6 +90,12 @@ void Config::parsearXML(std::string archivo) {
 		if (valor == "Desconectado")
 			estado = Estado::Desconectado;
 
+		if (valor == "ProyectilEnMovimiento")
+			estado = Estado::ProyectilEnMovimiento;
+
+		if (valor == "Bonus")
+			estado = Estado::Bonus;
+
 		valor = nodo.hijo("elemento").valor();
 		Tipo tipo;
 		if (valor == "Jugador")
@@ -98,6 +104,36 @@ void Config::parsearXML(std::string archivo) {
 		if (valor == "Enemigo")
 			tipo = Tipo::Enemigo;
 
+		if (valor == "Boss1")
+			tipo = Tipo::Boss1;
+
+		if (valor == "Boss2")
+			tipo = Tipo::Boss2;
+
+		if (valor == "Boss3")
+			tipo = Tipo::Boss3;
+
+		if (valor == "BonusKill")
+			tipo = Tipo::BonusKill;
+
+		if (valor == "BonusVida")
+			tipo = Tipo::BonusVida;
+
+		if (valor == "BonusArma")
+			tipo = Tipo::BonusArma;
+
+		if (valor == "GunH")
+			tipo = Tipo::GunH;
+
+		if (valor == "GunS")
+			tipo = Tipo::GunS;
+
+		if (valor == "GunR")
+			tipo = Tipo::GunR;
+
+		if (valor == "GunC")
+			tipo = Tipo::GunC;
+
 
 		sprite.estado = estado;
 		sprite.tipo = tipo;
@@ -105,22 +141,22 @@ void Config::parsearXML(std::string archivo) {
 
 	} while (nodo.siguiente());
 
-	nodo = doc.hijo("plataformas").hijo("plataforma");
+	//nodo = doc.hijo("plataformas").hijo("plataforma");
 
-	do {	//Plataformas
-		Plataformas plataforma;
-		valor = nodo.hijo("y").valor();
-		plataforma.punto.y = std::stoi(valor);
-
-		valor = nodo.hijo("x").valor();
-		plataforma.punto.x = std::stoi(valor);
-
-		valor = nodo.hijo("ancho").valor();
-		plataforma.ancho = std::stoi(valor);
-
-		this->plataformas.push_back(plataforma);
-
-	} while (nodo.siguiente());
+	//do {	//Plataformas
+	//	Plataformas plataforma;
+	//	valor = nodo.hijo("y").valor();
+	//	plataforma.punto.y = std::stoi(valor);
+	//
+	//	valor = nodo.hijo("x").valor();
+	//	plataforma.punto.x = std::stoi(valor);
+	//
+	//	valor = nodo.hijo("ancho").valor();
+	//	plataforma.ancho = std::stoi(valor);
+	//
+	//	this->plataformas.push_back(plataforma);
+	//
+	//} while (nodo.siguiente());
 
 	debug(toString());
 }
