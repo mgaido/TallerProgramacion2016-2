@@ -41,3 +41,26 @@ int Enemigo::getDistanciaPiso() {
 void Enemigo::setDistanciaPiso(int distancia) {
 	this->distanciaPiso = distancia;
 }
+
+void Enemigo::caminar(Direccion direccion) {
+	std::unique_lock<std::mutex> lock(mutex);
+
+	if (direccion == Direccion::IZQUIERDA)
+		velocCaminar = -configuracion.getVelocidadX() /2;
+	else
+		velocCaminar = configuracion.getVelocidadX() /2;
+
+	if (tiempoSalto == 0)
+		tiempoCaminando = tiempo();
+}
+
+void Enemigo::saltar() {
+	std::unique_lock<std::mutex> lock(mutex);
+
+	if (tiempoSalto == 0) {
+		velocSaltoY = configuracion.getVelocidadX();
+		velocSaltoX = velocCaminar;
+		tiempoSalto = tiempo();
+	}
+	cambios = true;
+}
