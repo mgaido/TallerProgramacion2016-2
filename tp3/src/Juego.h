@@ -32,6 +32,7 @@ public:
 	bool estaIniciado();
 	unsigned int getCantdadJugadores();
 	Enemigo* spawnEnemigo();
+	Enemigo* CrearBoss();	
 	void detener();
 	void agregarProyectilAliado(Proyectil* nuevoProyectil);
 	void agregarProyectilEnemigo(Proyectil* nuevoProyectil);
@@ -39,6 +40,8 @@ public:
 private:
 	void crearPlataformas();
 	bool detenido;
+	int nivel;
+	int maxPosJugadorX; //Tiene la posición en x mayor de todos los jugadores
 	Config& configuracion;
 	bool iniciado;
 	std::mutex lock;
