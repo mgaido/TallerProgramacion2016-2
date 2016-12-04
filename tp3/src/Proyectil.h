@@ -11,11 +11,11 @@ public:
 	void recargar();
 	int getPuntos();
 	void setPos(Punto nuevaPosicion);
-	virtual bool tieneCambios(std::vector<Plataforma*>* plataformas);
+	virtual bool tieneCambios(std::vector<Plataforma*>& plataformas);
 	Proyectil* disparar(); //Devuelve True si se pudo disparar, False si se quedo sin Balas.
 	virtual Proyectil* dispararEspecial(Objeto * enemigoMasCercano);
 	~Proyectil();
-	virtual void trayectoria(std::vector<Plataforma*>* plataformas);
+	virtual void trayectoria(std::vector<Plataforma*>& plataformas);
 	void setOrientacion(bool nuevaOrientacion);
 	int getDanio();
 	bool esVisible();

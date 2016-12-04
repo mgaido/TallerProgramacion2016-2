@@ -65,9 +65,8 @@ void Vista::iniciar() {
 
 		auto spriteIt = configuracion.getConfigSprites().begin();			//modificar xml para gregar config de sprites de enemigos y proyectiles 
 		while (spriteIt != configuracion.getConfigSprites().end()) {
-			std::shared_ptr<Sprite> sprite = std::make_shared<Sprite>(configuracion.getTamanioJugador(), *spriteIt);
+			std::shared_ptr<Sprite> sprite = std::make_shared<Sprite>(*spriteIt);
 			sprite->cargar(renderer);
-			sprites[spriteIt->estado] = sprite;
 			spritess[spriteIt->tipo][spriteIt->estado] = sprite;
 			spriteIt++;
 		}
@@ -161,9 +160,21 @@ void Vista::actualizar() {
 
 		auto it = estado.begin();
 		while (it != estado.end()) {
-			auto configSprite = spritess[it->getTipo()][it->getEstado()];
-			renderers.push_back(new RendererSprite(configSprite.get(), it->getPos(),
-					it->getFrame(), it->getOrientacion(), it->getId() == idJugador));
+
+			bool encontrado = false;
+			auto map = spritess.find(it->getTipo());
+			if (map != spritess.end()) {
+				auto map2 = map->second.find(it->getEstado());
+				if (map2 != map->second.end()) {
+					encontrado = true;
+					auto configSprite = map2->second;
+					renderers.push_back(new RendererSprite(configSprite.get(), it->getPos(), it->getTamanio(), it->getFrame(), it->getOrientacion(), it->getId() == idJugador));
+				}
+			}
+			if (! encontrado) {
+				std::cerr << "Falta sprite " << it->toString() << std::endl;
+			}
+
 			estado.erase(it);
 		}
 
@@ -183,10 +194,8 @@ void Vista::actualizar() {
 	lockEstado.unlock();
 }
 
-Imagen::Imagen(Punto tamanioDestino){
+Imagen::Imagen(){
 	img = nullptr;
-	this->tamanioDestino = tamanioDestino;
-	this->escala = 0;
 }
 
 Imagen::~Imagen() {
@@ -208,28 +217,29 @@ void Imagen::cargarImagen(SDL_Renderer* renderer, std::array<char, 512>& _path) 
 
 	SDL_SetColorKey(imagen, SDL_TRUE, SDL_MapRGB(imagen->format, 0, 255, 255));
 
-	escala = (double) tamanio.y / tamanioDestino.y;
-
 	img = SDL_CreateTextureFromSurface(renderer, imagen);
 	SDL_FreeSurface(imagen);
 }
 
-Capa::Capa(Punto ventana, int longitud, ConfigCapa& _config) : Imagen(ventana), config(_config) {
+Capa::Capa(Punto ventana, int longitud, ConfigCapa& _config) : Imagen(), config(_config) {
+	this->tamanioDestino = ventana;
 	this->longitud = longitud;
 	this->tiles = 1;
 }
 
 void Capa::cargar(SDL_Renderer* renderer) {
 	cargarImagen(renderer, config.imagen);
+	this->escala = (double) tamanio.y / tamanioDestino.y;
 	if (tamanioDestino.x * escala > tamanio.x)
 		this->tiles = ceil(tamanioDestino.x / (double) tamanio.x);
+
 }
 
 int Capa::getZindex() {
 	return config.zIndex;
 }
 
-Sprite::Sprite(Punto tamanioObj, ConfigSprite& _config) : Imagen(tamanioObj), config(_config) {
+Sprite::Sprite(ConfigSprite& _config) : Imagen(), config(_config) {
 	divider = std::max<double>(1, 1000 * config.tiempo / (frameDelay) / config.frames);
 }
 
@@ -274,9 +284,10 @@ void RendererCapa::aplicar(SDL_Renderer* renderer) {
 	}
 }
 
-RendererSprite::RendererSprite(Sprite* sprite, Punto pos, int frame, bool orientacion, bool esJugador) {
+RendererSprite::RendererSprite(Sprite* sprite, Punto pos, Punto tamanio, int frame, bool orientacion, bool esJugador) {
 	this->sprite = sprite;
 	this->pos = pos;
+	this->tamanio = tamanio;
 	this->frame = frame;
 
 	this->orientacion = orientacion;
@@ -298,27 +309,40 @@ void RendererSprite::aplicar(SDL_Renderer* renderer) {
 	seccion.h = sprite->tamanio.y;
 
 	SDL_Rect rect;
-	rect.w = sprite->tamanioDestino.x;
-	rect.h = sprite->tamanioDestino.y;
-	rect.x = pos.x;
+
+	double anchoEscalado = tamanio.y / (double) sprite->tamanio.y * sprite->tamanio.x;
+	if (anchoEscalado < tamanio.x)
+		rect.w = anchoEscalado;
+	else
+		rect.w = tamanio.x;
+
+	rect.h = tamanio.y;
 	rect.y = pos.y;
+	rect.x = pos.x;
+
+	do {
+		if (orientacion)
+		    SDL_RenderCopyEx(renderer, sprite->img, &seccion, &rect, 0, 0, SDL_FLIP_HORIZONTAL);
+		else
+			SDL_RenderCopy(renderer, sprite->img, &seccion, &rect);
+
+		rect.x += rect.w;
+		rect.w = std::min<int>(anchoEscalado, tamanio.x - (rect.x - pos.x));
+
+	} while (rect.x < pos.x + tamanio.x);
 
 	if (this->esJugador) {
 		SDL_Rect indicador;
-		indicador.w = rect.w / 2;
-		indicador.h = rect.h / 10;
+		indicador.w = tamanio.x / 2;
+		indicador.h = tamanio.y / 10;
 		indicador.x = pos.x + indicador.w / 2;
-		indicador.y = pos.y - indicador.h - rect.h * 0.05;
+		indicador.y = pos.y - indicador.h - pos.y * 0.05;
 
 		SDL_SetRenderDrawColor(renderer, 255, 255, 0, 50);
 		SDL_RenderFillRect(renderer, &indicador);
 	}
-
-	if (orientacion)
-	    SDL_RenderCopyEx(renderer, sprite->img, &seccion, &rect, 0, 0, SDL_FLIP_HORIZONTAL);
-	else
-		SDL_RenderCopy(renderer, sprite->img, &seccion, &rect);
 }
 
-Renderer::~Renderer() {}
+Renderer::~Renderer() {
+}
 

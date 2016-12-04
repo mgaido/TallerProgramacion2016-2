@@ -7,8 +7,8 @@ GunH::GunH(int id, int idJugador) : Proyectil(id, idJugador) {
 	this->puntosOtorgados = 15;
 	this->tipo = Tipo::GunH;
 	this->estado = Estado::ProyectilEnMovimiento;
-	this->tamanio.x = 10;			//ver si este tamanio esta bien 
-	this->tamanio.y = 4;
+	this->tamanio.x = 50;			//ver si este tamanio esta bien
+	this->tamanio.y = 50;
 	this->orientacion = false;
 	this->frame = 0;
 	this->velocidadProyectilY = 0;

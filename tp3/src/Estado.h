@@ -102,12 +102,51 @@ public:
 			case Tipo::Jugador:
 				tipo = "Jugador";
 				break;
+			case Tipo::Plataforma:
+				tipo = "Plataforma";
+				break;
+			case Tipo::Enemigo:
+				tipo = "Enemigo";
+				break;
+			case Tipo::Boss1:
+				tipo = "Boss1";
+				break;
+			case Tipo::Boss2:
+				tipo = "Boss2";
+				break;
+			case Tipo::Boss3:
+				tipo = "Boss3";
+				break;
+			case Tipo::BonusVida:
+				tipo = "BonusVida";
+				break;
+			case Tipo::BonusKill:
+				tipo = "BonusKill";
+				break;
+			case Tipo::BonusArma:
+				tipo = "BonusArma";
+				break;
+			case Tipo::GunH:
+				tipo = "GunH";
+				break;
+			case Tipo::GunC:
+				tipo = "GunC";
+				break;
+			case Tipo::GunS:
+				tipo = "GunS";
+				break;
+			case Tipo::GunR:
+				tipo = "GunR";
+				break;
+			case Tipo::GunF:
+				tipo = "GunF";
+				break;
 			default:
 				tipo = "????";
 			}
 
 			std::stringstream ss;
-			ss << tipo << " " << getId() << " " << estado << " en (" << getPos().x << ", " << getPos().y << ")";
+			ss << tipo << " " << getId() << " " << estado << " en (" << getPos().x << ", " << getPos().y << ")" << " Tamanio (" << getTamanio().x << ", " << getTamanio().y << ")";
 			return ss.str();
 	}
 

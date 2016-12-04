@@ -31,11 +31,12 @@ Juego::~Juego() {
 }
 
 void Juego::crearPlataformas() {
-	std::vector<Plataformas>* plataformasConfig = configuracion.getplataformas();
-	auto it = (*plataformasConfig).begin();
-	while (it != (*plataformasConfig).end()) {
+	std::vector<Plataformas> plataformasConfig = configuracion.getPlataformas();
+	auto it = plataformasConfig.begin();
+	while (it != plataformasConfig.end()) {
 		Plataforma* nuevaPlataforma = new Plataforma(++contador, it->punto.x, it->punto.y, it->ancho);
 		plataformas.push_back(nuevaPlataforma);
+		it++;
 	}
 }
 
@@ -181,7 +182,7 @@ bool Juego::getEstado(Bytes& bytes) {
 	 
 	for (auto it = jugadores.begin(); it != jugadores.end();) {
 		Jugador* unJugador = *it;
-		cambios |= unJugador->tieneCambios(&plataformas);
+		cambios |= unJugador->tieneCambios(plataformas);
 		bool colisionan = false;
 		if ((minX == 0 || unJugador->getPos().x < minX) && unJugador->getEstado() != Estado::Desconectado)
 			minX = unJugador->getPos().x + unJugador->getTamanio().x / 2;
@@ -218,13 +219,13 @@ bool Juego::getEstado(Bytes& bytes) {
 	auto it2 = enemigos.begin();
 	while (it2 != enemigos.end()) {
 		Enemigo* obj = *it2;
-		cambios |= obj->tieneCambios(&plataformas);
+		cambios |= obj->tieneCambios(plataformas);
 		it2++;
 	}
 
 	for(auto it3 = proyectilesAliados.begin(); it3 != proyectilesAliados.end();) {
 		Proyectil* unProyectil = *it3;
-		cambios |= unProyectil->tieneCambios(&plataformas);
+		cambios |= unProyectil->tieneCambios(plataformas);
 		bool colisionan = false;
 		it2 = enemigos.begin();
 		while ((it2 != enemigos.end()) && !colisionan) {
@@ -264,7 +265,7 @@ bool Juego::getEstado(Bytes& bytes) {
 
 	for (auto it6 = proyectilesEnemigos.begin(); it6 != proyectilesEnemigos.end();) {
 		Proyectil* unProyectil = *it6;
-		cambios |= unProyectil->tieneCambios(&plataformas);
+		cambios |= unProyectil->tieneCambios(plataformas);
 		bool colisionan = false;
 		it = jugadores.begin();
 		while ((it != jugadores.end()) && !colisionan) {
@@ -410,19 +411,31 @@ bool Juego::getEstado(Bytes& bytes) {
 		while (it5 != plataformas.end()) {
 			Objeto* obj = *it5;
 
-			EstadoObj estadoObj;
-			estadoObj.setId(obj->getId());
-			estadoObj.setTipo(obj->getTipo());
-			estadoObj.setEstado(obj->getEstado());
-			Punto pos;
-			pos.x = obj->getPos().x - escenario.getOffsetVista();
-			pos.y = escenario.getNivelPiso() - obj->getTamanio().y - obj->getPos().y;
-			estadoObj.setPos(pos);
-			estadoObj.setTamanio(obj->getTamanio());
-			estadoObj.setFrame(obj->getFrame());
-			estadoObj.setOrientacion(obj->getOrientacion());
+			int inicio = obj->getPos().x;
+			int fin = obj->getPos().x + obj->getTamanio().x;
 
-			estado.push_back(estadoObj);
+			if (fin >= escenario.getOffsetVista() && inicio <= escenario.getOffsetVista() + escenario.getAnchoVista()) {
+				inicio = inicio - escenario.getOffsetVista();
+				fin = std::max<int>(fin - escenario.getOffsetVista(), 0);
+				fin = std::min<int>(escenario.getAnchoVista(), fin);
+
+				EstadoObj estadoObj;
+				estadoObj.setId(obj->getId());
+				estadoObj.setTipo(obj->getTipo());
+				estadoObj.setEstado(obj->getEstado());
+				Punto pos;
+				pos.x = inicio;
+				pos.y = escenario.getNivelPiso() - obj->getPos().y;
+				estadoObj.setPos(pos);
+				Punto tamanio;
+				tamanio.x = fin - inicio;
+				tamanio.y = GROSOR_PLATAFORMA;
+				estadoObj.setTamanio(tamanio);
+				estadoObj.setFrame(obj->getFrame());
+				estadoObj.setOrientacion(obj->getOrientacion());
+
+				estado.push_back(estadoObj);
+			}
 			it5++;
 		}
 

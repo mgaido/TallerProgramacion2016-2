@@ -10,7 +10,7 @@ public:
 	GunC(int id, int idJugador);
 	GunC(int id, int idJugador, Objeto* enemigoMasCercano);
 	virtual Proyectil* dispararEspecial(Objeto *enemigoMasCercano);
-	virtual void trayectoria(std::vector<Plataforma*>* plataformas);
+	virtual void trayectoria(std::vector<Plataforma*>& plataformas);
 	
 private:
 	int modulo(int numero);

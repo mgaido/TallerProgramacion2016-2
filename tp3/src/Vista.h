@@ -21,15 +21,13 @@
 
 class Imagen {
 public:
-	Imagen(Punto tamanioDestino);
+	Imagen();
 	virtual ~Imagen();
 	virtual void cargar(SDL_Renderer* renderer)=0;
 	virtual int getZindex() = 0;
 protected:
 	void cargarImagen(SDL_Renderer* renderer, std::array<char, 512>& path);
 	Punto tamanio;
-	Punto tamanioDestino;
-	double escala;
 	SDL_Texture* img;
 };
 
@@ -37,7 +35,7 @@ class RendererSprite;
 class Sprite: public Imagen {
 	friend class RendererSprite;
 public:
-	Sprite(Punto tamanioObj, ConfigSprite& config);
+	Sprite(ConfigSprite& config);
 	virtual void cargar(SDL_Renderer* renderer);
 	virtual int getZindex();
 
@@ -55,6 +53,8 @@ public:
 	virtual int getZindex();
 private:
 	ConfigCapa& config;
+	Punto tamanioDestino;
+	double escala;
 	int tiles;
 	int longitud;
 };
@@ -68,13 +68,14 @@ public:
 
 class RendererSprite : public Renderer {
 public:
-	RendererSprite(Sprite* sprite, Punto pos, int frame, bool orientacion, bool esJugador);
+	RendererSprite(Sprite* sprite, Punto pos, Punto tamanio, int frame, bool orientacion, bool esJugador);
 	virtual int getZindex();
 	virtual void aplicar(SDL_Renderer* renderer);
 
 private:
 	Sprite* sprite;
 	Punto pos;
+	Punto tamanio;
 	int frame;
 	bool orientacion;
 	bool esJugador;
@@ -90,7 +91,6 @@ private:
 	int offsetVista;
 	SDL_Rect seccion, dest;
 };
-
 
 class Vista {
 public:
@@ -123,7 +123,6 @@ private:
 	SDL_Window* ventana;
 	SDL_Renderer* renderer;
 	std::vector<std::shared_ptr<Capa>> capas;
-	HashMap<Estado, std::shared_ptr<Sprite>> sprites;
 	HashMap<Tipo, HashMap<Estado, std::shared_ptr<Sprite>>> spritess;
 
 	std::vector<Renderer*> renderers;

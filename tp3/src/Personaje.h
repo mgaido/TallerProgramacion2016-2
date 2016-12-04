@@ -17,10 +17,10 @@ public:
 	void saltar();
 	Proyectil* disparar();
 	Proyectil* dispararDirigido(Objeto* enemigoMasCercano);
-	virtual bool tieneCambios(std::vector<Plataforma*>* plataformas);
+	virtual bool tieneCambios(std::vector<Plataforma*>& plataformas);
 	virtual bool esEnemigo() = 0;
 protected:
-	bool actualizar(std::vector<Plataforma*>* plataformas);
+	bool actualizar(std::vector<Plataforma*>& plataformas);
 	bool dispara;
 	Config& configuracion;
 	bool cambios;

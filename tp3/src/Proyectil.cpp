@@ -58,7 +58,7 @@ void Proyectil::setVelocidadY(double velocidadProyectilY){
 	this->velocidadProyectilY = velocidadProyectilY;
 }
 
-void Proyectil::trayectoria(std::vector<Plataforma*>* plataformas) {
+void Proyectil::trayectoria(std::vector<Plataforma*>& plataformas) {
 	micros t = 0;
 	double vx = 0;
 
@@ -76,8 +76,9 @@ void Proyectil::trayectoria(std::vector<Plataforma*>* plataformas) {
 	int nuevaPosX = pos.x + (int)round(vx*t);
 	int nuevaPosY = pos.y + (int)round(velocidadProyectilY*t);
 	bool colisionan = false;
-	auto it = (*plataformas).begin();
-	while ((it != (*plataformas).end()) && !colisionan) {
+
+	auto it = plataformas.begin();
+	while (it != plataformas.end() && !colisionan) {
 		Plataforma* unaPlataforma = *it;
 		if (((nuevaPosX + getTamanio().x) < (unaPlataforma->getPos().x)) || (nuevaPosX > unaPlataforma->getPos().x + unaPlataforma->getTamanio().x)) {
 			colisionan = false;
@@ -86,6 +87,7 @@ void Proyectil::trayectoria(std::vector<Plataforma*>* plataformas) {
 			colisionan = false;
 		}
 		else { colisionan = true; }
+		it++;
 	}
 	
 	if (!colisionan) {
@@ -99,7 +101,7 @@ Proyectil* Proyectil::crearProyectil(){
 	return NULL;
 }
 
-bool Proyectil::tieneCambios(std::vector<Plataforma*>* plataformas) {
+bool Proyectil::tieneCambios(std::vector<Plataforma*>& plataformas) {
 	std::unique_lock<std::mutex> lock(mutex);
 	trayectoria(plataformas);
 	return cambios;

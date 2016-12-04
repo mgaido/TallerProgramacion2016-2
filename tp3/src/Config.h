@@ -47,7 +47,7 @@ public:
 
 	std::vector<ConfigCapa>& getConfigCapas();
 	std::vector<ConfigSprite>& getConfigSprites();
-	std::vector<Plataformas>* getplataformas();
+	std::vector<Plataformas>& getPlataformas();
 
 	void defaultConfig();
 

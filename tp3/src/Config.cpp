@@ -141,6 +141,7 @@ void Config::toBytes(Bytes & bytes) {
 	bytes.put(longitud);
 	bytes.putAll(configCapas);
 	bytes.putAll(configSprites);
+	bytes.putAll(plataformas);
 }
 
 void Config::fromBytes(Bytes & bytes) {
@@ -159,6 +160,7 @@ void Config::fromBytes(Bytes & bytes) {
 	bytes.get(longitud);
 	bytes.getAll(configCapas);
 	bytes.getAll(configSprites);
+	bytes.getAll(plataformas);
 }
 
 void Config::defaultConfig() {
@@ -171,13 +173,22 @@ void Config::defaultConfig() {
 	this->tamanioJugador.x = 100;
 	this->tamanioJugador.y = 120;
 	this->velocX = 0.0003;
-	this->velocY = 0.0008;
+	this->velocY = 0.001;
 	this->gravedad = 2*this->velocY/1000000;
 	this->framerate = 30;
 	this->longitud = this->tamanioVentana.y * 10;
 	this->nivelPiso = (int) tamanioVentana.y * 0.833;
 
 	ConfigSprite sprite = ConfigSprite();
+	sprite.estado = Estado::Quieto;
+	sprite.tipo = Tipo::Plataforma;
+	setCharArray("img/plataforma.png", sprite.imagen);
+	sprite.frames = 1;
+	sprite.tiempo = 1000;
+	sprite.zIndex = 9;
+	this->configSprites.push_back(sprite);
+
+	sprite = ConfigSprite();
 	sprite.estado = Estado::Caminando;
 	sprite.tipo = Tipo::Jugador;
 	setCharArray("img/Personaje.png", sprite.imagen);
@@ -357,23 +368,23 @@ void Config::defaultConfig() {
 	sprite.zIndex = 10;
 	this->configSprites.push_back(sprite);
 
-	//Plataformas	plataforma = Plataformas();
-	//plataforma.punto.y = 80;
-	//plataforma.punto.x = 80;
-	//plataforma.ancho = 80;
-	//this->plataformas.push_back(plataforma);
-	//
-	//plataforma = Plataformas();
-	//plataforma.punto.y = 80;
-	//plataforma.punto.x = 400;
-	//plataforma.ancho = 80;
-	//this->plataformas.push_back(plataforma);
-	//
-	//plataforma = Plataformas();
-	//plataforma.punto.y = 80;
-	//plataforma.punto.x = 800;
-	//plataforma.ancho = 200;
-	//this->plataformas.push_back(plataforma);
+	Plataformas	plataforma = Plataformas();
+	plataforma.punto.y = 200;
+	plataforma.punto.x = 80;
+	plataforma.ancho = 300;
+	this->plataformas.push_back(plataforma);
+
+	plataforma = Plataformas();
+	plataforma.punto.y = 200;
+	plataforma.punto.x = 800;
+	plataforma.ancho = 300;
+	this->plataformas.push_back(plataforma);
+
+	plataforma = Plataformas();
+	plataforma.punto.y = 200;
+	plataforma.punto.x = 1500;
+	plataforma.ancho = 400;
+	this->plataformas.push_back(plataforma);
 
 	ConfigCapa capa = ConfigCapa();
 	setCharArray("img/cielo.png", capa.imagen);
@@ -444,8 +455,8 @@ std::vector<ConfigSprite>& Config::getConfigSprites() {
 	return this->configSprites;
 }
 
-std::vector<Plataformas>* Config::getplataformas(){
-	return &plataformas;
+std::vector<Plataformas>& Config::getPlataformas(){
+	return plataformas;
 }
 
 unsigned int Config::getCantidadMaximaJugadores() {

@@ -3,7 +3,7 @@
 #define PLATAFORMA_H_
 
 #include "Objeto.h"
-const int GROSOR_PLATAFORMA = 20;
+const int GROSOR_PLATAFORMA = 30;
 
 class Plataforma : public Objeto {
 public:

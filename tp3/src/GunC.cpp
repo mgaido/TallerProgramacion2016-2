@@ -28,7 +28,7 @@ GunC::GunC(int id, int idJugador, Objeto * enemigoMasCercano) : Proyectil(id, id
 	this->enemigoMasCercano = enemigoMasCercano;
 }
 
-void GunC::trayectoria(std::vector<Plataforma*>* plataformas){
+void GunC::trayectoria(std::vector<Plataforma*>& plataformas){
 		micros t = 0;
 		double velocidad = 0;
 
@@ -59,11 +59,11 @@ void GunC::trayectoria(std::vector<Plataforma*>* plataformas){
 				orientacion = velocidad < 0;
 			nuevaPosX = pos.x + (int)round(velocidad*t);
 			nuevaPosY = pos.y + (int)round(velocidad*t);
-		}
+		}
 
-		bool			colisionan = false;
-		auto it = (*plataformas).begin();
-		while ((it != (*plataformas).end()) && !colisionan) {
+		bool colisionan = false;
+		auto it = plataformas.begin();
+		while (it != plataformas.end() && !colisionan) {
 			Plataforma* unaPlataforma = *it;
 			if (((nuevaPosX + getTamanio().x) < (unaPlataforma->getPos().x)) || (nuevaPosX > unaPlataforma->getPos().x + unaPlataforma->getTamanio().x)) {
 				colisionan = false;
@@ -72,6 +72,7 @@ void GunC::trayectoria(std::vector<Plataforma*>* plataformas){
 				colisionan = false;
 			}
 			else { colisionan = true; }
+			it++;
 		}
 
 		if (!colisionan) {

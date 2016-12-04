@@ -25,7 +25,10 @@ bool Personaje::recibirDanio(int danio) {
 Proyectil* Personaje::disparar() {
 	Proyectil* nuevoProyectil = arma->disparar();
 	if (nuevoProyectil != NULL) {
-		nuevoProyectil->setPos(this->getPos());
+		Punto pos;
+		pos.x = getPos().x + (getOrientacion() ? 0 : getTamanio().x);
+		pos.y = getPos().y - getTamanio().y * 0.7;
+		nuevoProyectil->setPos(pos);
 		nuevoProyectil->setOrientacion(orientacion);
 		if ((velocSaltoY < 0) && nuevoProyectil->getTipo() == Tipo::GunH)
 			nuevoProyectil->setVelocidadY(-0.00008);
@@ -58,7 +61,7 @@ void Personaje::caminar(Direccion direccion) {
 
 void Personaje::detenerse() {
 	std::unique_lock<std::mutex> lock(mutex);
-	actualizar(NULL);
+	actualizar(std::vector<Plataforma*>());
 	velocCaminar = 0;
 	tiempoCaminando = 0;
 }
@@ -73,12 +76,12 @@ void Personaje::saltar() {
 	}
 }
 
-bool Personaje::tieneCambios(std::vector<Plataforma*>* plataformas) {
+bool Personaje::tieneCambios(std::vector<Plataforma*>& plataformas) {
 	std::unique_lock<std::mutex> lock(mutex);
 	return actualizar(plataformas);
 }
 
-bool Personaje::actualizar(std::vector<Plataforma*>* plataformas) {
+bool Personaje::actualizar(std::vector<Plataforma*>& plataformas) {
 	if (estado != Estado::Desconectado) {
 
 		micros t = 0;
@@ -100,38 +103,52 @@ bool Personaje::actualizar(std::vector<Plataforma*>* plataformas) {
 
 		if (vx != 0)
 			orientacion = vx < 0;
-		if (plataformas != NULL) {
-			int nuevaPosX = pos.x + (int)round(vx*t);
-			int nuevaPosY = pos.y + (int)round(velocSaltoY*t);
 
-			bool colisionan = false;
-			auto it = (*plataformas).begin();
-			while ((it != (*plataformas).end()) && !colisionan) {
-				Plataforma* unaPlataforma = *it;
-				if (((nuevaPosX + getTamanio().x) < (unaPlataforma->getPos().x)) || (nuevaPosX > unaPlataforma->getPos().x + unaPlataforma->getTamanio().x)) {
-					colisionan = false;
-				}
-				else if (((nuevaPosY + getTamanio().y) < (unaPlataforma->getPos().y)) || (nuevaPosY > unaPlataforma->getPos().y + unaPlataforma->getTamanio().y)) {
-					colisionan = false;
-				}
-				else { colisionan = true; }
-			}
 
-			if (!colisionan) {
-				pos.x = nuevaPosX;
-				pos.y = nuevaPosY;
+		pos.x  = pos.x + (int)round(vx*t);
+		pos.y = pos.y + (int)round(velocSaltoY*t);
+
+
+		Plataforma* plataforma = nullptr;
+		auto it = plataformas.begin();
+		while (it != plataformas.end()) {
+			Plataforma* unaPlataforma = *it;
+			int inicio = unaPlataforma->getPos().x;
+			int fin = inicio + unaPlataforma->getTamanio().x;
+			int posX = pos.x + getTamanio().x / 2;
+			if ( posX >= inicio && posX <= fin ) {
+				plataforma = unaPlataforma;
+				break;
 			}
-		}else {		
-			pos.x += (int)round(vx*t);
-			pos.y += (int)round(velocSaltoY*t);
+			it++;
 		}
-		if	(tiempoSalto > 0 && velocSaltoY < 0 && pos.y <= 0) {
-			pos.y = 0;
-			velocSaltoX = 0;
+
+		bool cayendo = tiempoSalto > 0 && velocSaltoY < 0;
+		if	(cayendo) {
+			if (pos.y <= 0) {
+				pos.y = 0;
+				cayendo = false;
+			}
+
+			if (plataforma != nullptr && getPos().y <= plataforma->getPos().y && getPos().y > plataforma->getPos().y - plataforma->getTamanio().y - 10) {
+				pos.y = plataforma->getPos().y;
+				cayendo = false;
+			}
+
+			if (! cayendo) {
+				velocSaltoX = 0;
+				velocSaltoY = 0;
+				if (velocCaminar != 0)
+					tiempoCaminando = tiempoSalto;
+				tiempoSalto = 0;
+			}
+
+		} else if (tiempoCaminando > 0 && tiempoSalto == 0 && pos.y > 0 && plataforma == nullptr) {
+			velocSaltoX = velocCaminar;
 			velocSaltoY = 0;
-			if (velocCaminar != 0)
-				tiempoCaminando = tiempoSalto;
-			tiempoSalto = 0;
+			tiempoSalto = tiempo();
+			tiempoCaminando = 0;
+			cayendo = true;
 		}
 
 		if (t > 0 && pos.x < 0)
