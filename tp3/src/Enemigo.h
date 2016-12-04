@@ -16,6 +16,7 @@ public:
 	int getPuntos();
 	int getDistanciaPiso();
 	void setDistanciaPiso(int distancia);
+	void caminar(Direccion direcc);
 protected:
 	int puntosQueDaAlMorir;
 	int distanciaPiso;

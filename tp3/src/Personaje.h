@@ -19,6 +19,7 @@ public:
 	Proyectil* dispararDirigido(Objeto* enemigoMasCercano);
 	virtual bool tieneCambios(std::vector<Plataforma*>* plataformas);
 	virtual bool esEnemigo() = 0;
+	double getVelocidadCaminar();
 protected:
 	bool actualizar(std::vector<Plataforma*>* plataformas);
 	bool dispara;

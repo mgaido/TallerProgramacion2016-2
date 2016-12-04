@@ -19,6 +19,7 @@ Juego::Juego(Config& _configuracion) : configuracion(_configuracion) {
 	escenario = Escenario(configuracion.getLongitud(), configuracion.getTamanioVentana().x, configuracion.getNivelPiso());
 	maxOffsetDelta = round(configuracion.getVelocidadX() * 2 * 1000000.0 / configuracion.getFrameRate());
 	t_updateWorld = std::thread(&Juego::updateWorld, this);
+	BossFinal = NULL;
 }
 
 Juego::~Juego() {
@@ -44,9 +45,19 @@ void Juego::updateWorld() {
 	Enemigo* enemigoSpawneado;
 	while (!detenido) {
 		enemigoSpawneado = spawnEnemigo();
-		std::this_thread::sleep_for(std::chrono::milliseconds(10 * (rand() % 300)));
+		std::this_thread::sleep_for(std::chrono::milliseconds(10 * (rand() % 500)));
 		enemigoSpawneado->detenerse();
-		std::this_thread::sleep_for(std::chrono::milliseconds(1000 * (rand() % 6)));
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000 * (rand() % 5)));
+		if (BossFinal != NULL ) {                                 //Logica MOVIMIENTO BOSS HABRIA QUE MEJORAR para que no salga del mapa
+			if (BossFinal->getVelocidadCaminar() > 0) {
+				BossFinal->detenerse();
+				BossFinal->caminar(Direccion::IZQUIERDA);
+			}
+			else {
+				BossFinal->detenerse();
+				BossFinal->caminar(Direccion::DERECHA);
+			}
+		}
 	}
 }
 
@@ -97,7 +108,7 @@ Jugador* Juego::nuevoJugador(std::string nombre) {
 
 Enemigo* Juego::spawnEnemigo(){
 	Enemigo* nuevoEnemigo = new Enemigo(++contador, configuracion);
-	int queBOSS = rand() % 3;
+	int queBOSS = rand() % 1; //ACA DEBERIA IR EL NIVEL SELECCIONADO
 	if (contadorEnemigosSpawneados % 5 != 4) {		
 		nuevoEnemigo->getTamanio().x = configuracion.getTamanioJugador().x;				//configurar para enemigo 
 		nuevoEnemigo->getTamanio().y = configuracion.getTamanioJugador().y;				//configurar para enemigo
@@ -115,7 +126,7 @@ Enemigo* Juego::spawnEnemigo(){
 
 		info("Enemigo creado");
 	}
-	else if (queBOSS == 0) { //Se crea el Boss HI-DO
+	else if (queBOSS == 0 && (BossFinal == NULL)) { //Se crea el Boss HI-DO
 		nuevoEnemigo->getTamanio().x = 200;				//configurar para enemigo 
 		nuevoEnemigo->getTamanio().y = 400;				//configurar para enemigo
 		nuevoEnemigo->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista();
@@ -127,12 +138,14 @@ Enemigo* Juego::spawnEnemigo(){
 		enemigos.push_back(nuevoEnemigo);
 
 		lock.unlock();
+		if (BossFinal == NULL)
+			BossFinal = nuevoEnemigo;
 
 		cambios = true;
 
 		info("Boss HI-DO creado");
 	}	
-	else if (queBOSS == 1) { //Se crea el Boss AirbusterRiberts
+	else if (queBOSS == 1 && (BossFinal == NULL)) { //Se crea el Boss AirbusterRiberts
 		nuevoEnemigo->getTamanio().x = 400;				//configurar para enemigo 
 		nuevoEnemigo->getTamanio().y = 400;				//configurar para enemigo
 		nuevoEnemigo->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista();
@@ -145,11 +158,14 @@ Enemigo* Juego::spawnEnemigo(){
 
 		lock.unlock();
 
+		if (BossFinal == NULL)
+			BossFinal = nuevoEnemigo;
+
 		cambios = true;
 
 		info("Boss creado");
 	}
-	else if (queBOSS == 2) { //Se crea el Boss TANI OH
+	else if (queBOSS == 2 && (BossFinal == NULL)) { //Se crea el Boss TANI OH
 		nuevoEnemigo->getTamanio().x = 400;				//configurar para enemigo 
 		nuevoEnemigo->getTamanio().y = 400;				//configurar para enemigo
 		nuevoEnemigo->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista();
@@ -162,9 +178,29 @@ Enemigo* Juego::spawnEnemigo(){
 
 		lock.unlock();
 
+		if (BossFinal == NULL)
+			BossFinal = nuevoEnemigo;
+
 		cambios = true;
 
 		info("Boss creado");
+	}
+	else {
+		nuevoEnemigo->getTamanio().x = configuracion.getTamanioJugador().x;				//configurar para enemigo 
+		nuevoEnemigo->getTamanio().y = configuracion.getTamanioJugador().y;				//configurar para enemigo
+		nuevoEnemigo->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista();
+		nuevoEnemigo->setTipo(Tipo::Enemigo);
+		nuevoEnemigo->setDistanciaPiso(-nuevoEnemigo->getTamanio().y - nuevoEnemigo->getPos().y);
+		contadorEnemigosSpawneados++;
+		lock.lock();
+		nuevoEnemigo->caminar(Direccion::IZQUIERDA);
+		enemigos.push_back(nuevoEnemigo);
+
+		lock.unlock();
+
+		cambios = true;
+
+		info("Enemigo creado");
 	}
 	return nuevoEnemigo;
 }

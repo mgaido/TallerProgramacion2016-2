@@ -50,6 +50,7 @@ private:
 	std::vector<Proyectil*> proyectilesEnemigos;
 	std::vector<PickUp*> pickups;
 	std::vector<Enemigo*> enemigos;
+	Enemigo* BossFinal;
 	//std::vector<Objeto*> objetos; para TP3
 	bool cambios;
 	std::thread t_updateWorld;	
