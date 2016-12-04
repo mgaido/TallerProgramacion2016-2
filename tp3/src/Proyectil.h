@@ -20,7 +20,6 @@ public:
 	int getDanio();
 	bool esVisible();
 	int getIdTirador();
-	void setVelocidadY(double velocidadProyectilY);
 private:
 
 protected:
@@ -33,8 +32,7 @@ protected:
 	int cantidadRepuesto;
 	int puntosOtorgados;
 	int tiempoUltimoDisparo;
-	double velocidadProyectilX;
-	double velocidadProyectilY;
+	double velocidadProyectil;
 	double tiempoEnMovimiento;
 	bool cambios;
 };

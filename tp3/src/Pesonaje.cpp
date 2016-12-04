@@ -27,10 +27,6 @@ Proyectil* Personaje::disparar() {
 	if (nuevoProyectil != NULL) {
 		nuevoProyectil->setPos(this->getPos());
 		nuevoProyectil->setOrientacion(orientacion);
-		if ((velocSaltoY < 0) && nuevoProyectil->getTipo() == Tipo::GunH)
-			nuevoProyectil->setVelocidadY(-0.00008);
-		else if((velocSaltoY > 0) && nuevoProyectil->getTipo() == Tipo::GunH)
-			nuevoProyectil->setVelocidadY(0.00008);
 	}
 	return nuevoProyectil;
 }

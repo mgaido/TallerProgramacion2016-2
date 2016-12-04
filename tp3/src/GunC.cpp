@@ -33,7 +33,7 @@ void GunC::trayectoria(std::vector<Plataforma*>* plataformas){
 		double velocidad = 0;
 
 		if (tiempoEnMovimiento > 0) {
-			velocidad = velocidadProyectilX;
+			velocidad = velocidadProyectil;
 			t = tiempo() - tiempoEnMovimiento;
 			tiempoEnMovimiento += t;
 		}
