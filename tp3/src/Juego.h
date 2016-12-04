@@ -32,6 +32,8 @@ public:
 	bool estaIniciado();
 	unsigned int getCantdadJugadores();
 	Enemigo* spawnEnemigo();
+	Enemigo* spawnBoss();
+
 	void detener();
 	void agregarProyectilAliado(Proyectil* nuevoProyectil);
 	void agregarProyectilEnemigo(Proyectil* nuevoProyectil);
@@ -50,11 +52,15 @@ private:
 	std::vector<Proyectil*> proyectilesEnemigos;
 	std::vector<PickUp*> pickups;
 	std::vector<Enemigo*> enemigos;
+	Enemigo* BossFinal;
 	//std::vector<Objeto*> objetos; para TP3
 	bool cambios;
 	std::thread t_updateWorld;	
 	void updateWorld();
 	int contadorEnemigosSpawneados; //Para el tema de los Boss
+	int minPosXJugador;
+	int minPosXEnemigo;
+
 };
 
 #endif /* JUEGO_H_ */

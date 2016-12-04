@@ -109,5 +109,5 @@ bool Proyectil::tieneCambios(std::vector<Plataforma*>& plataformas) {
 
 void Proyectil::setPos(Punto nuevaPosicion) {
 	this->pos.x = nuevaPosicion.x;
-	this->pos.y = nuevaPosicion.y + 140;
+	this->pos.y = nuevaPosicion.y + 120;
 }

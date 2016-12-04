@@ -19,6 +19,7 @@ Juego::Juego(Config& _configuracion) : configuracion(_configuracion) {
 	escenario = Escenario(configuracion.getLongitud(), configuracion.getTamanioVentana().x, configuracion.getNivelPiso());
 	maxOffsetDelta = round(configuracion.getVelocidadX() * 2 * 1000000.0 / configuracion.getFrameRate());
 	t_updateWorld = std::thread(&Juego::updateWorld, this);
+	BossFinal = NULL;
 }
 
 Juego::~Juego() {
@@ -44,10 +45,29 @@ void Juego::updateWorld() {
 	std::thread t_detenerEnemigoAnterior;
 	Enemigo* enemigoSpawneado;
 	while (!detenido) {
-		enemigoSpawneado = spawnEnemigo();
-		std::this_thread::sleep_for(std::chrono::milliseconds(10 * (rand() % 300)));
+		if (BossFinal != NULL || minPosXJugador < 5500) {
+			enemigoSpawneado = spawnEnemigo();
+		}
+		else {
+			enemigoSpawneado = spawnBoss();
+		}
+		std::this_thread::sleep_for(std::chrono::milliseconds(10 * (rand() % 500)));
 		enemigoSpawneado->detenerse();
-		std::this_thread::sleep_for(std::chrono::milliseconds(1000 * (rand() % 6)));
+		
+		if ((rand() % 7 == 0) && (enemigoSpawneado->getTipo() == Tipo::Enemigo)) //Logica para que el enemigo salte y suba a una plataforma
+			enemigoSpawneado->saltar();
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000 * (rand() % 5)));
+		if (BossFinal != NULL ) {                                 //Logica MOVIMIENTO BOSS HABRIA QUE MEJORAR para que no salga del mapa
+			if (BossFinal->getVelocidadCaminar() > 0) {
+				BossFinal->detenerse();
+				BossFinal->caminar(Direccion::IZQUIERDA);
+			}
+			else {
+				BossFinal->detenerse();
+				BossFinal->caminar(Direccion::DERECHA);
+			}
+		}
 	}
 }
 
@@ -96,27 +116,10 @@ Jugador* Juego::nuevoJugador(std::string nombre) {
 	return jugador;
 }
 
-Enemigo* Juego::spawnEnemigo(){
+Enemigo* Juego::spawnBoss() {
 	Enemigo* nuevoEnemigo = new Enemigo(++contador, configuracion);
-	int queBOSS = rand() % 3;
-	if (contadorEnemigosSpawneados % 5 != 4) {		
-		nuevoEnemigo->getTamanio().x = configuracion.getTamanioJugador().x;				//configurar para enemigo 
-		nuevoEnemigo->getTamanio().y = configuracion.getTamanioJugador().y;				//configurar para enemigo
-		nuevoEnemigo->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista();
-		nuevoEnemigo->setTipo(Tipo::Enemigo);
-		nuevoEnemigo->setDistanciaPiso(-nuevoEnemigo->getTamanio().y - nuevoEnemigo->getPos().y);
-		contadorEnemigosSpawneados++;
-		lock.lock();
-		nuevoEnemigo->caminar(Direccion::IZQUIERDA);
-		enemigos.push_back(nuevoEnemigo);
-
-		lock.unlock();
-
-		cambios = true;
-
-		info("Enemigo creado");
-	}
-	else if (queBOSS == 0) { //Se crea el Boss HI-DO
+	int nivel = 0;
+	if (nivel == 0 ) { //Se crea el Boss HI-DO
 		nuevoEnemigo->getTamanio().x = 200;				//configurar para enemigo 
 		nuevoEnemigo->getTamanio().y = 400;				//configurar para enemigo
 		nuevoEnemigo->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista();
@@ -128,12 +131,14 @@ Enemigo* Juego::spawnEnemigo(){
 		enemigos.push_back(nuevoEnemigo);
 
 		lock.unlock();
+		if (BossFinal == NULL)
+			BossFinal = nuevoEnemigo;
 
 		cambios = true;
 
 		info("Boss HI-DO creado");
-	}	
-	else if (queBOSS == 1) { //Se crea el Boss AirbusterRiberts
+	}
+	else if (nivel == 1 && (BossFinal == NULL)) { //Se crea el Boss AirbusterRiberts
 		nuevoEnemigo->getTamanio().x = 400;				//configurar para enemigo 
 		nuevoEnemigo->getTamanio().y = 400;				//configurar para enemigo
 		nuevoEnemigo->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista();
@@ -146,11 +151,14 @@ Enemigo* Juego::spawnEnemigo(){
 
 		lock.unlock();
 
+		if (BossFinal == NULL)
+			BossFinal = nuevoEnemigo;
+
 		cambios = true;
 
 		info("Boss creado");
 	}
-	else if (queBOSS == 2) { //Se crea el Boss TANI OH
+	else if (nivel == 2 && (BossFinal == NULL)) { //Se crea el Boss TANI OH
 		nuevoEnemigo->getTamanio().x = 400;				//configurar para enemigo 
 		nuevoEnemigo->getTamanio().y = 400;				//configurar para enemigo
 		nuevoEnemigo->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista();
@@ -163,10 +171,37 @@ Enemigo* Juego::spawnEnemigo(){
 
 		lock.unlock();
 
+		if (BossFinal == NULL)
+			BossFinal = nuevoEnemigo;
+
 		cambios = true;
 
 		info("Boss creado");
 	}
+	return nuevoEnemigo;
+}
+
+
+Enemigo* Juego::spawnEnemigo(){
+	Enemigo* nuevoEnemigo = new Enemigo(++contador, configuracion);
+		
+	nuevoEnemigo->getTamanio().x = configuracion.getTamanioJugador().x;				//configurar para enemigo 
+	nuevoEnemigo->getTamanio().y = configuracion.getTamanioJugador().y;				//configurar para enemigo
+	nuevoEnemigo->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista();
+	nuevoEnemigo->setTipo(Tipo::Enemigo);
+	nuevoEnemigo->setDistanciaPiso(-nuevoEnemigo->getTamanio().y - nuevoEnemigo->getPos().y);
+	contadorEnemigosSpawneados++;
+	lock.lock();
+	nuevoEnemigo->caminar(Direccion::IZQUIERDA);
+	enemigos.push_back(nuevoEnemigo);
+
+	lock.unlock();
+
+	cambios = true;
+
+	info("Enemigo creado");
+	
+
 	return nuevoEnemigo;
 }
 
@@ -186,6 +221,7 @@ bool Juego::getEstado(Bytes& bytes) {
 		bool colisionan = false;
 		if ((minX == 0 || unJugador->getPos().x < minX) && unJugador->getEstado() != Estado::Desconectado)
 			minX = unJugador->getPos().x + unJugador->getTamanio().x / 2;
+			minPosXJugador = minX;
 
 		auto it4 = pickups.begin();
 		while ((it4 != pickups.end()) && !colisionan) {
@@ -230,7 +266,7 @@ bool Juego::getEstado(Bytes& bytes) {
 		it2 = enemigos.begin();
 		while ((it2 != enemigos.end()) && !colisionan) {
 			Enemigo *unEnemigo = *it2;
-			if (((unProyectil->getPos().x + unProyectil->getTamanio().x) < (unEnemigo->getPos().x)) || (unProyectil->getPos().x > unEnemigo->getPos().x + unEnemigo->getTamanio().x)) {
+ 			if (((unProyectil->getPos().x + unProyectil->getTamanio().x) < (unEnemigo->getPos().x)) || (unProyectil->getPos().x > unEnemigo->getPos().x + unEnemigo->getTamanio().x)) {
 				colisionan = false;
 			}
 			else if (((unProyectil->getPos().y + unProyectil->getTamanio().y) < (unEnemigo->getPos().y)) || (unProyectil->getPos().y > unEnemigo->getPos().y + unEnemigo->getTamanio().y)) {
@@ -332,6 +368,9 @@ bool Juego::getEstado(Bytes& bytes) {
 			pos.x = obj->getPos().x - escenario.getOffsetVista();
 			pos.y = escenario.getNivelPiso() - obj->getTamanio().y - obj->getPos().y;
 			estadoObj.setPos(pos);
+			//std::cout << obj->getPos().x << std::endl;
+			//std::cout << minPosXJugador << std::endl;
+
 			estadoObj.setTamanio(obj->getTamanio());
 			estadoObj.setFrame(obj->getFrame());
 			estadoObj.setOrientacion(obj->getOrientacion());

@@ -66,6 +66,10 @@ void Personaje::detenerse() {
 	tiempoCaminando = 0;
 }
 
+double Personaje::getVelocidadCaminar() {
+	return velocCaminar;
+}
+
 void Personaje::saltar() {
 	std::unique_lock<std::mutex> lock(mutex);
 
