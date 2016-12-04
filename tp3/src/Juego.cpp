@@ -14,7 +14,6 @@ Juego::Juego(Config& _configuracion) : configuracion(_configuracion) {
 	iniciado = false;
 	cambios = true;
 	detenido = false;
-	nivel = 1;
 	contadorEnemigosSpawneados = 0;
 	crearPlataformas();
 	escenario = Escenario(configuracion.getLongitud(), configuracion.getTamanioVentana().x, configuracion.getNivelPiso());
@@ -41,7 +40,8 @@ void Juego::crearPlataformas() {
 	}
 }
 
-void Juego::updateWorld() {	
+void Juego::updateWorld() {
+	std::thread t_detenerEnemigoAnterior;
 	Enemigo* enemigoSpawneado;
 	while (!detenido) {
 		enemigoSpawneado = spawnEnemigo();
@@ -63,8 +63,6 @@ void Juego::updateWorld() {
 			}
 		}
 	}
-
-	//Creo el BOSS, si estoy al final de la ventana
 }
 
 void Juego::detener() {
@@ -114,12 +112,8 @@ Jugador* Juego::nuevoJugador(std::string nombre) {
 
 Enemigo* Juego::spawnEnemigo(){
 	Enemigo* nuevoEnemigo = new Enemigo(++contador, configuracion);
-<<<<<<< HEAD
-		
-=======
 	int queBOSS = rand() % 1; //ACA DEBERIA IR EL NIVEL SELECCIONADO
 	if (contadorEnemigosSpawneados % 5 != 4) {		
->>>>>>> origin/master
 		nuevoEnemigo->getTamanio().x = configuracion.getTamanioJugador().x;				//configurar para enemigo 
 		nuevoEnemigo->getTamanio().y = configuracion.getTamanioJugador().y;				//configurar para enemigo
 		nuevoEnemigo->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista();
@@ -135,18 +129,8 @@ Enemigo* Juego::spawnEnemigo(){
 		cambios = true;
 
 		info("Enemigo creado");
-<<<<<<< HEAD
-	
-	return nuevoEnemigo;
-}
-
-Enemigo* Juego::CrearBoss() {
-	Enemigo* nuevoEnemigo = new Enemigo(++contador, configuracion);
-	if (nivel == 1) { //Se crea el Boss HI-DO
-=======
 	}
 	else if (queBOSS == 0 && (BossFinal == NULL)) { //Se crea el Boss HI-DO
->>>>>>> origin/master
 		nuevoEnemigo->getTamanio().x = 200;				//configurar para enemigo 
 		nuevoEnemigo->getTamanio().y = 400;				//configurar para enemigo
 		nuevoEnemigo->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista();
@@ -164,13 +148,8 @@ Enemigo* Juego::CrearBoss() {
 		cambios = true;
 
 		info("Boss HI-DO creado");
-<<<<<<< HEAD
-	}
-	else if (nivel == 2) { //Se crea el Boss AirbusterRiberts
-=======
 	}	
 	else if (queBOSS == 1 && (BossFinal == NULL)) { //Se crea el Boss AirbusterRiberts
->>>>>>> origin/master
 		nuevoEnemigo->getTamanio().x = 400;				//configurar para enemigo 
 		nuevoEnemigo->getTamanio().y = 400;				//configurar para enemigo
 		nuevoEnemigo->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista();
@@ -188,13 +167,9 @@ Enemigo* Juego::CrearBoss() {
 
 		cambios = true;
 
-		info("Boss AirbusterRiberts creado");
+		info("Boss creado");
 	}
-<<<<<<< HEAD
-	else if (nivel == 3) { //Se crea el Boss TANI OH
-=======
 	else if (queBOSS == 2 && (BossFinal == NULL)) { //Se crea el Boss TANI OH
->>>>>>> origin/master
 		nuevoEnemigo->getTamanio().x = 400;				//configurar para enemigo 
 		nuevoEnemigo->getTamanio().y = 400;				//configurar para enemigo
 		nuevoEnemigo->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista();
@@ -212,11 +187,8 @@ Enemigo* Juego::CrearBoss() {
 
 		cambios = true;
 
-		info("Boss TANI OH creado");
+		info("Boss creado");
 	}
-<<<<<<< HEAD
-
-=======
 	else {
 		nuevoEnemigo->getTamanio().x = configuracion.getTamanioJugador().x;				//configurar para enemigo 
 		nuevoEnemigo->getTamanio().y = configuracion.getTamanioJugador().y;				//configurar para enemigo
@@ -234,7 +206,6 @@ Enemigo* Juego::CrearBoss() {
 
 		info("Enemigo creado");
 	}
->>>>>>> origin/master
 	return nuevoEnemigo;
 }
 
@@ -245,8 +216,7 @@ bool Juego::getEstado(Bytes& bytes) {
 	lock.lock();
 
 	//Actualizar posiciones de jugadores y encontrar el minimo en X
-	int minX = 0;	
-	maxPosJugadorX = 0;
+	int minX = 0;
 	auto it = jugadores.begin();
 	 
 	for (auto it = jugadores.begin(); it != jugadores.end();) {
@@ -255,9 +225,6 @@ bool Juego::getEstado(Bytes& bytes) {
 		bool colisionan = false;
 		if ((minX == 0 || unJugador->getPos().x < minX) && unJugador->getEstado() != Estado::Desconectado)
 			minX = unJugador->getPos().x + unJugador->getTamanio().x / 2;
-
-		if (maxPosJugadorX < unJugador->getPos().x)
-			maxPosJugadorX = unJugador->getPos().x;
 
 		auto it4 = pickups.begin();
 		while ((it4 != pickups.end()) && !colisionan) {
