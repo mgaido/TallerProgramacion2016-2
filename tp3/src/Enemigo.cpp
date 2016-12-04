@@ -53,3 +53,14 @@ void Enemigo::caminar(Direccion direccion) {
 	if (tiempoSalto == 0)
 		tiempoCaminando = tiempo();
 }
+
+void Enemigo::saltar() {
+	std::unique_lock<std::mutex> lock(mutex);
+
+	if (tiempoSalto == 0) {
+		velocSaltoY = configuracion.getVelocidadX();
+		velocSaltoX = velocCaminar;
+		tiempoSalto = tiempo();
+	}
+	cambios = true;
+}

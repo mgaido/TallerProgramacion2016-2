@@ -47,6 +47,10 @@ void Juego::updateWorld() {
 		enemigoSpawneado = spawnEnemigo();
 		std::this_thread::sleep_for(std::chrono::milliseconds(10 * (rand() % 500)));
 		enemigoSpawneado->detenerse();
+		
+		if ((rand() % 7 == 0) && (enemigoSpawneado->getTipo() == Tipo::Enemigo)) //Logica para que el enemigo salte y suba a una plataforma
+			enemigoSpawneado->saltar();
+
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000 * (rand() % 5)));
 		if (BossFinal != NULL ) {                                 //Logica MOVIMIENTO BOSS HABRIA QUE MEJORAR para que no salga del mapa
 			if (BossFinal->getVelocidadCaminar() > 0) {
