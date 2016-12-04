@@ -229,7 +229,7 @@ bool Juego::getEstado(Bytes& bytes) {
 		it2 = enemigos.begin();
 		while ((it2 != enemigos.end()) && !colisionan) {
 			Enemigo *unEnemigo = *it2;
-			if (((unProyectil->getPos().x + unProyectil->getTamanio().x) < (unEnemigo->getPos().x)) || (unProyectil->getPos().x > unEnemigo->getPos().x + unEnemigo->getTamanio().x)) {
+ 			if (((unProyectil->getPos().x + unProyectil->getTamanio().x) < (unEnemigo->getPos().x)) || (unProyectil->getPos().x > unEnemigo->getPos().x + unEnemigo->getTamanio().x)) {
 				colisionan = false;
 			}
 			else if (((unProyectil->getPos().y + unProyectil->getTamanio().y) < (unEnemigo->getPos().y)) || (unProyectil->getPos().y > unEnemigo->getPos().y + unEnemigo->getTamanio().y)) {

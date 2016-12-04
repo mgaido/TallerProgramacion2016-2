@@ -7,8 +7,8 @@ GunC::GunC(int id, int idJugador) : Proyectil(id, idJugador) {
 	this->puntosOtorgados = 100;
 	this->tipo = Tipo::GunC;
 	this->estado = Estado::ProyectilEnMovimiento;
-	this->tamanio.x = 10;			//ver si este tamanio esta bien 
-	this->tamanio.y = 4;
+	this->tamanio.x = 12;			//ver si este tamanio esta bien 
+	this->tamanio.y = 6;
 	this->orientacion = false;
 	this->frame = 0;
 	this->enemigoMasCercano = NULL;
