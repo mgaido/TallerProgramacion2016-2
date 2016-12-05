@@ -30,6 +30,7 @@ Vista::~Vista() {
 
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(ventana);
+	TTF_CloseFont(fuente);
 	IMG_Quit();
 	SDL_Quit();
 }
@@ -74,6 +75,12 @@ void Vista::iniciar() {
 			spriteIt++;
 		}
 
+		fuente = TTF_OpenFont("img/arcade_r.ttf", 20);
+		if (! fuente) {
+			error( "No se pudo cargar la fuente. Error: " + std::string(TTF_GetError()), true);
+			detener();
+			return;
+		}
 		cicloPrincipal();
 	}
 }
@@ -154,7 +161,7 @@ void Vista::actualizar() {
 
 		auto rendererIt = renderers.begin();
 		while (rendererIt != renderers.end()) {
-			(*rendererIt)->aplicar(renderer);
+			(*rendererIt)->aplicar(renderer, fuente);
 			delete *rendererIt;
 			renderers.erase(rendererIt);
 		}
@@ -175,7 +182,7 @@ void Vista::actualizar() {
 				if (map2 != map->second.end()) {
 					encontrado = true;
 					auto configSprite = map2->second;
-					renderers.push_back(new RendererSprite(configSprite.get(), it->getPos(), it->getTamanio(), it->getFrame(), it->getOrientacion(), it->getId() == idJugador));
+					renderers.push_back(new RendererSprite(configSprite.get(), it->getPos(), it->getTamanio(), it->getNombre(), it->getFrame(), it->getOrientacion(), it->getId() == idJugador));
 				}
 			}
 			if (! encontrado) {
@@ -192,7 +199,7 @@ void Vista::actualizar() {
 
 	auto rendererIt = renderers.begin();
 	while (rendererIt != renderers.end()) {
-		(*rendererIt)->aplicar(renderer);
+		(*rendererIt)->aplicar(renderer, fuente);
 		rendererIt++;
 	}
 
@@ -272,7 +279,7 @@ int RendererCapa::getZindex() {
 	return capa->getZindex();
 }
 
-void RendererCapa::aplicar(SDL_Renderer* renderer) {
+void RendererCapa::aplicar(SDL_Renderer* renderer, TTF_Font* fuente) {
 	dest.x = 0;
 	while (dest.x < capa->tamanioDestino.x) {
 		if (dest.x == 0) {
@@ -291,12 +298,12 @@ void RendererCapa::aplicar(SDL_Renderer* renderer) {
 	}
 }
 
-RendererSprite::RendererSprite(Sprite* sprite, Punto pos, Punto tamanio, int frame, bool orientacion, bool esJugador) {
+RendererSprite::RendererSprite(Sprite* sprite, Punto pos, Punto tamanio, std::string texto, int frame, bool orientacion, bool esJugador) {
 	this->sprite = sprite;
 	this->pos = pos;
 	this->tamanio = tamanio;
+	this->texto = texto;
 	this->frame = frame;
-
 	this->orientacion = orientacion;
 	this->esJugador = esJugador;
 }
@@ -305,7 +312,7 @@ int RendererSprite::getZindex() {
 	return sprite->getZindex() + (esJugador ? 1 : 0);
 }
 
-void RendererSprite::aplicar(SDL_Renderer* renderer) {
+void RendererSprite::aplicar(SDL_Renderer* renderer, TTF_Font* fuente) {
 
 	int frame = (int) (this->frame++ / sprite->divider) % sprite->config.frames;
 
@@ -338,17 +345,40 @@ void RendererSprite::aplicar(SDL_Renderer* renderer) {
 
 	} while (rect.x < pos.x + tamanio.x);
 
-	if (this->esJugador) {
-		SDL_Rect indicador;
-		indicador.w = tamanio.x / 2;
-		indicador.h = tamanio.y / 10;
-		indicador.x = pos.x + indicador.w / 2;
-		indicador.y = pos.y - indicador.h - pos.y * 0.05;
-
-		SDL_SetRenderDrawColor(renderer, 255, 255, 0, 50);
-		SDL_RenderFillRect(renderer, &indicador);
-	}
+	if (texto.length() > 0)
+		dibujarTexto(renderer, fuente);
 }
+
+
+void RendererSprite::dibujarTexto(SDL_Renderer* renderer, TTF_Font* fuente) {
+
+	SDL_Color color;
+	if (sprite->config.tipo == Tipo::Jugador) {
+		if (esJugador)
+			color = { 255, 255, 180, 255 };
+		else
+			color = { 180, 180, 180, 255 };
+	} else
+		color = { 255, 255, 255, 255 };
+
+	SDL_Surface* surface = TTF_RenderText_Solid(fuente, texto.c_str(), color);
+	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+	SDL_FreeSurface(surface);
+
+	int ancho, alto;
+	SDL_QueryTexture( texture, NULL, NULL, &ancho, &alto);
+
+	SDL_Rect label;
+	label.w = std::min<int>(ancho, tamanio.x);
+	label.h = alto / (double) ancho * label.w;
+
+	label.x = pos.x + (tamanio.x - label.w) / 2;
+	label.y = pos.y - label.h - pos.y * 0.01;
+
+	SDL_RenderCopy(renderer, texture, nullptr, &label);
+	SDL_DestroyTexture(texture);
+}
+
 
 Renderer::~Renderer() {
 }

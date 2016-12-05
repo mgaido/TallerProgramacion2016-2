@@ -64,19 +64,23 @@ class Renderer {
 public:
 	virtual ~Renderer();
 	virtual int getZindex() = 0;
-	virtual void aplicar(SDL_Renderer* renderer) = 0;
+	virtual void aplicar(SDL_Renderer* renderer, TTF_Font* fuente) = 0;
 };
 
 class RendererSprite : public Renderer {
 public:
-	RendererSprite(Sprite* sprite, Punto pos, Punto tamanio, int frame, bool orientacion, bool esJugador);
+	RendererSprite(Sprite* sprite, Punto pos, Punto tamanio, std::string texto, int frame, bool orientacion, bool esJugador);
 	virtual int getZindex();
-	virtual void aplicar(SDL_Renderer* renderer);
+	virtual void aplicar(SDL_Renderer* renderer, TTF_Font* fuente);
 
 private:
+	void dibujarTexto(SDL_Renderer* renderer, TTF_Font* fuente);
+
+
 	Sprite* sprite;
 	Punto pos;
 	Punto tamanio;
+	std::string texto;
 	int frame;
 	bool orientacion;
 	bool esJugador;
@@ -86,7 +90,7 @@ class RendererCapa : public Renderer {
 public:
 	RendererCapa(Capa* capa, int offsetVista);
 	virtual int getZindex();
-	virtual void aplicar(SDL_Renderer* renderer);
+	virtual void aplicar(SDL_Renderer* renderer, TTF_Font* fuente);
 private:
 	Capa* capa;
 	int offsetVista;
@@ -127,6 +131,8 @@ private:
 	HashMap<Tipo, HashMap<Estado, std::shared_ptr<Sprite>>> spritess;
 
 	std::vector<Renderer*> renderers;
+
+	TTF_Font* fuente;
 };
 
 

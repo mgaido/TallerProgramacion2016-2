@@ -12,6 +12,11 @@
 
 class EstadoObj {
 public:
+	EstadoObj() {
+		nombre[0] = '\0';
+		frame = 0;
+	}
+
 	inline Estado getEstado() const {
 		return estado;
 	}
@@ -157,7 +162,7 @@ public:
 			}
 
 			std::stringstream ss;
-			ss << tipo << " " << getId() << " " << estado << " en (" << getPos().x << ", " << getPos().y << ")" << " Tamanio (" << getTamanio().x << ", " << getTamanio().y << ")";
+			ss << tipo << " " << getId() << " " << getNombre() << " " << estado << " en (" << getPos().x << ", " << getPos().y << ")" << " Tamanio (" << getTamanio().x << ", " << getTamanio().y << ")";
 			return ss.str();
 	}
 
