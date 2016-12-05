@@ -58,7 +58,7 @@ void Enemigo::saltar() {
 	std::unique_lock<std::mutex> lock(mutex);
 
 	if (tiempoSalto == 0) {
-		velocSaltoY = configuracion.getVelocidadX();
+		velocSaltoY = 0.0009;
 		velocSaltoX = velocCaminar;
 		tiempoSalto = tiempo();
 	}
@@ -80,7 +80,6 @@ void Enemigo::comportamiento(micros tiempoActual, std::vector<Proyectil*>* proye
 			this->saltar();
 		}
 	}
-	
 }
 
 void Enemigo::setTiempoCreacion(micros tiempoCreacion){

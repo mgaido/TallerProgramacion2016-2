@@ -402,7 +402,7 @@ bool Juego::getEstado(Bytes& bytes) {
 
 			Punto pos;
 			pos.x = obj->getPos().x - escenario.getOffsetVista();
-			pos.y = escenario.getNivelPiso() + obj->getDistanciaPiso();
+			pos.y = escenario.getNivelPiso() + obj->getDistanciaPiso() - obj->getPos().y;
 			estadoObj.setPos(pos);
 			estadoObj.setTamanio(obj->getTamanio());
 			estadoObj.setFrame(obj->getFrame());
