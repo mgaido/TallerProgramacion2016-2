@@ -2,8 +2,8 @@
 
 PickUp::PickUp(int id) : Objeto(id) {
 	this->estado = Estado::Bonus;
-	this->tamanio.x = 7;
-	this->tamanio.y = 7;
+	this->tamanio.x = 70;
+	this->tamanio.y = 70;
 	this->orientacion = false;
 	this->frame = 0;
 	energiaACurar = 0;
@@ -42,5 +42,5 @@ int PickUp::getEnergiaACurar() {
 
 void PickUp::setPos(Punto pos) {
 	this->pos.x = pos.x;
-	this->pos.y = 120;
+	this->pos.y = pos.y;
 }

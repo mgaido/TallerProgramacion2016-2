@@ -234,6 +234,24 @@ void Config::defaultConfig() {
 	this->configSprites.push_back(sprite);
 
 	sprite = ConfigSprite();
+	sprite.estado = Estado::MirarArriba;
+	sprite.tipo = Tipo::Jugador;
+	setCharArray("img/PersonajeQuietoArriba.png", sprite.imagen);
+	sprite.frames = 1;
+	sprite.tiempo = 1000;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
+	sprite = ConfigSprite();
+	sprite.estado = Estado::MirarAbajo;
+	sprite.tipo = Tipo::Jugador;
+	setCharArray("img/PersonajeQuietoAbajo.png", sprite.imagen);
+	sprite.frames = 1;
+	sprite.tiempo = 1000;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
+	sprite = ConfigSprite();
 	sprite.estado = Estado::Saltando;
 	sprite.tipo = Tipo::Jugador;
 	setCharArray("img/Personaje-Saltando.png", sprite.imagen);
@@ -372,6 +390,15 @@ void Config::defaultConfig() {
 	sprite.estado = Estado::ProyectilEnMovimiento;
 	setCharArray("img/bala4.png", sprite.imagen);
 	sprite.tipo = Tipo::GunC;
+	sprite.frames = 1;
+	sprite.tiempo = 1000;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
+	sprite = ConfigSprite();
+	sprite.estado = Estado::ProyectilEnMovimiento;
+	setCharArray("img/bala5.png", sprite.imagen);
+	sprite.tipo = Tipo::BalaEnemigo;
 	sprite.frames = 1;
 	sprite.tiempo = 1000;
 	sprite.zIndex = 10;
