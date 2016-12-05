@@ -16,10 +16,12 @@ Juego::Juego(Config& _configuracion) : configuracion(_configuracion) {
 	detenido = false;
 	contadorEnemigosSpawneados = 0;
 	crearPlataformas();
+	modoDeJuego = MODO_INDIVIDUAL;
 	escenario = Escenario(configuracion.getLongitud(), configuracion.getTamanioVentana().x, configuracion.getNivelPiso());
 	maxOffsetDelta = round(configuracion.getVelocidadX() * 2 * 1000000.0 / configuracion.getFrameRate());
 	t_updateWorld = std::thread(&Juego::updateWorld, this);
 	t_updateIA = std::thread(&Juego::updateIA, this);
+	t_chequearGameOver = std::thread(&Juego::chequearGameOver, this);
 	BossFinal = NULL;
 }
 
@@ -29,6 +31,48 @@ Juego::~Juego() {
 		Jugador* obj = *it;
 		delete obj;
 		jugadores.erase(it);
+	}    
+
+	auto it1 = enemigos.begin();
+	while (it1 != enemigos.end()) {
+		Enemigo* obj = *it1;
+		delete obj;
+		enemigos.erase(it1);
+	}
+
+	auto it2 = proyectilesAliados.begin();
+	while (it2 != proyectilesAliados.end()) {
+		Proyectil* obj = *it2;
+		delete obj;
+		proyectilesAliados.erase(it2);
+	}
+
+	auto it3 = proyectilesEnemigos.begin();
+	while (it3 != proyectilesEnemigos.end()) {
+		Proyectil* obj = *it3;
+		delete obj;
+		proyectilesEnemigos.erase(it3);
+	}
+
+	auto it4 = pickups.begin();
+	while (it4 != pickups.end()) {
+		PickUp* obj = *it4;
+		delete obj;
+		pickups.erase(it4);
+	}
+
+	auto it5 = plataformas.begin();
+	while (it5 != plataformas.end()) {
+		Plataforma* obj = *it5;
+		delete obj;
+		plataformas.erase(it5);
+	}
+
+	auto it6 = efectos.begin();
+	while (it6 != efectos.end()) {
+		Efecto* obj = *it6;
+		delete obj;
+		efectos.erase(it6);
 	}
 }
 
@@ -51,6 +95,29 @@ void Juego::updateIA(){
 			it++;
 		}
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000));				//lo duermo para q no consuma tanto recurso
+	}
+}
+
+void Juego::chequearGameOver(){
+	while (!detenido) {
+		auto it = jugadores.begin();
+		while (it != jugadores.end()) {
+			Jugador* obj = *it;
+			switch (modoDeJuego) {
+				case MODO_INDIVIDUAL: {
+				
+				}
+				case MODO_COOP: {
+				
+				}
+				case MODO_GRUPAL: {
+
+				}
+				case MODO_DIOS: {
+
+				}
+			}
+		}
 	}
 }
 
@@ -323,10 +390,7 @@ bool Juego::getEstado(Bytes& bytes) {
 			else { colisionan = true; }
 
 			if (colisionan) {
-				bool estaMuerto = unJugador->recibirDanio(unProyectil->getDanio());
-				if (estaMuerto) {
-						//hacer algo GAME OVER? ???  ? ? ? ? ? ? ? ?? ? ? ? ? ? ?? ? ? ? ? ? ? ? ? ? ? ? ??? ? '
-				}
+				unJugador->recibirDanio(unProyectil->getDanio());
 			}
 			it++;
 		}

@@ -28,6 +28,11 @@
 #include "Boss1.h"
 #include "Boss2.h"
 
+const char MODO_INDIVIDUAL = 0;
+const char MODO_COOP = 1;
+const char MODO_GRUPAL = 2;
+const char MODO_DIOS = 3;
+
 class Juego {
 public:
 	Juego(Config& configuracion);
@@ -45,6 +50,7 @@ public:
 	void agregarProyectilEnemigo(Proyectil* nuevoProyectil);
 
 private:
+	char modoDeJuego; 
 	void crearPlataformas();
 	bool detenido;
 	Config& configuracion;
@@ -65,6 +71,8 @@ private:
 	void updateWorld();
 	std::thread t_updateIA;
 	void updateIA();
+	std::thread t_chequearGameOver;
+	void chequearGameOver();
 	int contadorEnemigosSpawneados; //Para el tema de los Boss
 	int minPosXJugador;
 	int minPosXEnemigo;
