@@ -3,11 +3,73 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tp1", "tp1\tp1.vcxproj", "{E185C3AE-DD67-44B5-B09C-27B345F01593}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A70765FA-6832-462B-BF0F-271BE96D0078}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tp2", "tp2\tp2.vcxproj", "{CCFF0AEB-5687-4CD8-896B-EEAA8ED1DCAA}"
+	ProjectSection(SolutionItems) = preProject
+		tp3\src\Arma.cpp = tp3\src\Arma.cpp
+		tp3\src\Arma.h = tp3\src\Arma.h
+		tp3\src\Boss.cpp = tp3\src\Boss.cpp
+		tp3\src\Boss.h = tp3\src\Boss.h
+		tp3\src\Bytes.h = tp3\src\Bytes.h
+		tp3\src\Cliente.cpp = tp3\src\Cliente.cpp
+		tp3\src\Cliente.h = tp3\src\Cliente.h
+		tp3\src\ColaBloqueante.h = tp3\src\ColaBloqueante.h
+		tp3\src\Conexion.cpp = tp3\src\Conexion.cpp
+		tp3\src\Conexion.h = tp3\src\Conexion.h
+		tp3\src\Config.cpp = tp3\src\Config.cpp
+		tp3\src\Config.h = tp3\src\Config.h
+		tp3\src\Efecto.cpp = tp3\src\Efecto.cpp
+		tp3\src\Efecto.h = tp3\src\Efecto.h
+		tp3\src\Enemigo.cpp = tp3\src\Enemigo.cpp
+		tp3\src\Enemigo.h = tp3\src\Enemigo.h
+		tp3\src\EnemigoMuriendo.cpp = tp3\src\EnemigoMuriendo.cpp
+		tp3\src\EnemigoMuriendo.h = tp3\src\EnemigoMuriendo.h
+		tp3\src\Estado.h = tp3\src\Estado.h
+		tp3\src\GunC.cpp = tp3\src\GunC.cpp
+		tp3\src\GunC.h = tp3\src\GunC.h
+		tp3\src\GunF.cpp = tp3\src\GunF.cpp
+		tp3\src\GunF.h = tp3\src\GunF.h
+		tp3\src\GunH.cpp = tp3\src\GunH.cpp
+		tp3\src\GunH.h = tp3\src\GunH.h
+		tp3\src\GunR.cpp = tp3\src\GunR.cpp
+		tp3\src\GunR.h = tp3\src\GunR.h
+		tp3\src\GunS.cpp = tp3\src\GunS.cpp
+		tp3\src\GunS.h = tp3\src\GunS.h
+		tp3\src\Handshake.cpp = tp3\src\Handshake.cpp
+		tp3\src\Handshake.h = tp3\src\Handshake.h
+		tp3\src\ImpactoBala.cpp = tp3\src\ImpactoBala.cpp
+		tp3\src\ImpactoBala.h = tp3\src\ImpactoBala.h
+		tp3\src\Juego.cpp = tp3\src\Juego.cpp
+		tp3\src\Juego.h = tp3\src\Juego.h
+		tp3\src\Jugador.cpp = tp3\src\Jugador.cpp
+		tp3\src\Jugador.h = tp3\src\Jugador.h
+		tp3\src\Logger.cpp = tp3\src\Logger.cpp
+		tp3\src\Logger.h = tp3\src\Logger.h
+		tp3\src\main.cpp = tp3\src\main.cpp
+		tp3\src\NoImage.h = tp3\src\NoImage.h
+		tp3\src\Objeto.cpp = tp3\src\Objeto.cpp
+		tp3\src\Objeto.h = tp3\src\Objeto.h
+		tp3\src\Personaje.h = tp3\src\Personaje.h
+		tp3\src\Pesonaje.cpp = tp3\src\Pesonaje.cpp
+		tp3\src\PickUp.cpp = tp3\src\PickUp.cpp
+		tp3\src\PickUp.h = tp3\src\PickUp.h
+		tp3\src\Plataforma.cpp = tp3\src\Plataforma.cpp
+		tp3\src\Plataforma.h = tp3\src\Plataforma.h
+		tp3\src\Proyectil.cpp = tp3\src\Proyectil.cpp
+		tp3\src\Proyectil.h = tp3\src\Proyectil.h
+		tp3\src\Servidor.cpp = tp3\src\Servidor.cpp
+		tp3\src\Servidor.h = tp3\src\Servidor.h
+		tp3\src\Sesion.cpp = tp3\src\Sesion.cpp
+		tp3\src\Sesion.h = tp3\src\Sesion.h
+		tp3\src\Sockets.cpp = tp3\src\Sockets.cpp
+		tp3\src\Sockets.h = tp3\src\Sockets.h
+		tp3\src\Soldado.cpp = tp3\src\Soldado.cpp
+		tp3\src\Soldado.h = tp3\src\Soldado.h
+		tp3\src\Teclas.cpp = tp3\src\Teclas.cpp
+		tp3\src\Teclas.h = tp3\src\Teclas.h
+		tp3\src\Utils.h = tp3\src\Utils.h
+		tp3\src\Vista.cpp = tp3\src\Vista.cpp
+		tp3\src\Vista.h = tp3\src\Vista.h
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tp3", "tp3\tp3.vcxproj", "{F67D4806-7983-4729-A3CC-F62296CA4ABB}"
 EndProject
@@ -16,10 +78,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E185C3AE-DD67-44B5-B09C-27B345F01593}.Release|x86.ActiveCfg = Release|Win32
-		{E185C3AE-DD67-44B5-B09C-27B345F01593}.Release|x86.Build.0 = Release|Win32
-		{CCFF0AEB-5687-4CD8-896B-EEAA8ED1DCAA}.Release|x86.ActiveCfg = Release|Win32
-		{CCFF0AEB-5687-4CD8-896B-EEAA8ED1DCAA}.Release|x86.Build.0 = Release|Win32
 		{F67D4806-7983-4729-A3CC-F62296CA4ABB}.Release|x86.ActiveCfg = Release|Win32
 		{F67D4806-7983-4729-A3CC-F62296CA4ABB}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection

@@ -12,12 +12,15 @@
     <ClCompile Include="src\Cliente.cpp" />
     <ClCompile Include="src\Conexion.cpp" />
     <ClCompile Include="src\Config.cpp" />
+    <ClCompile Include="src\Efecto.cpp" />
     <ClCompile Include="src\Enemigo.cpp" />
+    <ClCompile Include="src\EnemigoMuriendo.cpp" />
     <ClCompile Include="src\GunF.cpp" />
     <ClCompile Include="src\GunH.cpp" />
     <ClCompile Include="src\GunR.cpp" />
     <ClCompile Include="src\GunS.cpp" />
     <ClCompile Include="src\Handshake.cpp" />
+    <ClCompile Include="src\ImpactoBala.cpp" />
     <ClCompile Include="src\Juego.cpp" />
     <ClCompile Include="src\Jugador.cpp" />
     <ClCompile Include="src\Logger.cpp" />
@@ -37,7 +40,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Arma.h" />
+    <ClInclude Include="src\Efecto.h" />
     <ClInclude Include="src\Enemigo.h" />
+    <ClInclude Include="src\EnemigoMuriendo.h" />
     <ClInclude Include="src\Estado.h" />
     <ClInclude Include="src\Bytes.h" />
     <ClInclude Include="src\Cliente.h" />
@@ -51,6 +56,7 @@
     <ClInclude Include="src\GunH.h" />
     <ClInclude Include="src\GunC.h" />
     <ClInclude Include="src\Boss.h" />
+    <ClInclude Include="src\ImpactoBala.h" />
     <ClInclude Include="src\Plataforma.h" />
     <ClInclude Include="src\Proyectil.h" />
     <ClInclude Include="src\Juego.h" />
@@ -91,8 +97,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(SolutionDir)SDL2-2.0.4\include;$(SolutionDir)SDL2_image-2.0.1\include;$(SolutionDir)rapidxml-1.13;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)SDL2_image-2.0.1\lib\x86;$(SolutionDir)SDL2-2.0.4\lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)SDL2-2.0.4\include;$(SolutionDir)SDL2_image-2.0.1\include;$(SolutionDir)SDL2_ttf-2.0.14\include;$(SolutionDir)rapidxml-1.13;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)SDL2_image-2.0.1\lib\x86;$(SolutionDir)SDL2-2.0.4\lib\x86;$(SolutionDir)SDL2_ttf-2.0.14\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -105,7 +111,7 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Ws2_32.lib;SDL2.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Ws2_32.lib;SDL2.lib;SDL2_image.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>

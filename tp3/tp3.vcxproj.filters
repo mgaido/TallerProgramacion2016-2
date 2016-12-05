@@ -96,6 +96,15 @@
     <ClCompile Include="src\Plataforma.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Efecto.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EnemigoMuriendo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ImpactoBala.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Cliente.h">
@@ -189,6 +198,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Plataforma.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Efecto.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EnemigoMuriendo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ImpactoBala.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
