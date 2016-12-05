@@ -105,9 +105,9 @@ void Sesion::eventoTeclado(Bytes& bytes) {
 		return;
 	}
 
-	if (teclas.arriba()) {
+	if (teclas.saltar()) {
 		jugador->saltar();
-		debug(ip + " tecla arriba");
+		debug(ip + " tecla saltar");
 	}  else if (teclas.der() && !teclas.izq()) {
 		jugador->caminar(Direccion::DERECHA);
 		debug(ip + " tecla derecha");
@@ -119,6 +119,16 @@ void Sesion::eventoTeclado(Bytes& bytes) {
 		if(nuevoProyectil != NULL)
 			servidor->enviarProyectilAJuego(nuevoProyectil);
 		debug(ip + " disparar ");
+	}
+	else if (teclas.arriba()) {
+		jugador->detenerse();
+		jugador->apuntar(UP);
+		debug(ip + " tecla arriba");
+	}
+	else if (teclas.abajo()) {
+		jugador->detenerse();
+		jugador->apuntar(DOWN);
+		debug(ip + " tecla abajo");
 	} else {
 		jugador->detenerse();
 		debug(ip + " sin teclas");

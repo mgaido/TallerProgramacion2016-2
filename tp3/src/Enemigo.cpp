@@ -64,3 +64,26 @@ void Enemigo::saltar() {
 	}
 	cambios = true;
 }
+
+void Enemigo::comportamiento(micros tiempoActual, std::vector<Proyectil*>* proyectilesEnemigos) {
+	/*if ((tiempoActual - tiempoCreacion) > (10 * (rand() % 500) * 1000)) {
+		this->detenerse();
+	}
+	if (velocCaminar == 0) {
+		if ((tiempoActual - tiempoCreacion) > (6 * (rand() % 500) * 1000)) {
+			proyectilesEnemigos->push_back(this->disparar());
+		}
+	}
+
+	if (velocCaminar != 0) {
+		if ((tiempoActual - tiempoCreacion) > (2 * (rand() % 500) * 1000)) {
+			this->saltar();
+		}
+	}
+	*/
+	this->saltar();
+}
+
+void Enemigo::setTiempoCreacion(micros tiempoCreacion){
+	this->tiempoCreacion = tiempoCreacion;
+}

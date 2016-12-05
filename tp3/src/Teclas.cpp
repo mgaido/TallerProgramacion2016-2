@@ -16,6 +16,14 @@ bool Teclas::arriba() {
 	return (estado & (1 << ARRIBA)) != 0;
 }
 
+bool Teclas::saltar() {
+	return (estado & (1 << SPACE)) != 0;
+}
+
+bool Teclas::abajo() {
+	return (estado & (1 << ABAJO)) != 0;
+}
+
 bool Teclas::izq() {
 	return (estado & (1 << IZQ)) != 0;
 }
@@ -25,7 +33,7 @@ bool Teclas::der() {
 }
 
 bool Teclas::disparar() {
-	return (estado & (1 << SPACE)) != 0;
+	return (estado & (1 << Z)) != 0;
 }
 
 bool Teclas::recargar() {

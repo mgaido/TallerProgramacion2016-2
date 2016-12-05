@@ -70,6 +70,15 @@ double Personaje::getVelocidadCaminar() {
 	return velocCaminar;
 }
 
+void Personaje::apuntar(char direcion){
+	apunta = direcion;
+	if (direcion == UP) {
+		estado = Estado::MirarAbajo;
+	} else if(direcion == DOWN) {
+		estado = Estado::MirarAbajo;
+	}
+}
+
 void Personaje::saltar() {
 	std::unique_lock<std::mutex> lock(mutex);
 

@@ -46,16 +46,21 @@ void Juego::updateWorld() {
 	Enemigo* enemigoSpawneado;
 	while (!detenido) {
 		if (BossFinal != NULL || minPosXJugador < 5500) {
-			enemigoSpawneado = spawnEnemigo();
+			enemigoSpawneado = spawnEnemigo(tiempo());
 		}
 		else {
-			enemigoSpawneado = spawnBoss();
+			enemigoSpawneado = spawnBoss(tiempo());
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(10 * (rand() % 500)));
-		enemigoSpawneado->detenerse();
+
+		auto it = enemigos.begin();
+		while (it != enemigos.end()) {
+			Enemigo *unEnemigo = *it;
+			unEnemigo->comportamiento(tiempo(), &proyectilesEnemigos);
+			it++;
+		}
 		
-		if ((rand() % 7 == 0) && (enemigoSpawneado->getTipo() == Tipo::Enemigo)) //Logica para que el enemigo salte y suba a una plataforma
-			enemigoSpawneado->saltar();
+		//if ((rand() % 7 == 0) && (enemigoSpawneado->getTipo() == Tipo::Enemigo)) //Logica para que el enemigo salte y suba a una plataforma
+		//	enemigoSpawneado->saltar();
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000 * (rand() % 5)));
 		if (BossFinal != NULL ) {                                 //Logica MOVIMIENTO BOSS HABRIA QUE MEJORAR para que no salga del mapa
@@ -116,7 +121,7 @@ Jugador* Juego::nuevoJugador(std::string nombre) {
 	return jugador;
 }
 
-Enemigo* Juego::spawnBoss() {
+Enemigo* Juego::spawnBoss(micros tiempoCreacion) {
 	Enemigo* nuevoEnemigo = new Enemigo(++contador, configuracion);
 	int nivel = 0;
 	if (nivel == 0 ) { //Se crea el Boss HI-DO
@@ -182,12 +187,13 @@ Enemigo* Juego::spawnBoss() {
 }
 
 
-Enemigo* Juego::spawnEnemigo(){
+Enemigo* Juego::spawnEnemigo(micros tiempoCreacion){
 	Enemigo* nuevoEnemigo = new Enemigo(++contador, configuracion);
 		
 	nuevoEnemigo->getTamanio().x = configuracion.getTamanioJugador().x;				//configurar para enemigo 
 	nuevoEnemigo->getTamanio().y = configuracion.getTamanioJugador().y;				//configurar para enemigo
 	nuevoEnemigo->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista();
+	nuevoEnemigo->setTiempoCreacion(tiempoCreacion);
 	nuevoEnemigo->setTipo(Tipo::Enemigo);
 	nuevoEnemigo->setDistanciaPiso(-nuevoEnemigo->getTamanio().y - nuevoEnemigo->getPos().y);
 	contadorEnemigosSpawneados++;
