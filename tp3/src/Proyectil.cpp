@@ -2,6 +2,7 @@
 
 Proyectil::Proyectil(int id, int idJugador) : Objeto(id) {
 	tiempoUltimoDisparo = 0;
+	orientacionEjeY = DISPARAR_NEUTRO;
 	cambios = false;
 	visible = true; 
 	velocidadProyectilX = 0;
@@ -33,13 +34,24 @@ Proyectil* Proyectil::dispararEspecial(Objeto* enemigoMasCercano) {
 	return NULL;
 }
 
-void Proyectil::setOrientacion(bool nuevaOrientacion) {
+void Proyectil::setOrientacionX(bool nuevaOrientacion) {
 	orientacion = nuevaOrientacion;
 	tiempoEnMovimiento = tiempo();
 	if (orientacion)
 		velocidadProyectilX = -0.0004;
 	else
 		velocidadProyectilX = 0.0004;
+}
+
+void Proyectil::setOrientacionY(char nuevaOrientacion) {
+	orientacionEjeY = nuevaOrientacion;
+	tiempoEnMovimiento = tiempo();
+	if (orientacionEjeY == DISPARAR_ARRIBA)
+		velocidadProyectilY = 0.0004;
+	else if (orientacionEjeY == DISPARAR_ABAJO)
+		velocidadProyectilY = -0.0004;
+	else
+		velocidadProyectilY = 0;
 }
 
 int Proyectil::getDanio(){
