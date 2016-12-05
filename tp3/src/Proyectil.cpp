@@ -38,18 +38,29 @@ void Proyectil::setOrientacionX(bool nuevaOrientacion) {
 	orientacion = nuevaOrientacion;
 	tiempoEnMovimiento = tiempo();
 	if (orientacion)
-		velocidadProyectilX = -0.0004;
+		velocidadProyectilX = -0.0007;
 	else
-		velocidadProyectilX = 0.0004;
+		velocidadProyectilX = 0.0007;
 }
 
 void Proyectil::setOrientacionY(char nuevaOrientacion) {
 	orientacionEjeY = nuevaOrientacion;
 	tiempoEnMovimiento = tiempo();
-	if (orientacionEjeY == DISPARAR_ARRIBA)
-		velocidadProyectilY = 0.0004;
-	else if (orientacionEjeY == DISPARAR_ABAJO)
-		velocidadProyectilY = -0.0004;
+	if (orientacionEjeY == DISPARAR_ARRIBA) {
+		velocidadProyectilY = 0.0007;
+		velocidadProyectilX = 0;
+		//estado = Estado::ProyectilHaciaArriba;
+	}
+	else if (orientacionEjeY == DISPARAR_ABAJO) {
+		if (disparadorSaltando) {
+			velocidadProyectilY = -0.0007;
+			velocidadProyectilX = 0;
+		//	estado = Estado::ProyectilHaciaAbajo;
+		} else {
+			velocidadProyectilY = 0;
+			pos.y -= 40;				//por estar agachado
+		}
+	}
 	else
 		velocidadProyectilY = 0;
 }
@@ -68,6 +79,10 @@ int Proyectil::getIdTirador(){
 
 void Proyectil::setVelocidadY(double velocidadProyectilY){
 	this->velocidadProyectilY = velocidadProyectilY;
+}
+
+void Proyectil::setSiElDisparadorEstaSaltando(bool saltando){
+	this->disparadorSaltando = saltando;
 }
 
 void Proyectil::trayectoria(std::vector<Plataforma*>& plataformas) {

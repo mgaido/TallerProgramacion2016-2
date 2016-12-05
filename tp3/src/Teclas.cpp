@@ -40,6 +40,10 @@ bool Teclas::recargar() {
 	return (estado & (1 << R)) != 0;
 }
 
+bool Teclas::dejarApuntar() {
+	return (((estado & (1 << ABAJO)) == 0) && ((estado & (1 << ARRIBA)) == 0));
+}
+
 int Teclas::getEstado() {
 	return estado;
 }

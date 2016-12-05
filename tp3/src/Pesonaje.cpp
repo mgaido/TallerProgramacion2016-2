@@ -30,10 +30,10 @@ Proyectil* Personaje::disparar() {
 		pos.x = getPos().x + (getOrientacion() ? 0 : getTamanio().x);
 		pos.y = getPos().y - getTamanio().y * 0.6;
 		nuevoProyectil->setPos(pos);
+		nuevoProyectil->setSiElDisparadorEstaSaltando(tiempoSalto != 0);
 		nuevoProyectil->setOrientacionX(orientacion);
 		nuevoProyectil->setOrientacionY(apunta);
 	}
-	apunta = NEUTRO; //esto hay q mejorarlo para q sea neutro cuando se suelta la tecla de apuntar (arriba o abajo) 
 	return nuevoProyectil;
 }
 

@@ -17,7 +17,7 @@ enum class Tipo {  GunH, GunC, GunS, GunR, GunF, BalaEnemigo, //Proyectiles
 					ImpactoH, ImpactoS, ImpactoF, ImpactoExp, EnemigoMuriendo //Efectos
 			};
 
-enum class Estado { Quieto, Caminando, Saltando, Desconectado, ProyectilEnMovimiento, Bonus, MirarArriba, MirarAbajo};
+enum class Estado { Quieto, Caminando, Saltando, Desconectado, ProyectilEnMovimiento, ProyectilHaciaAbajo, ProyectilHaciaArriba, Bonus, MirarArriba, MirarAbajo};
 
 
 class Punto {

@@ -29,7 +29,7 @@ GunC::GunC(int id, int idJugador, Objeto * enemigoMasCercano) : Proyectil(id, id
 }
 
 void GunC::trayectoria(std::vector<Plataforma*>& plataformas){
-		micros t = 0;
+/*		micros t = 0;
 		double velocidad = 0;
 
 		if (tiempoEnMovimiento > 0) {
@@ -81,6 +81,7 @@ void GunC::trayectoria(std::vector<Plataforma*>& plataformas){
 			pos.y = nuevaPosY;
 		} else
 			visible = false;
+			*/
 }
 
 

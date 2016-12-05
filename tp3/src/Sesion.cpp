@@ -99,6 +99,7 @@ void Sesion::eventoTeclado(Bytes& bytes) {
 	bytes.get(estado);
 	Teclas teclas;
 	teclas.setEstado(estado);
+	bool sePresionoTeclaMovimiento = false;
 
 	if (teclas.recargar()) {
 		servidor->recargar();
@@ -108,28 +109,38 @@ void Sesion::eventoTeclado(Bytes& bytes) {
 	if (teclas.saltar()) {
 		jugador->saltar();
 		debug(ip + " tecla saltar");
-	}  else if (teclas.der() && !teclas.izq()) {
+		
+	}
+	if (teclas.der() && !teclas.izq()) {
 		jugador->caminar(Direccion::DERECHA);
 		debug(ip + " tecla derecha");
-	} else if (teclas.izq() && !teclas.der()) {
+		sePresionoTeclaMovimiento = true;
+	}
+	if (teclas.izq() && !teclas.der()) {
 		jugador->caminar(Direccion::IZQUIERDA);
 		debug(ip + " tecla izquierda");
-	} else if (teclas.disparar()) {
+		sePresionoTeclaMovimiento = true;
+	}
+	if (teclas.disparar()) {
 		Proyectil* nuevoProyectil = jugador->disparar();
 		if(nuevoProyectil != NULL)
 			servidor->enviarProyectilAJuego(nuevoProyectil);
-		debug(ip + " disparar ");
+		debug(ip + " disparar "); 
 	}
-	else if (teclas.arriba()) {
-		jugador->detenerse();
+	if (teclas.arriba() && !teclas.abajo()) {
 		jugador->apuntar(UP);
 		debug(ip + " tecla arriba");
 	}
-	else if (teclas.abajo()) {
-		jugador->detenerse();
+	if (teclas.abajo() && !teclas.arriba()) {
 		jugador->apuntar(DOWN);
 		debug(ip + " tecla abajo");
-	} else {
+	}
+	if (teclas.dejarApuntar()) {
+		jugador->apuntar(NEUTRO);
+		debug(ip + " dejar de apuntar");
+	} 
+	
+	if(!sePresionoTeclaMovimiento){
 		jugador->detenerse();
 		debug(ip + " sin teclas");
 	}

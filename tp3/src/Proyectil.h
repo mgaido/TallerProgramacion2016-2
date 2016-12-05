@@ -26,9 +26,11 @@ public:
 	bool esVisible();
 	int getIdTirador();
 	void setVelocidadY(double velocidadProyectilY);
+	void setSiElDisparadorEstaSaltando(bool saltando);
 private:
 
 protected:
+	bool disparadorSaltando;
 	char orientacionEjeY;
 	int idTirador;
 	std::mutex mutex;

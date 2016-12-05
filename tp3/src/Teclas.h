@@ -27,10 +27,9 @@ public:
 	bool disparar();
 	bool abajo();
 	bool saltar();
-
+	bool dejarApuntar();
 	int getEstado();
 	void setEstado(int estado);
-
 	bool evento(char tecla, bool presionada);
 
 private:

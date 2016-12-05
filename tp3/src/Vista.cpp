@@ -114,6 +114,7 @@ void Vista::enviarEventos() {
 				cambio = teclas.evento(ARRIBA, evento.type == SDL_KEYDOWN);
 				break;
 			case SDLK_DOWN:
+				cambio = teclas.evento(ABAJO, evento.type == SDL_KEYDOWN);
 				break;
 			case SDLK_LEFT:
 				cambio = teclas.evento(IZQ, evento.type == SDL_KEYDOWN);
@@ -127,9 +128,10 @@ void Vista::enviarEventos() {
 			case SDLK_SPACE:
 				cambio = teclas.evento(SPACE, evento.type == SDL_KEYDOWN);
 				break;
-			case SDLK_z:
+			case SDLK_z: {
 				cambio = teclas.evento(Z, evento.type == SDL_KEYDOWN);
 				break;
+			}
 			/*case SDLK_q:
 				detener();
 				break;*/
