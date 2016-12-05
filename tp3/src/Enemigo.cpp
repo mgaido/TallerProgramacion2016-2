@@ -66,7 +66,7 @@ void Enemigo::saltar() {
 }
 
 void Enemigo::comportamiento(micros tiempoActual, std::vector<Proyectil*>* proyectilesEnemigos) {
-	/*if ((tiempoActual - tiempoCreacion) > (10 * (rand() % 500) * 1000)) {
+	if ((tiempoActual - tiempoCreacion) > (10 * (rand() % 500) * 1000)) {
 		this->detenerse();
 	}
 	if (velocCaminar == 0) {
@@ -80,8 +80,7 @@ void Enemigo::comportamiento(micros tiempoActual, std::vector<Proyectil*>* proye
 			this->saltar();
 		}
 	}
-	*/
-	this->saltar();
+	
 }
 
 void Enemigo::setTiempoCreacion(micros tiempoCreacion){
