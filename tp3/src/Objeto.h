@@ -13,7 +13,7 @@
 enum class Tipo {  GunH, GunC, GunS, GunR, GunF, BalaEnemigo, //Proyectiles
 					Jugador, Enemigo, Boss1, Boss2, Boss3, //Personajes
 					BonusVida, BonusKill, BonusArma, //PickUps
-					Plataforma,
+					Plataforma, Bomba,
 					ImpactoH, ImpactoS, ImpactoF, ImpactoExp, EnemigoMuriendo //Efectos
 			};
 

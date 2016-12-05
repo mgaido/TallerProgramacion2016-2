@@ -26,6 +26,7 @@ public:
 
 protected:
 	micros tiempoCreacion;
+	micros tiempoUltimoDisparo;
 	int aumentoDeDanio;
 	int puntosQueDaAlMorir;
 	int distanciaPiso;

@@ -13,6 +13,17 @@ Boss2::Boss2(int id, Config & _configuracion) : Boss(id, _configuracion) {
 	cambios = false;
 }
 
-void Boss2::comportamiento(micros tiempoActual, std::vector<Proyectil*>* proyectilesEnemigos, std::vector<Enemigo*>* enemigos)
-{
+void Boss2::comportamiento(micros tiempoActual, std::vector<Proyectil*>* proyectilesEnemigos, std::vector<Enemigo*>* enemigos){
+	if ((tiempoActual - tiempoUltimoDisparo) > (6 * (rand() % 500) * 1000)) {
+		Proyectil* nuevoProyectil = this->disparar();
+		if (nuevoProyectil != NULL)
+			proyectilesEnemigos->push_back(nuevoProyectil);
+		nuevoProyectil = this->disparar();
+		if (nuevoProyectil != NULL)
+			proyectilesEnemigos->push_back(nuevoProyectil);
+		tiempoUltimoDisparo = tiempo();
+	}
+
+
+	//agregar movimiento
 }

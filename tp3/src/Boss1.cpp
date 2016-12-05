@@ -36,12 +36,12 @@ void Boss1::comportamiento(micros tiempoActual, std::vector<Proyectil*>* proyect
 				info("Enemigo creado");
 				tiempoCreacionDeEnemigo = tiempo();
 			}
-
+			//agregar moviemitno
 
 		} while (i < CANTIDAD_SOLDADOS_BOSS_0);
 		enemigosYaSpawneados = true;
 	}
 	else {
-
+		//agregar movimiento
 	}
 }

@@ -5,6 +5,7 @@ Enemigo::Enemigo(int id, Config& _configuracion) : Personaje(id, _configuracion)
 	aumentoDeDanio = 0;
 	tiempoCaminando = 0;
 	tiempoSalto = 0;
+	tiempoUltimoDisparo = 0;
 	energia = 250;
 	puntosQueDaAlMorir = 50;				//chequear con tp la cantidad q piden
 	estado = Estado::Quieto;
@@ -96,10 +97,11 @@ void Enemigo::comportamiento(micros tiempoActual, std::vector<Proyectil*>* proye
 		this->detenerse();
 	}
 	if (velocCaminar == 0) {
-		if ((tiempoActual - tiempoCreacion) > (6 * (rand() % 500) * 1000)) {
+		if ((tiempoActual - tiempoUltimoDisparo) > (6 * (rand() % 500) * 1000)) {
 			Proyectil* nuevoProyectil = this->disparar();
 			if(nuevoProyectil != NULL)
 				proyectilesEnemigos->push_back(nuevoProyectil);
+			tiempoUltimoDisparo = tiempo();
 		}
 	}
 
