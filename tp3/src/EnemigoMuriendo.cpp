@@ -8,7 +8,7 @@
 #include "EnemigoMuriendo.h"
 
 EnemigoMuriendo::EnemigoMuriendo(int id, Punto pos, Punto tamanio) : Efecto(id, pos, tamanio, 0) {
-	this->duracion = 1000;
+	this->duracion = 900;
 	this->tipo = Tipo::EnemigoMuriendo;
 }
 

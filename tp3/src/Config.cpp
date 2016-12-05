@@ -218,7 +218,7 @@ void Config::defaultConfig() {
 	ConfigSprite sprite = ConfigSprite();
 	sprite.estado = Estado::Quieto;
 	sprite.tipo = Tipo::Plataforma;
-	setCharArray("img/plataforma.png", sprite.imagen);
+	setCharArray("img/Plataforma.png", sprite.imagen);
 	sprite.frames = 1;
 	sprite.tiempo = 1000;
 	sprite.zIndex = 9;

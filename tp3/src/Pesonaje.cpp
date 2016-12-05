@@ -61,7 +61,8 @@ void Personaje::caminar(Direccion direccion) {
 
 void Personaje::detenerse() {
 	std::unique_lock<std::mutex> lock(mutex);
-	actualizar(std::vector<Plataforma*>());
+	std::vector<Plataforma*> vacio;
+	actualizar(vacio);
 	velocCaminar = 0;
 	tiempoCaminando = 0;
 }
