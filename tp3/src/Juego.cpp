@@ -64,7 +64,7 @@ void Juego::updateWorld() {
 		else {
 			enemigoSpawneado = spawnBoss(tiempo());
 		}	
-		std::this_thread::sleep_for(std::chrono::milliseconds(1000 * (rand() % 5)));
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000 * (rand() % 7)));
 	}
 }
 
@@ -484,7 +484,7 @@ bool Juego::getEstado(Bytes& bytes) {
 
 			EstadoObj estadoObj;
 			estadoObj.setId(obj->getId());
-			estadoObj.setTipo(obj->getTipo());
+			estadoObj.setTipo(Tipo::BalaEnemigo);
 			estadoObj.setEstado(obj->getEstado());
 			Punto pos;
 			pos.x = obj->getPos().x - escenario.getOffsetVista();
