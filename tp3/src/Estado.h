@@ -152,12 +152,6 @@ public:
 			case Tipo::EnemigoMuriendo:
 				tipo = "EnemigoMuriendo";
 				break;
-			case Tipo::EnemigoMuriendoExp:
-				tipo = "EnemigoMuriendoExp";
-				break;
-			case Tipo::EnemigoMuriendoFuego:
-				tipo = "EnemigoMuriendoFuego";
-				break;
 			default:
 				tipo = "????";
 			}

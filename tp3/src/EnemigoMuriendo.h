@@ -12,7 +12,7 @@
 
 class EnemigoMuriendo: public Efecto {
 public:
-	EnemigoMuriendo(int id, Punto pos, Punto tamanio, Tipo tipoProyectil);
+	EnemigoMuriendo(int id, Punto pos, Punto tamanio);
 };
 
 #endif /* ENEMIGOMURIENDO_H_ */

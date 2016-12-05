@@ -243,7 +243,7 @@ bool Juego::getEstado(Bytes& bytes) {
 					while (it2 != enemigos.end()) {
 						Enemigo* obj = *it2;
 						delete (*it2);
-						efectos.push_back(new EnemigoMuriendo(++contador, obj->getPos(), obj->getTamanio(), Tipo::GunR));
+						efectos.push_back(new EnemigoMuriendo(++contador, obj->getPos(), obj->getTamanio()));
 						enemigos.erase(it2);;
 					}
 				}
@@ -289,7 +289,7 @@ bool Juego::getEstado(Bytes& bytes) {
 							jugadorQueEliminoAlEnemigo->recibirPuntos(unEnemigo->getPuntos());
 						it++;
 					}
-					efectos.push_back(new EnemigoMuriendo(++contador, unEnemigo->getPos(), unEnemigo->getTamanio(), unProyectil->getTipo()));
+					efectos.push_back(new EnemigoMuriendo(++contador, unEnemigo->getPos(), unEnemigo->getTamanio()));
 					enemigos.erase(it2);
 				}
 			}

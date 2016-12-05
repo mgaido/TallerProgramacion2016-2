@@ -476,24 +476,6 @@ void Config::defaultConfig() {
 	sprite.zIndex = 10;
 	this->configSprites.push_back(sprite);
 
-	sprite = ConfigSprite();
-	sprite.estado = Estado::Quieto;
-	setCharArray("img/EnemigoExplotando.png", sprite.imagen);
-	sprite.tipo = Tipo::EnemigoMuriendoExp;
-	sprite.frames = 12;
-	sprite.tiempo = 1000;
-	sprite.zIndex = 10;
-	this->configSprites.push_back(sprite);
-
-	sprite = ConfigSprite();
-	sprite.estado = Estado::Quieto;
-	setCharArray("img/EnemigoQuemado.png", sprite.imagen);
-	sprite.tipo = Tipo::EnemigoMuriendoFuego;
-	sprite.frames = 12;
-	sprite.tiempo = 1000;
-	sprite.zIndex = 10;
-	this->configSprites.push_back(sprite);
-
 	Plataformas	plataforma = Plataformas();
 	plataforma.punto.y = 200;
 	plataforma.punto.x = 80;

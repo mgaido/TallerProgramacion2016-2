@@ -41,6 +41,9 @@ void Vista::initSDL() {
 	int flags = IMG_INIT_JPG | IMG_INIT_PNG;
 	if ((IMG_Init(flags) & flags) != flags)
 		error( "SDL_image could not initialize! SDL_image Error: " + std::string(IMG_GetError()));
+
+	if (TTF_Init() < 0)
+		error( "SDL_ttf could not initialize! SDL_ttf Error: " + std::string(TTF_GetError()));
 }
 
 void Vista::iniciar() {
