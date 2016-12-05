@@ -20,6 +20,9 @@
 #include "Enemigo.h"
 #include "PickUp.h"
 #include "Plataforma.h"
+#include "ImpactoBala.h"
+#include "EnemigoMuriendo.h"
+#include "Efecto.h"
 
 
 class Juego {
@@ -52,8 +55,8 @@ private:
 	std::vector<Proyectil*> proyectilesEnemigos;
 	std::vector<PickUp*> pickups;
 	std::vector<Enemigo*> enemigos;
+	std::vector<Efecto*> efectos;
 	Enemigo* BossFinal;
-	//std::vector<Objeto*> objetos; para TP3
 	bool cambios;
 	std::thread t_updateWorld;	
 	void updateWorld();

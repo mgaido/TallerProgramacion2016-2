@@ -251,7 +251,7 @@ bool Juego::getEstado(Bytes& bytes) {
 		}
 		it++;
 	}
-	
+
 	auto it2 = enemigos.begin();
 	while (it2 != enemigos.end()) {
 		Enemigo* obj = *it2;
@@ -288,15 +288,18 @@ bool Juego::getEstado(Bytes& bytes) {
 							jugadorQueEliminoAlEnemigo->recibirPuntos(unEnemigo->getPuntos());
 						it++;
 					}
+					efectos.push_back(new EnemigoMuriendo(++contador, unEnemigo->getPos(), unEnemigo->getTamanio(), unProyectil->getTipo()));
 					enemigos.erase(it2);
 				}
 			}
 			it2++;
 		}
-		if(colisionan || !unProyectil->esVisible())
+		if(colisionan || !unProyectil->esVisible()) {
+			efectos.push_back(new ImpactoBala(++contador, unProyectil));
 			it3 = proyectilesAliados.erase(it3);
-		else
+		} else
 			it3++;
+
 	}
 
 	for (auto it6 = proyectilesEnemigos.begin(); it6 != proyectilesEnemigos.end();) {
@@ -351,6 +354,17 @@ bool Juego::getEstado(Bytes& bytes) {
 			obj->getPos().x = escenario.getOffsetVista();
 		}
 		it++;
+	}
+
+	auto efectosIt = efectos.begin();
+	while (efectosIt != efectos.end()) {
+		Efecto* obj = *efectosIt;
+		cambios |= obj->tieneCambios(plataformas);
+
+		if (obj->esVisible())
+			efectosIt++;
+		else
+			efectosIt = efectos.erase(efectosIt);
 	}
 
 	//Generar estado para la vista
@@ -496,6 +510,26 @@ bool Juego::getEstado(Bytes& bytes) {
 
 			estado.push_back(estadoObj);
 			it6++;
+		}
+
+		auto efectosIt = efectos.begin();
+		while (efectosIt != efectos.end()) {
+			Efecto* obj = *efectosIt;
+
+			EstadoObj estadoObj;
+			estadoObj.setId(obj->getId());
+			estadoObj.setTipo(obj->getTipo());
+			estadoObj.setEstado(obj->getEstado());
+			Punto pos;
+			pos.x = obj->getPos().x - escenario.getOffsetVista();
+			pos.y = escenario.getNivelPiso() - obj->getTamanio().y - obj->getPos().y;
+			estadoObj.setPos(pos);
+			estadoObj.setTamanio(obj->getTamanio());
+			estadoObj.setFrame(obj->getFrame());
+			estadoObj.setOrientacion(obj->getOrientacion());
+			estadoObj.setNombre(obj->getNombre());
+			estado.push_back(estadoObj);
+			efectosIt++;
 		}
 	}
 

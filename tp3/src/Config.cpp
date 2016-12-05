@@ -206,7 +206,7 @@ void Config::defaultConfig() {
 	this->cantidadMaximaJugadores = 4;
 	this->tamanioVentana.x = 1024;
 	this->tamanioVentana.y = 600;
-	this->tamanioJugador.x = 100;
+	this->tamanioJugador.x = 90;
 	this->tamanioJugador.y = 120;
 	this->velocX = 0.0003;
 	this->velocY = 0.001;
@@ -400,6 +400,69 @@ void Config::defaultConfig() {
 	setCharArray("img/Armas.png", sprite.imagen);
 	sprite.tipo = Tipo::BonusArma;
 	sprite.frames = 1;
+	sprite.tiempo = 1000;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
+	sprite = ConfigSprite();
+	sprite.estado = Estado::Quieto;
+	setCharArray("img/impactoBala.png", sprite.imagen);
+	sprite.tipo = Tipo::ImpactoH;
+	sprite.frames = 10;
+	sprite.tiempo = 500;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
+	sprite = ConfigSprite();
+	sprite.estado = Estado::Quieto;
+	setCharArray("img/impactoShot.png", sprite.imagen);
+	sprite.tipo = Tipo::ImpactoS;
+	sprite.frames = 10;
+	sprite.tiempo = 500;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
+	sprite = ConfigSprite();
+	sprite.estado = Estado::Quieto;
+	setCharArray("img/impactoFuego.png", sprite.imagen);
+	sprite.tipo = Tipo::ImpactoF;
+	sprite.frames = 10;
+	sprite.tiempo = 500;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
+	sprite = ConfigSprite();
+	sprite.estado = Estado::Quieto;
+	setCharArray("img/impactoExplosion.png", sprite.imagen);
+	sprite.tipo = Tipo::ImpactoExp;
+	sprite.frames = 10;
+	sprite.tiempo = 500;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
+	sprite = ConfigSprite();
+	sprite.estado = Estado::Quieto;
+	setCharArray("img/EnemigoMuriendo.png", sprite.imagen);
+	sprite.tipo = Tipo::EnemigoMuriendo;
+	sprite.frames = 12;
+	sprite.tiempo = 1000;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
+	sprite = ConfigSprite();
+	sprite.estado = Estado::Quieto;
+	setCharArray("img/EnemigoExplotando.png", sprite.imagen);
+	sprite.tipo = Tipo::EnemigoMuriendoExp;
+	sprite.frames = 12;
+	sprite.tiempo = 1000;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
+	sprite = ConfigSprite();
+	sprite.estado = Estado::Quieto;
+	setCharArray("img/EnemigoQuemado.png", sprite.imagen);
+	sprite.tipo = Tipo::EnemigoMuriendoFuego;
+	sprite.frames = 12;
 	sprite.tiempo = 1000;
 	sprite.zIndex = 10;
 	this->configSprites.push_back(sprite);

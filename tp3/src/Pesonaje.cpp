@@ -27,13 +27,11 @@ Proyectil* Personaje::disparar() {
 	if (nuevoProyectil != NULL) {
 		Punto pos;
 		pos.x = getPos().x + (getOrientacion() ? 0 : getTamanio().x);
-		pos.y = getPos().y - getTamanio().y * 0.7;
+		pos.y = getPos().y - getTamanio().y * 0.6;
 		nuevoProyectil->setPos(pos);
 		nuevoProyectil->setOrientacion(orientacion);
-		if ((velocSaltoY < 0) && nuevoProyectil->getTipo() == Tipo::GunH)
-			nuevoProyectil->setVelocidadY(-0.00008);
-		else if((velocSaltoY > 0) && nuevoProyectil->getTipo() == Tipo::GunH)
-			nuevoProyectil->setVelocidadY(0.00008);
+		if ((velocSaltoY != 0) && nuevoProyectil->getTipo() == Tipo::GunH)
+			nuevoProyectil->setVelocidadY(velocSaltoY);
 	}
 	return nuevoProyectil;
 }
