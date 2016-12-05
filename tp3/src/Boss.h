@@ -6,6 +6,7 @@
 
 class Boss : public Enemigo {
 public:
+	virtual void comportamiento(micros tiempoActual, std::vector<Proyectil*>* proyectilesEnemigos);
 
 private:
 

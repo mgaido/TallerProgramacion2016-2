@@ -5,6 +5,7 @@
 Personaje::Personaje(int id, Config & _configuracion) : Objeto(id), configuracion(_configuracion) {
 	energia = 1000;
 	arma =  new GunH(++contador,id);  //agregar id  //La por default es GunH Cambiar
+	apunta = NEUTRO;
 }
 
 int Personaje::getEnergia() {
@@ -29,10 +30,12 @@ Proyectil* Personaje::disparar() {
 		pos.x = getPos().x + (getOrientacion() ? 0 : getTamanio().x);
 		pos.y = getPos().y - getTamanio().y * 0.6;
 		nuevoProyectil->setPos(pos);
-		nuevoProyectil->setOrientacion(orientacion);
+		nuevoProyectil->setOrientacionX(orientacion);
+		nuevoProyectil->setOrientacionY(apunta);
 		if ((velocSaltoY != 0) && nuevoProyectil->getTipo() == Tipo::GunH)
 			nuevoProyectil->setVelocidadY(velocSaltoY);
 	}
+	apunta = NEUTRO; //esto hay q mejorarlo para q sea neutro cuando se suelta la tecla de apuntar (arriba o abajo) 
 	return nuevoProyectil;
 }
 
@@ -40,7 +43,8 @@ Proyectil* Personaje::dispararDirigido(Objeto* enemigoMasCercano) {
 	Proyectil* nuevoProyectil = arma->dispararEspecial(enemigoMasCercano);
 	if (nuevoProyectil != NULL) {
 		nuevoProyectil->setPos(this->getPos());
-		nuevoProyectil->setOrientacion(orientacion);
+		nuevoProyectil->setOrientacionX(orientacion);
+		nuevoProyectil->setOrientacionY(apunta);
 	}
 	return nuevoProyectil;
 }
@@ -66,6 +70,15 @@ void Personaje::detenerse() {
 
 double Personaje::getVelocidadCaminar() {
 	return velocCaminar;
+}
+
+void Personaje::apuntar(char direcion){
+	apunta = direcion;
+	if (direcion == UP) {
+		estado = Estado::MirarAbajo;
+	} else if(direcion == DOWN) {
+		estado = Estado::MirarAbajo;
+	}
 }
 
 void Personaje::saltar() {

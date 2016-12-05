@@ -124,7 +124,9 @@ void Vista::enviarEventos() {
 			case SDLK_SPACE:
 				cambio = teclas.evento(SPACE, evento.type == SDL_KEYDOWN);
 				break;
-
+			case SDLK_z:
+				cambio = teclas.evento(Z, evento.type == SDL_KEYDOWN);
+				break;
 			/*case SDLK_q:
 				detener();
 				break;*/

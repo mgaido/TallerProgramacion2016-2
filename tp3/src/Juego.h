@@ -34,8 +34,8 @@ public:
 	bool getEstado(Bytes& bytes);
 	bool estaIniciado();
 	unsigned int getCantdadJugadores();
-	Enemigo* spawnEnemigo();
-	Enemigo* spawnBoss();
+	Enemigo* spawnEnemigo(micros tiempoCreacion);
+	Enemigo* spawnBoss(micros tiempoCreacion);
 
 	void detener();
 	void agregarProyectilAliado(Proyectil* nuevoProyectil);
@@ -60,6 +60,8 @@ private:
 	bool cambios;
 	std::thread t_updateWorld;	
 	void updateWorld();
+	std::thread t_updateIA;
+	void updateIA();
 	int contadorEnemigosSpawneados; //Para el tema de los Boss
 	int minPosXJugador;
 	int minPosXEnemigo;

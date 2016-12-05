@@ -6,6 +6,11 @@
 #include "Config.h"
 #include "Plataforma.h"
 #include "GunC.h"
+
+const char UP = 0;
+const char DOWN = 1;
+const char NEUTRO = 2;
+
 class Personaje : public Objeto {
 public:
 	Personaje(int id, Config& _configuracion);
@@ -20,9 +25,11 @@ public:
 	virtual bool tieneCambios(std::vector<Plataforma*>& plataformas);
 	virtual bool esEnemigo() = 0;
 	double getVelocidadCaminar();
+	void apuntar(char direcion);
 protected:
 	bool actualizar(std::vector<Plataforma*>& plataformas);
 	bool dispara;
+	char apunta;
 	Config& configuracion;
 	bool cambios;
 	int energia;

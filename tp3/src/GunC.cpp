@@ -7,8 +7,8 @@ GunC::GunC(int id, int idJugador) : Proyectil(id, idJugador) {
 	this->puntosOtorgados = 100;
 	this->tipo = Tipo::GunC;
 	this->estado = Estado::ProyectilEnMovimiento;
-	this->tamanio.x = 12;			//ver si este tamanio esta bien 
-	this->tamanio.y = 6;
+	this->tamanio.x = 30;			//ver si este tamanio esta bien 
+	this->tamanio.y = 30;
 	this->orientacion = false;
 	this->frame = 0;
 	this->enemigoMasCercano = NULL;
@@ -21,8 +21,8 @@ GunC::GunC(int id, int idJugador, Objeto * enemigoMasCercano) : Proyectil(id, id
 	this->puntosOtorgados = 100;
 	this->tipo = Tipo::GunC;
 	this->estado = Estado::ProyectilEnMovimiento;
-	this->tamanio.x = 10;			//ver si este tamanio esta bien 
-	this->tamanio.y = 4;
+	this->tamanio.x = 50;			//ver si este tamanio esta bien 
+	this->tamanio.y = 50;
 	this->orientacion = false;
 	this->frame = 0;
 	this->enemigoMasCercano = enemigoMasCercano;

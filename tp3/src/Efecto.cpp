@@ -20,7 +20,6 @@ Efecto::~Efecto() {
 }
 
 bool Efecto::esVisible() {
-	std::cout << (tiempo() - inicio)/1000 << " " << duracion << std::endl;
 	return (tiempo() - inicio)/1000 < duracion;
 }
 

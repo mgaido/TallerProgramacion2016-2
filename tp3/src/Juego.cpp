@@ -19,6 +19,7 @@ Juego::Juego(Config& _configuracion) : configuracion(_configuracion) {
 	escenario = Escenario(configuracion.getLongitud(), configuracion.getTamanioVentana().x, configuracion.getNivelPiso());
 	maxOffsetDelta = round(configuracion.getVelocidadX() * 2 * 1000000.0 / configuracion.getFrameRate());
 	t_updateWorld = std::thread(&Juego::updateWorld, this);
+	t_updateIA = std::thread(&Juego::updateIA, this);
 	BossFinal = NULL;
 }
 
@@ -41,33 +42,29 @@ void Juego::crearPlataformas() {
 	}
 }
 
+void Juego::updateIA(){
+	while (!detenido) {
+		auto it = enemigos.begin();
+		while (it != enemigos.end()) {
+			Enemigo *unEnemigo = *it;
+			unEnemigo->comportamiento(tiempo(), &proyectilesEnemigos);
+			it++;
+		}
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000));				//lo duermo para q no consuma tanto recurso
+	}
+}
+
 void Juego::updateWorld() {
 	std::thread t_detenerEnemigoAnterior;
 	Enemigo* enemigoSpawneado;
 	while (!detenido) {
 		if (BossFinal != NULL || minPosXJugador < 5500) {
-			enemigoSpawneado = spawnEnemigo();
+			enemigoSpawneado = spawnEnemigo(tiempo());
 		}
 		else {
-			enemigoSpawneado = spawnBoss();
-		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(10 * (rand() % 500)));
-		enemigoSpawneado->detenerse();
-		
-		if ((rand() % 7 == 0) && (enemigoSpawneado->getTipo() == Tipo::Enemigo)) //Logica para que el enemigo salte y suba a una plataforma
-			enemigoSpawneado->saltar();
-
-		std::this_thread::sleep_for(std::chrono::milliseconds(1000 * (rand() % 5)));
-		if (BossFinal != NULL ) {                                 //Logica MOVIMIENTO BOSS HABRIA QUE MEJORAR para que no salga del mapa
-			if (BossFinal->getVelocidadCaminar() > 0) {
-				BossFinal->detenerse();
-				BossFinal->caminar(Direccion::IZQUIERDA);
-			}
-			else {
-				BossFinal->detenerse();
-				BossFinal->caminar(Direccion::DERECHA);
-			}
-		}
+			enemigoSpawneado = spawnBoss(tiempo());
+		}	
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000 * (rand() % 7)));
 	}
 }
 
@@ -76,6 +73,8 @@ void Juego::detener() {
 		detenido = true;
 		t_updateWorld.join();
 		debug("Thread updateWorld termino");
+		t_updateIA.join();
+		debug("Thread updateIA termino");
 	}
 }
 
@@ -116,7 +115,7 @@ Jugador* Juego::nuevoJugador(std::string nombre) {
 	return jugador;
 }
 
-Enemigo* Juego::spawnBoss() {
+Enemigo* Juego::spawnBoss(micros tiempoCreacion) {
 	Enemigo* nuevoEnemigo = new Enemigo(++contador, configuracion);
 	int nivel = 0;
 	if (nivel == 0 ) { //Se crea el Boss HI-DO
@@ -182,12 +181,13 @@ Enemigo* Juego::spawnBoss() {
 }
 
 
-Enemigo* Juego::spawnEnemigo(){
+Enemigo* Juego::spawnEnemigo(micros tiempoCreacion){
 	Enemigo* nuevoEnemigo = new Enemigo(++contador, configuracion);
 		
 	nuevoEnemigo->getTamanio().x = configuracion.getTamanioJugador().x;				//configurar para enemigo 
 	nuevoEnemigo->getTamanio().y = configuracion.getTamanioJugador().y;				//configurar para enemigo
 	nuevoEnemigo->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista();
+	nuevoEnemigo->setTiempoCreacion(tiempoCreacion);
 	nuevoEnemigo->setTipo(Tipo::Enemigo);
 	nuevoEnemigo->setDistanciaPiso(-nuevoEnemigo->getTamanio().y - nuevoEnemigo->getPos().y);
 	contadorEnemigosSpawneados++;
@@ -410,7 +410,7 @@ bool Juego::getEstado(Bytes& bytes) {
 
 			Punto pos;
 			pos.x = obj->getPos().x - escenario.getOffsetVista();
-			pos.y = escenario.getNivelPiso() + obj->getDistanciaPiso();
+			pos.y = escenario.getNivelPiso() + obj->getDistanciaPiso() - obj->getPos().y;
 			estadoObj.setPos(pos);
 			estadoObj.setTamanio(obj->getTamanio());
 			estadoObj.setFrame(obj->getFrame());
@@ -498,7 +498,7 @@ bool Juego::getEstado(Bytes& bytes) {
 
 			EstadoObj estadoObj;
 			estadoObj.setId(obj->getId());
-			estadoObj.setTipo(obj->getTipo());
+			estadoObj.setTipo(Tipo::BalaEnemigo);
 			estadoObj.setEstado(obj->getEstado());
 			Punto pos;
 			pos.x = obj->getPos().x - escenario.getOffsetVista();

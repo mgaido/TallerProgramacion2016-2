@@ -13,6 +13,8 @@ const char IZQ = 1;
 const char DER = 2;
 const char R = 4;
 const char SPACE = 5;
+const char Z = 6;
+const char ABAJO = 7;
 
 class Teclas {
 public:
@@ -23,6 +25,8 @@ public:
 	bool der();
 	bool recargar();
 	bool disparar();
+	bool abajo();
+	bool saltar();
 
 	int getEstado();
 	void setEstado(int estado);
