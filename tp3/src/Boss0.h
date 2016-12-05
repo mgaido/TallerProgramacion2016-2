@@ -1,13 +1,12 @@
-#pragma once
-#ifndef BOSS_H_
-#define BOSS_H_
+#ifndef BOSS0_H_
+#define BOSS0_H_
 
-#include "Enemigo.h"
+#include "Boss.h"
 
 
-class Boss : public Enemigo {
+class Boss0 : public Boss {
 public:
-	Boss(int id, Config& _configuracion);
+	Boss0(int id, Config& _configuracion);
 	virtual void comportamiento(micros tiempoActual, std::vector<Proyectil*>* proyectilesEnemigos, std::vector<Enemigo*>* enemigos);
 
 protected:

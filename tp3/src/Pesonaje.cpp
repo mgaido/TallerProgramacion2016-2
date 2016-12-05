@@ -24,7 +24,10 @@ bool Personaje::recibirDanio(int danio) {
 }
 
 Proyectil* Personaje::disparar() {
-	Proyectil* nuevoProyectil = arma->disparar();
+	Proyectil* nuevoProyectil = NULL;
+	if (arma != NULL) {
+		nuevoProyectil = arma->disparar();
+	}
 	if (nuevoProyectil != NULL) {
 		Punto pos;
 		pos.x = getPos().x + (getOrientacion() ? 0 : getTamanio().x);

@@ -18,10 +18,15 @@ public:
 	void setDistanciaPiso(int distancia);
 	void caminar(Direccion direcc);
 	void saltar();
-	virtual void comportamiento(micros tiempoActual, std::vector<Proyectil*>* proyectilesEnemigos);
+	virtual Proyectil* disparar();
+	virtual void comportamiento(micros tiempoActual, std::vector<Proyectil*>* proyectilesEnemigos, std::vector<Enemigo*>* enemigos);
 	void setTiempoCreacion(micros tiempoCreacion);
+	void aumentarEnergia();
+	void aumentarDanio();
+
 protected:
 	micros tiempoCreacion;
+	int aumentoDeDanio;
 	int puntosQueDaAlMorir;
 	int distanciaPiso;
 };

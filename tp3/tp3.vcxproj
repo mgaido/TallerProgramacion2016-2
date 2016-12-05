@@ -9,6 +9,9 @@
   <ItemGroup>
     <ClCompile Include="src\Arma.cpp" />
     <ClCompile Include="src\Boss.cpp" />
+    <ClCompile Include="src\Boss0.cpp" />
+    <ClCompile Include="src\Boss1.cpp" />
+    <ClCompile Include="src\Boss2.cpp" />
     <ClCompile Include="src\Cliente.cpp" />
     <ClCompile Include="src\Conexion.cpp" />
     <ClCompile Include="src\Config.cpp" />
@@ -40,6 +43,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Arma.h" />
+    <ClInclude Include="src\Boss0.h" />
+    <ClInclude Include="src\Boss1.h" />
+    <ClInclude Include="src\Boss2.h" />
     <ClInclude Include="src\Efecto.h" />
     <ClInclude Include="src\Enemigo.h" />
     <ClInclude Include="src\EnemigoMuriendo.h" />

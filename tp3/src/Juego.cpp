@@ -47,7 +47,7 @@ void Juego::updateIA(){
 		auto it = enemigos.begin();
 		while (it != enemigos.end()) {
 			Enemigo *unEnemigo = *it;
-			unEnemigo->comportamiento(tiempo(), &proyectilesEnemigos);
+			unEnemigo->comportamiento(tiempo(), &proyectilesEnemigos, &enemigos);
 			it++;
 		}
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000));				//lo duermo para q no consuma tanto recurso
@@ -63,6 +63,7 @@ void Juego::updateWorld() {
 		}
 		else {
 			enemigoSpawneado = spawnBoss(tiempo());
+			break;
 		}	
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000 * (rand() % 7)));
 	}
@@ -116,11 +117,12 @@ Jugador* Juego::nuevoJugador(std::string nombre) {
 }
 
 Enemigo* Juego::spawnBoss(micros tiempoCreacion) {
-	Enemigo* nuevoEnemigo = new Enemigo(++contador, configuracion);
+	Enemigo* nuevoEnemigo = NULL;
 	int nivel = 0;
 	if (nivel == 0 ) { //Se crea el Boss HI-DO
+		nuevoEnemigo = new Boss0(++contador, configuracion);
 		nuevoEnemigo->getTamanio().x = 200;				//configurar para enemigo 
-		nuevoEnemigo->getTamanio().y = 400;				//configurar para enemigo
+		nuevoEnemigo->getTamanio().y = 700;				//configurar para enemigo
 		nuevoEnemigo->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista();
 		nuevoEnemigo->setTipo(Tipo::Boss1);
 		contadorEnemigosSpawneados++;
@@ -138,8 +140,9 @@ Enemigo* Juego::spawnBoss(micros tiempoCreacion) {
 		info("Boss HI-DO creado");
 	}
 	else if (nivel == 1 && (BossFinal == NULL)) { //Se crea el Boss AirbusterRiberts
+		nuevoEnemigo = new Boss1(++contador, configuracion);
 		nuevoEnemigo->getTamanio().x = 400;				//configurar para enemigo 
-		nuevoEnemigo->getTamanio().y = 400;				//configurar para enemigo
+		nuevoEnemigo->getTamanio().y = 700;				//configurar para enemigo
 		nuevoEnemigo->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista();
 		nuevoEnemigo->setTipo(Tipo::Boss2);
 		contadorEnemigosSpawneados++;
@@ -158,6 +161,7 @@ Enemigo* Juego::spawnBoss(micros tiempoCreacion) {
 		info("Boss creado");
 	}
 	else if (nivel == 2 && (BossFinal == NULL)) { //Se crea el Boss TANI OH
+		nuevoEnemigo = new Boss2(++contador, configuracion);
 		nuevoEnemigo->getTamanio().x = 400;				//configurar para enemigo 
 		nuevoEnemigo->getTamanio().y = 400;				//configurar para enemigo
 		nuevoEnemigo->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista();

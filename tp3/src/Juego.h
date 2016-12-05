@@ -23,7 +23,10 @@
 #include "ImpactoBala.h"
 #include "EnemigoMuriendo.h"
 #include "Efecto.h"
-
+#include "Boss.h"
+#include "Boss0.h"
+#include "Boss1.h"
+#include "Boss2.h"
 
 class Juego {
 public:

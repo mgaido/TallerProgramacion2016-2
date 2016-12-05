@@ -20,7 +20,7 @@ public:
 	void caminar(Direccion direccion);
 	void detenerse();
 	void saltar();
-	Proyectil* disparar();
+	virtual Proyectil* disparar();
 	Proyectil* dispararDirigido(Objeto* enemigoMasCercano);
 	virtual bool tieneCambios(std::vector<Plataforma*>& plataformas);
 	virtual bool esEnemigo() = 0;

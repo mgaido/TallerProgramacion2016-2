@@ -85,6 +85,10 @@ void Proyectil::setSiElDisparadorEstaSaltando(bool saltando){
 	this->disparadorSaltando = saltando;
 }
 
+void Proyectil::aumentarDanio(int aumento) {
+	this->danio += aumento;
+}
+
 void Proyectil::trayectoria(std::vector<Plataforma*>& plataformas) {
 	micros t = 0;
 	double vx = 0;
