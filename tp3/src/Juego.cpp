@@ -243,6 +243,7 @@ bool Juego::getEstado(Bytes& bytes) {
 					while (it2 != enemigos.end()) {
 						Enemigo* obj = *it2;
 						delete (*it2);
+						efectos.push_back(new EnemigoMuriendo(++contador, obj->getPos(), obj->getTamanio(), Tipo::GunR));
 						enemigos.erase(it2);;
 					}
 				}

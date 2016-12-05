@@ -97,13 +97,24 @@ public:
 			}
 
 			std::string tipo;
-
 			switch (getTipo()) {
+			case Tipo::GunH:
+				tipo = "GunH";
+				break;
+			case Tipo::GunC:
+				tipo = "GunC";
+				break;
+			case Tipo::GunS:
+				tipo = "GunS";
+				break;
+			case Tipo::GunR:
+				tipo = "GunR";
+				break;
+			case Tipo::GunF:
+				tipo = "GunF";
+				break;
 			case Tipo::Jugador:
 				tipo = "Jugador";
-				break;
-			case Tipo::Plataforma:
-				tipo = "Plataforma";
 				break;
 			case Tipo::Enemigo:
 				tipo = "Enemigo";
@@ -126,20 +137,26 @@ public:
 			case Tipo::BonusArma:
 				tipo = "BonusArma";
 				break;
-			case Tipo::GunH:
-				tipo = "GunH";
+			case Tipo::ImpactoH:
+				tipo = "ImpactoH";
 				break;
-			case Tipo::GunC:
-				tipo = "GunC";
+			case Tipo::ImpactoS:
+				tipo = "ImpactoS";
 				break;
-			case Tipo::GunS:
-				tipo = "GunS";
+			case Tipo::ImpactoF:
+				tipo = "ImpactoF";
 				break;
-			case Tipo::GunR:
-				tipo = "GunR";
+			case Tipo::ImpactoExp:
+				tipo = "ImpactoExp";
 				break;
-			case Tipo::GunF:
-				tipo = "GunF";
+			case Tipo::EnemigoMuriendo:
+				tipo = "EnemigoMuriendo";
+				break;
+			case Tipo::EnemigoMuriendoExp:
+				tipo = "EnemigoMuriendoExp";
+				break;
+			case Tipo::EnemigoMuriendoFuego:
+				tipo = "EnemigoMuriendoFuego";
 				break;
 			default:
 				tipo = "????";

@@ -32,8 +32,6 @@ Proyectil* Personaje::disparar() {
 		nuevoProyectil->setPos(pos);
 		nuevoProyectil->setOrientacionX(orientacion);
 		nuevoProyectil->setOrientacionY(apunta);
-		if ((velocSaltoY != 0) && nuevoProyectil->getTipo() == Tipo::GunH)
-			nuevoProyectil->setVelocidadY(velocSaltoY);
 	}
 	apunta = NEUTRO; //esto hay q mejorarlo para q sea neutro cuando se suelta la tecla de apuntar (arriba o abajo) 
 	return nuevoProyectil;
