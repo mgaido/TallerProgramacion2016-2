@@ -19,6 +19,7 @@ Juego::Juego(Config& _configuracion) : configuracion(_configuracion) {
 	escenario = Escenario(configuracion.getLongitud(), configuracion.getTamanioVentana().x, configuracion.getNivelPiso());
 	maxOffsetDelta = round(configuracion.getVelocidadX() * 2 * 1000000.0 / configuracion.getFrameRate());
 	t_updateWorld = std::thread(&Juego::updateWorld, this);
+	t_updateIA = std::thread(&Juego::updateIA, this);
 	BossFinal = NULL;
 }
 
@@ -41,6 +42,18 @@ void Juego::crearPlataformas() {
 	}
 }
 
+void Juego::updateIA(){
+	while (!detenido) {
+		auto it = enemigos.begin();
+		while (it != enemigos.end()) {
+			Enemigo *unEnemigo = *it;
+			unEnemigo->comportamiento(tiempo(), &proyectilesEnemigos);
+			it++;
+		}
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000));				//lo duermo para q no consuma tanto recurso
+	}
+}
+
 void Juego::updateWorld() {
 	std::thread t_detenerEnemigoAnterior;
 	Enemigo* enemigoSpawneado;
@@ -50,29 +63,8 @@ void Juego::updateWorld() {
 		}
 		else {
 			enemigoSpawneado = spawnBoss(tiempo());
-		}
-
-		auto it = enemigos.begin();
-		while (it != enemigos.end()) {
-			Enemigo *unEnemigo = *it;
-			unEnemigo->comportamiento(tiempo(), &proyectilesEnemigos);
-			it++;
-		}
-		
-		//if ((rand() % 7 == 0) && (enemigoSpawneado->getTipo() == Tipo::Enemigo)) //Logica para que el enemigo salte y suba a una plataforma
-		//	enemigoSpawneado->saltar();
-
+		}	
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000 * (rand() % 5)));
-		if (BossFinal != NULL ) {                                 //Logica MOVIMIENTO BOSS HABRIA QUE MEJORAR para que no salga del mapa
-			if (BossFinal->getVelocidadCaminar() > 0) {
-				BossFinal->detenerse();
-				BossFinal->caminar(Direccion::IZQUIERDA);
-			}
-			else {
-				BossFinal->detenerse();
-				BossFinal->caminar(Direccion::DERECHA);
-			}
-		}
 	}
 }
 
@@ -81,6 +73,8 @@ void Juego::detener() {
 		detenido = true;
 		t_updateWorld.join();
 		debug("Thread updateWorld termino");
+		t_updateIA.join();
+		debug("Thread updateIA termino");
 	}
 }
 

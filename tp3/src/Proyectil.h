@@ -5,6 +5,10 @@
 #include "Objeto.h"
 #include "Plataforma.h"
 
+const char DISPARAR_ARRIBA = 0;
+const char DISPARAR_ABAJO = 1;
+const char DISPARAR_NEUTRO = 2;
+
 class Proyectil : public Objeto {
 public:
 	Proyectil(int id, int idJugador);
@@ -16,7 +20,8 @@ public:
 	virtual Proyectil* dispararEspecial(Objeto * enemigoMasCercano);
 	~Proyectil();
 	virtual void trayectoria(std::vector<Plataforma*>& plataformas);
-	void setOrientacion(bool nuevaOrientacion);
+	void setOrientacionX(bool nuevaOrientacion);
+	void setOrientacionY(char nuevaOrientacion);
 	int getDanio();
 	bool esVisible();
 	int getIdTirador();
@@ -24,6 +29,7 @@ public:
 private:
 
 protected:
+	char orientacionEjeY;
 	int idTirador;
 	std::mutex mutex;
 	bool visible;

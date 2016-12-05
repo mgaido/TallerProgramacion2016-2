@@ -57,6 +57,8 @@ private:
 	bool cambios;
 	std::thread t_updateWorld;	
 	void updateWorld();
+	std::thread t_updateIA;
+	void updateIA();
 	int contadorEnemigosSpawneados; //Para el tema de los Boss
 	int minPosXJugador;
 	int minPosXEnemigo;

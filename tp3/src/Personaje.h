@@ -9,6 +9,7 @@
 
 const char UP = 0;
 const char DOWN = 1;
+const char NEUTRO = 2;
 
 class Personaje : public Objeto {
 public:
