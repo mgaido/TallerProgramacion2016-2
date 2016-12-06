@@ -94,7 +94,7 @@ void Juego::updateIA(){
 			unEnemigo->comportamiento(tiempo(), &proyectilesEnemigos, &enemigos);
 			it++;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(1000));				//lo duermo para q no consuma tanto recurso
+		std::this_thread::sleep_for(std::chrono::milliseconds(2000));				//lo duermo para q no consuma tanto recurso
 	}
 }
 
@@ -125,7 +125,7 @@ void Juego::updateWorld() {
 	std::thread t_detenerEnemigoAnterior;
 	Enemigo* enemigoSpawneado;
 	while (!detenido) {
-		if (BossFinal != NULL || minPosXJugador < 5500) {
+		if ((BossFinal != NULL || minPosXJugador < 5500) && (contadorEnemigosSpawneados <6)) {
 			enemigoSpawneado = spawnEnemigo(tiempo());
 		}
 		else {
@@ -325,9 +325,15 @@ bool Juego::getEstado(Bytes& bytes) {
 	}
 
 	auto it2 = enemigos.begin();
+	minX = 0;
 	while (it2 != enemigos.end()) {
-		Enemigo* obj = *it2;
-		cambios |= obj->tieneCambios(plataformas);
+		Enemigo* enemigo = *it2;
+		cambios |= enemigo->tieneCambios(plataformas);
+		if (enemigo->getPos().x < minX) {
+			enemigos.erase(it2);
+			contadorEnemigosSpawneados--; //elimino del total global
+		}
+
 		it2++;
 	}
 
@@ -347,8 +353,9 @@ bool Juego::getEstado(Bytes& bytes) {
 			else { colisionan = true; }
 
 			if (colisionan) {
-				bool estaMuerto = unEnemigo->recibirDanio(unProyectil->getDanio());
+				bool estaMuerto = unEnemigo->recibirDanio(unProyectil->getDanio());				
 				if (estaMuerto) {
+					contadorEnemigosSpawneados--; //elimino del total global
 					PickUp* nuevoPickup = unEnemigo->spawnPickUp();
 					if (nuevoPickup != NULL)
 						pickups.push_back(nuevoPickup);
