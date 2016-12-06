@@ -100,11 +100,13 @@ void Vista::cicloPrincipal() {
 	}
 }
 
-void Vista::nuevoEstado(int offsetVista, std::vector<EstadoObj>& estado) {
+void Vista::nuevoEstado(int offsetVista, std::vector<EstadoObj>& estado, std::vector<InfoJugador>& hudInfo) {
 	lockEstado.lock();
 	this->offsetVista = offsetVista;
 	this->estado.clear();
 	this->estado = estado;
+	this->hudInfo.clear();
+	this->hudInfo = hudInfo;
 	lockEstado.unlock();
 }
 
@@ -203,9 +205,72 @@ void Vista::actualizar() {
 		rendererIt++;
 	}
 
+	mostrarHud();
+
 	SDL_RenderPresent(renderer);
 
 	lockEstado.unlock();
+}
+
+void Vista::mostrarHud() {
+	auto it = hudInfo.begin();
+	int i = 0;
+	while (it != hudInfo.end()) {
+		std::string nombre = std::string(it->nombre.data());
+
+		SDL_Color color;
+		if (nombreJugador == nombre)
+			color = { 255, 255, 180, 255 };
+		else
+			color = { 180, 180, 180, 255 };
+
+		std::string energia = it->energia > 0 ? std::to_string(it->energia) : "inf";
+		std::string texto = nombre + ": " + energia;
+		escribirLineaHud(0, i, hudInfo.size(), texto, color);
+
+		std::string arma;
+		switch (it->arma) {
+		case Tipo::GunH:
+			arma = "Heavy";
+			break;
+		case Tipo::GunS:
+			arma = "Shotgun";
+			break;
+		case Tipo::GunR:
+			arma = "Rocket";
+			break;
+		case Tipo::GunF:
+			arma = "Flame";
+			break;
+		case Tipo::GunC:
+			arma = "Chaser";
+			break;
+		default:
+			arma = "WTF?";
+		}
+		texto = arma + ": " + std::to_string(it->balas);
+		escribirLineaHud(1, i, hudInfo.size(), texto, color);
+
+		it++;
+		i++;
+	}
+}
+
+void Vista::escribirLineaHud(int linea, int jugador, int jugadores, std::string texto, SDL_Color color) {
+
+	SDL_Surface* surface = TTF_RenderText_Solid(fuente, texto.c_str(), color);
+	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+	SDL_FreeSurface(surface);
+
+	SDL_Rect label;
+	SDL_QueryTexture( texture, NULL, NULL, &label.w, &label.h);
+
+	int anchoEspacio = configuracion.getTamanioVentana().x / jugadores;
+	label.x = (anchoEspacio - label.w) / 2 + anchoEspacio * jugador;
+	label.y = (int) label.h * 0.5 + label.h * 1.25 * linea;
+
+	SDL_RenderCopy(renderer, texture, nullptr, &label);
+	SDL_DestroyTexture(texture);
 }
 
 Imagen::Imagen(){

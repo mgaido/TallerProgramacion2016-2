@@ -23,6 +23,7 @@ public:
 	std::string getNombre();
 	void recibirBonus(PickUp* unPickUp);
 	void recibirPuntos(int puntosObtenidos);
+	int getPuntos();
 private:
 	bool killAll;
 	std::string nombre;

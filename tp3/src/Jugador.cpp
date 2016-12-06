@@ -86,8 +86,13 @@ bool Jugador::getKillAll() {
 	killAll = false;
 	return kill;
 }
+
 bool Jugador::esEnemigo() {
 	return false;
+}
+
+int Jugador::getPuntos() {
+	return puntos;
 }
 
 void Jugador::setConectado(bool conectado) {

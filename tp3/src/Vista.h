@@ -106,12 +106,15 @@ public:
 
 	void iniciar();
 	void detener();
-	void nuevoEstado(int offsetVista, std::vector<EstadoObj>& estado);
+	void nuevoEstado(int offsetVista, std::vector<EstadoObj>& estado, std::vector<InfoJugador>& hudInfo);
 
 private:
 	void cicloPrincipal();
 	void enviarEventos();
 	void actualizar();
+
+	void mostrarHud();
+	void escribirLineaHud(int linea, int jugador, int jugadores, std::string texto, SDL_Color color);
 
 	bool detenido;
 	std::string nombreJugador;
@@ -124,6 +127,7 @@ private:
 	std::mutex lockEstado;
 	int offsetVista;
 	std::vector<EstadoObj> estado;
+	std::vector<InfoJugador> hudInfo;
 
 	SDL_Window* ventana;
 	SDL_Renderer* renderer;

@@ -91,7 +91,9 @@ void Cliente::recibirEstado() {
 				bytes.get(offsetVista);
 				std::vector<EstadoObj> estado;
 				bytes.getAll(estado);
-				vista->nuevoEstado(offsetVista, estado);
+				std::vector<InfoJugador> hudInfo;
+				bytes.getAll(hudInfo);
+				vista->nuevoEstado(offsetVista, estado, hudInfo);
 			} else if (comando == RLD) {
 				info("Reiniciando vista");
 				reconectar = true;

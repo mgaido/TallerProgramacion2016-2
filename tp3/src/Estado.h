@@ -177,4 +177,14 @@ private:
 	bool orientacion;
 };
 
+
+class InfoJugador {
+public:
+	std::array<char, 100> nombre;
+	int energia;
+	int puntos;
+	Tipo arma;
+	int balas;
+};
+
 #endif /* ESTADO_H_ */

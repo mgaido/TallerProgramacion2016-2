@@ -28,6 +28,10 @@ Proyectil* Proyectil::disparar() {
 	return nuevoProyectil;
 }
 
+int Proyectil::getCantidad() {
+	return cantidad;
+}
+
 Proyectil::~Proyectil() {}
 
 Proyectil* Proyectil::dispararEspecial(Objeto* enemigoMasCercano) {

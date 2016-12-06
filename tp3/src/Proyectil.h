@@ -28,6 +28,7 @@ public:
 	void setVelocidadY(double velocidadProyectilY);
 	void setSiElDisparadorEstaSaltando(bool saltando);
 	void aumentarDanio(int aumento);
+	int getCantidad();
 private:
 
 protected:

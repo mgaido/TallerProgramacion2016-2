@@ -12,6 +12,10 @@ int Personaje::getEnergia() {
 	return energia;
 }
 
+Proyectil* Personaje::getArma() {
+	return arma;
+}
+
 bool Personaje::recibirDanio(int danio) {
 	bool muerto = false;
 	if (energia > danio) {

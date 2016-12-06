@@ -26,6 +26,9 @@ public:
 	virtual bool esEnemigo() = 0;
 	double getVelocidadCaminar();
 	void apuntar(char direcion);
+
+	Proyectil* getArma();
+
 protected:
 	bool actualizar(std::vector<Plataforma*>& plataformas);
 	bool dispara;

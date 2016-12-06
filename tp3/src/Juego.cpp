@@ -602,6 +602,24 @@ bool Juego::getEstado(Bytes& bytes) {
 		}
 	}
 
+	std::vector<InfoJugador> hudInfo;
+
+	auto jugadorIt = jugadores.begin();
+	while (jugadorIt != jugadores.end()) {
+		Jugador* jugador = *jugadorIt;
+		InfoJugador info;
+
+		info.arma = jugador->getArma()->getTipo();
+		info.balas = jugador->getArma()->getCantidad();
+		setCharArray(jugador->getNombre(), info.nombre);
+		info.puntos = jugador->getPuntos();
+		info.energia = jugador->getEnergia();
+		hudInfo.push_back(info);
+
+		jugadorIt++;
+	}
+
+
 	rv = cambios;
 	cambios = false;
 	lock.unlock();
@@ -609,6 +627,7 @@ bool Juego::getEstado(Bytes& bytes) {
 	if (rv) {
 		bytes.put(escenario.getOffsetVista());
 		bytes.putAll(estado);
+		bytes.putAll(hudInfo);
 	}
 	return rv;
 }
