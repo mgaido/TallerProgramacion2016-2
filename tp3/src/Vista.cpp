@@ -14,6 +14,7 @@ Vista::Vista(ColaBloqueante<int>& _eventosTeclado, std::string nombreJugador, in
 	ventana = nullptr;
 	renderer = nullptr;
 	detenido = false;
+	this->nivel = 0;
 	this->idJugador = idJugador;
 	this->nombreJugador = nombreJugador;
 	this->configuracion = configuracion;
@@ -100,8 +101,9 @@ void Vista::cicloPrincipal() {
 	}
 }
 
-void Vista::nuevoEstado(int offsetVista, std::vector<EstadoObj>& estado, std::vector<InfoJugador>& hudInfo) {
+void Vista::nuevoEstado(int nivel, int offsetVista, std::vector<EstadoObj>& estado, std::vector<InfoJugador>& hudInfo) {
 	lockEstado.lock();
+	this->nivel = nivel;
 	this->offsetVista = offsetVista;
 	this->estado.clear();
 	this->estado = estado;

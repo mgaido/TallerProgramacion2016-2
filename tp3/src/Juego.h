@@ -50,8 +50,11 @@ public:
 	void agregarProyectilEnemigo(Proyectil* nuevoProyectil);
 
 private:
+	void pasarDeNivel();
+	int nivel; 
+	bool bossEliminado;
 	bool elJuegoEmpezo;
-	void gameOver();
+	void gameOver(bool juegoGanado);
 	int ultimoMinX;
 	char modoDeJuego; 
 	void crearPlataformas();

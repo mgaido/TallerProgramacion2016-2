@@ -23,6 +23,8 @@ Juego::Juego(Config& _configuracion) : configuracion(_configuracion) {
 	t_updateIA = std::thread(&Juego::updateIA, this);
 	t_chequearGameOverYComienzoDeJuego = std::thread(&Juego::chequearGameOverYComienzoDeJuego, this);
 	BossFinal = NULL;
+	bossEliminado = false;
+	nivel = 0;
 	elJuegoEmpezo = false;
 	ultimoMinX = 0;
 }
@@ -78,7 +80,12 @@ Juego::~Juego() {
 	}
 }
 
-void Juego::gameOver(){
+void Juego::gameOver(bool juegoGanado){
+	if(juegoGanado){
+		//pantalla de felicitaciones
+	} else {
+		//pantalla de game over 
+	}
 }
 
 void Juego::crearPlataformas() {
@@ -118,13 +125,31 @@ void Juego::chequearGameOverYComienzoDeJuego() {
 	while (!detenido) {
 		if (elJuegoEmpezo) {
 			if(jugadores.empty())
-				this->gameOver();
+				this->gameOver(false);
 		} else {
 			if(jugadores.size() == 1)   //configuracion.getCantidadMaximaJugadores()
 				elJuegoEmpezo = true;
 		}
+
+		if (bossEliminado) {
+			elJuegoEmpezo = false;
+			bossEliminado = false;
+			pasarDeNivel();
+		}
 	}
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));				//lo duermo para q no consuma tanto recurso
+}
+
+void Juego::pasarDeNivel() {
+	if (nivel < 2) {
+		nivel++;
+		auto it = jugadores.begin();
+		while (it != jugadores.end()) {
+			Jugador* unJugador = *it;
+			unJugador->getPos().x = 0;
+			it++;
+		}
+	}
 }
 
 void Juego::updateWorld() {
@@ -133,8 +158,9 @@ void Juego::updateWorld() {
 	while (!detenido) {
 		if (elJuegoEmpezo) {
 			if ((BossFinal != NULL || minPosXJugador < 5500)) {
-				if (contadorEnemigosSpawneados < 6)
-					enemigoSpawneado = spawnEnemigo(tiempo());
+				if (contadorEnemigosSpawneados < 6) {
+					//	enemigoSpawneado = spawnEnemigo(tiempo());
+				}
 			}
 			else {
 				enemigoSpawneado = spawnBoss(tiempo());
@@ -391,18 +417,23 @@ bool Juego::getEstado(Bytes& bytes) {
 					if (colisionan) {
 						bool estaMuerto = unEnemigo->recibirDanio(unProyectil->getDanio());
 						if (estaMuerto) {
-							contadorEnemigosSpawneados--; //elimino del total global
-							PickUp* nuevoPickup = unEnemigo->spawnPickUp();
-							if (nuevoPickup != NULL)
-								pickups.push_back(nuevoPickup);
-							it = jugadores.begin();
-							bool encontrado = false;
-							while ((it != jugadores.end()) && !encontrado) {
-								Jugador* jugadorQueEliminoAlEnemigo = *it;
-								if (unProyectil->getIdTirador() == jugadorQueEliminoAlEnemigo->getId())
-									jugadorQueEliminoAlEnemigo->recibirPuntos(unEnemigo->getPuntos());
-								it++;
+							if ((unEnemigo->getTipo() == Tipo::Boss1) || (unEnemigo->getTipo() == Tipo::Boss2) || (unEnemigo->getTipo() == Tipo::Boss3)) {
+								bossEliminado = true;
+								contadorEnemigosSpawneados--; //elimino del total global
+							} else {
+								contadorEnemigosSpawneados--; //elimino del total global
+								PickUp* nuevoPickup = unEnemigo->spawnPickUp();
+								if (nuevoPickup != NULL)
+									pickups.push_back(nuevoPickup);
 							}
+								it = jugadores.begin();
+								bool encontrado = false;
+								while ((it != jugadores.end()) && !encontrado) {
+									Jugador* jugadorQueEliminoAlEnemigo = *it;
+									if (unProyectil->getIdTirador() == jugadorQueEliminoAlEnemigo->getId())
+										jugadorQueEliminoAlEnemigo->recibirPuntos(unEnemigo->getPuntos());
+									it++;
+								}
 							efectos.push_back(new EnemigoMuriendo(++contador, unEnemigo->getPos(), unEnemigo->getTamanio()));
 							enemigos.erase(it2);
 						}
@@ -679,6 +710,7 @@ bool Juego::getEstado(Bytes& bytes) {
 		lock.unlock();
 
 		if (rv) {
+			bytes.put(nivel);
 			bytes.put(escenario.getOffsetVista());
 			bytes.putAll(estado);
 			bytes.putAll(hudInfo);

@@ -106,9 +106,10 @@ public:
 
 	void iniciar();
 	void detener();
-	void nuevoEstado(int offsetVista, std::vector<EstadoObj>& estado, std::vector<InfoJugador>& hudInfo);
+	void nuevoEstado(int nivel, int offsetVista, std::vector<EstadoObj>& estado, std::vector<InfoJugador>& hudInfo);
 
 private:
+	int nivel;
 	void cicloPrincipal();
 	void enviarEventos();
 	void actualizar();
