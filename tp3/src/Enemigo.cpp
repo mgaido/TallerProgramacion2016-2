@@ -12,6 +12,7 @@ Enemigo::Enemigo(int id, Config& _configuracion) : Personaje(id, _configuracion)
 	tipo = Tipo::Enemigo;
 	distanciaPiso = 0;
 	cambios = false;
+	srand(time(NULL));
 	int valor = (rand() % 100);
 	if (valor < 20)
 		arma = new GunH(++contador, id);
