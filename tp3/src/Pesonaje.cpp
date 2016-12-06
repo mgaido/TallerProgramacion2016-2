@@ -40,6 +40,12 @@ Proyectil* Personaje::disparar() {
 		nuevoProyectil->setSiElDisparadorEstaSaltando(tiempoSalto != 0);
 		nuevoProyectil->setOrientacionX(orientacion);
 		nuevoProyectil->setOrientacionY(apunta);
+		if((this->getTipo() == Tipo::Jugador) && (arma->getTipo() == Tipo::GunH)) {
+			if (tiempoCaminando != 0) {
+				nuevoProyectil->setOrientacionY(apunta);
+				nuevoProyectil->setOrientacionX(orientacion);
+			}
+		}
 	}
 	return nuevoProyectil;
 }
