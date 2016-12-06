@@ -50,6 +50,7 @@ public:
 	void agregarProyectilEnemigo(Proyectil* nuevoProyectil);
 
 private:
+	int ultimoMinX;
 	char modoDeJuego; 
 	void crearPlataformas();
 	bool detenido;

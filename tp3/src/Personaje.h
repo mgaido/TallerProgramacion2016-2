@@ -30,7 +30,7 @@ public:
 	Proyectil* getArma();
 
 protected:
-	bool actualizar(std::vector<Plataforma*>& plataformas);
+	virtual bool actualizar(std::vector<Plataforma*>& plataformas);
 	bool dispara;
 	char apunta;
 	Config& configuracion;

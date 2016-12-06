@@ -29,6 +29,7 @@ public:
 	void setSiElDisparadorEstaSaltando(bool saltando);
 	void aumentarDanio(int aumento);
 	int getCantidad();
+	void setCantidad(int cantidad);
 private:
 
 protected:

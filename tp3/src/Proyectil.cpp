@@ -32,6 +32,10 @@ int Proyectil::getCantidad() {
 	return cantidad;
 }
 
+void Proyectil::setCantidad(int cantidad){
+	this->cantidad = cantidad;
+}
+
 Proyectil::~Proyectil() {}
 
 Proyectil* Proyectil::dispararEspecial(Objeto* enemigoMasCercano) {

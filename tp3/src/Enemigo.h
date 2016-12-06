@@ -16,7 +16,7 @@ public:
 	int getPuntos();
 	int getDistanciaPiso();
 	void setDistanciaPiso(int distancia);
-	void caminar(Direccion direcc);
+	virtual void caminar(Direccion direcc);
 	void saltar();
 	virtual Proyectil* disparar();
 	virtual void comportamiento(micros tiempoActual, std::vector<Proyectil*>* proyectilesEnemigos, std::vector<Enemigo*>* enemigos);

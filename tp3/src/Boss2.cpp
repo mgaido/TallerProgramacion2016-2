@@ -10,6 +10,7 @@ Boss2::Boss2(int id, Config & _configuracion) : Boss(id, _configuracion) {
 	estado = Estado::Quieto;
 	tipo = Tipo::Enemigo;
 	distanciaPiso = 0;
+	this->getArma()->setCantidad(1000000);
 	cambios = false;
 }
 
@@ -23,7 +24,16 @@ void Boss2::comportamiento(micros tiempoActual, std::vector<Proyectil*>* proyect
 			proyectilesEnemigos->push_back(nuevoProyectil);
 		tiempoUltimoDisparo = tiempo();
 	}
+}
 
+void Boss2::caminar(Direccion direccion){
+	std::unique_lock<std::mutex> lock(mutex);
 
-	//agregar movimiento
+	if (direccion == Direccion::IZQUIERDA)
+		velocCaminar = -VELOCIDAD_BOSS;
+	else
+		velocCaminar = VELOCIDAD_BOSS;
+
+	if (tiempoSalto == 0)
+		tiempoCaminando = tiempo();
 }

@@ -23,6 +23,7 @@ Juego::Juego(Config& _configuracion) : configuracion(_configuracion) {
 	t_updateIA = std::thread(&Juego::updateIA, this);
 	t_chequearGameOver = std::thread(&Juego::chequearGameOver, this);
 	BossFinal = NULL;
+	ultimoMinX = 0;
 }
 
 Juego::~Juego() {
@@ -31,7 +32,7 @@ Juego::~Juego() {
 		Jugador* obj = *it;
 		delete obj;
 		jugadores.erase(it);
-	}    
+	}
 
 	auto it1 = enemigos.begin();
 	while (it1 != enemigos.end()) {
@@ -86,36 +87,47 @@ void Juego::crearPlataformas() {
 	}
 }
 
-void Juego::updateIA(){
+void Juego::updateIA() {
 	while (!detenido) {
 		auto it = enemigos.begin();
 		while (it != enemigos.end()) {
 			Enemigo *unEnemigo = *it;
-			unEnemigo->comportamiento(tiempo(), &proyectilesEnemigos, &enemigos);
+			if (unEnemigo != NULL) {
+				unEnemigo->comportamiento(tiempo(), &proyectilesEnemigos, &enemigos);
+				
+					if ((unEnemigo->getTipo() == Tipo::Boss1) || (unEnemigo->getTipo() == Tipo::Boss2) || (unEnemigo->getTipo() == Tipo::Boss3)) {
+						if (unEnemigo->getPos().x < (escenario.getOffsetVista() + unEnemigo->getTamanio().x)) {
+							unEnemigo->caminar(Direccion::DERECHA);
+						}
+						else if (unEnemigo->getPos().x > (escenario.getOffsetVista() + escenario.getAnchoVista() - unEnemigo->getTamanio().x)) {
+							unEnemigo->caminar(Direccion::IZQUIERDA);
+						}
+					}
+			}
 			it++;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(2000));				//lo duermo para q no consuma tanto recurso
+		std::this_thread::sleep_for(std::chrono::milliseconds(1500));				//lo duermo para q no consuma tanto recurso
 	}
 }
 
-void Juego::chequearGameOver(){
+void Juego::chequearGameOver() {
 	while (!detenido) {
 		auto it = jugadores.begin();
 		while (it != jugadores.end()) {
 			Jugador* obj = *it;
 			switch (modoDeJuego) {
-				case MODO_INDIVIDUAL: {
-				
-				}
-				case MODO_COOP: {
-				
-				}
-				case MODO_GRUPAL: {
+			case MODO_INDIVIDUAL: {
 
-				}
-				case MODO_DIOS: {
+			}
+			case MODO_COOP: {
 
-				}
+			}
+			case MODO_GRUPAL: {
+
+			}
+			case MODO_DIOS: {
+
+			}
 			}
 		}
 	}
@@ -125,13 +137,34 @@ void Juego::updateWorld() {
 	std::thread t_detenerEnemigoAnterior;
 	Enemigo* enemigoSpawneado;
 	while (!detenido) {
-		if ((BossFinal != NULL || minPosXJugador < 5500) && (contadorEnemigosSpawneados <6)) {
+		if ((BossFinal != NULL || minPosXJugador < 5500) && (contadorEnemigosSpawneados < 6)) {
 			enemigoSpawneado = spawnEnemigo(tiempo());
 		}
 		else {
 			enemigoSpawneado = spawnBoss(tiempo());
 			break;
-		}	
+		}
+
+		for (auto it = proyectilesAliados.begin(); it != proyectilesAliados.end();) {
+			Proyectil* unProyectil = *it;
+			if (((unProyectil->getPos().x < escenario.getOffsetVista()) || unProyectil->getPos().x > (escenario.getOffsetVista() + escenario.getAnchoVista())) || (
+				((unProyectil->getPos().y < 0) || unProyectil->getPos().y > configuracion.getTamanioVentana().y))) {
+				proyectilesAliados.erase(it);
+			}
+			else
+				it++;
+		}
+
+		for (auto it = proyectilesEnemigos.begin(); it != proyectilesEnemigos.end();) {
+			Proyectil* unProyectil = *it;
+			if (((unProyectil->getPos().x < escenario.getOffsetVista()) || unProyectil->getPos().x > (escenario.getOffsetVista() + escenario.getAnchoVista())) || (
+				((unProyectil->getPos().y < 0) || unProyectil->getPos().y > configuracion.getTamanioVentana().y))) {
+				proyectilesEnemigos.erase(it);
+			}
+			else
+				it++;
+		}
+		
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000 * (rand() % 7)));
 	}
 }
@@ -143,10 +176,12 @@ void Juego::detener() {
 		debug("Thread updateWorld termino");
 		t_updateIA.join();
 		debug("Thread updateIA termino");
+		t_chequearGameOver.join();
+		debug("Thread chequeargameover termino");
 	}
 }
 
-void Juego::agregarProyectilAliado(Proyectil * nuevoProyectil){
+void Juego::agregarProyectilAliado(Proyectil * nuevoProyectil) {
 	proyectilesAliados.push_back(nuevoProyectil);
 }
 
@@ -154,7 +189,7 @@ void Juego::agregarProyectilEnemigo(Proyectil * nuevoProyectil) {
 	proyectilesEnemigos.push_back(nuevoProyectil);
 }
 
-unsigned int Juego::getCantdadJugadores(){
+unsigned int Juego::getCantdadJugadores() {
 	return jugadores.size();
 }
 
@@ -170,7 +205,7 @@ Jugador* Juego::nuevoJugador(std::string nombre) {
 	lock.lock();
 	jugadores.push_back(jugador);
 
-	if (! iniciado && jugadores.size() >= configuracion.getCantidadMinimaJugadores()) { //config
+	if (!iniciado && jugadores.size() >= configuracion.getCantidadMinimaJugadores()) { //config
 		iniciado = true;
 		for (auto it = jugadores.begin(); it != jugadores.end(); it++)
 			(*it)->setConectado(true);
@@ -186,17 +221,18 @@ Jugador* Juego::nuevoJugador(std::string nombre) {
 Enemigo* Juego::spawnBoss(micros tiempoCreacion) {
 	Enemigo* nuevoEnemigo = NULL;
 	int nivel = 0;
-	if (nivel == 0 ) { //Se crea el Boss HI-DO
+	if (nivel == 0) { //Se crea el Boss HI-DO
 		nuevoEnemigo = new Boss0(++contador, configuracion);
 		nuevoEnemigo->getTamanio().x = 200;				//configurar para enemigo 
-		nuevoEnemigo->getTamanio().y = 700;				//configurar para enemigo
+		nuevoEnemigo->getTamanio().y = 250;				//configurar para enemigo
 		nuevoEnemigo->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista();
+		nuevoEnemigo->getPos().y = 300;
 		nuevoEnemigo->setTipo(Tipo::Boss1);
-		contadorEnemigosSpawneados++;
 		lock.lock();
+		nuevoEnemigo->setDistanciaPiso(escenario.getAnchoVista());
 		nuevoEnemigo->caminar(Direccion::IZQUIERDA);
-		nuevoEnemigo->setDistanciaPiso(-400);
 		enemigos.push_back(nuevoEnemigo);
+		contadorEnemigosSpawneados++;
 
 		lock.unlock();
 		if (BossFinal == NULL)
@@ -209,14 +245,15 @@ Enemigo* Juego::spawnBoss(micros tiempoCreacion) {
 	else if (nivel == 1 && (BossFinal == NULL)) { //Se crea el Boss AirbusterRiberts
 		nuevoEnemigo = new Boss1(++contador, configuracion);
 		nuevoEnemigo->getTamanio().x = 400;				//configurar para enemigo 
-		nuevoEnemigo->getTamanio().y = 700;				//configurar para enemigo
+		nuevoEnemigo->getTamanio().y = 250;				//configurar para enemigo
 		nuevoEnemigo->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista();
+		nuevoEnemigo->getPos().y = 300;
 		nuevoEnemigo->setTipo(Tipo::Boss2);
-		contadorEnemigosSpawneados++;
 		lock.lock();
+		nuevoEnemigo->setDistanciaPiso(escenario.getAnchoVista());
 		nuevoEnemigo->caminar(Direccion::IZQUIERDA);
-		nuevoEnemigo->setDistanciaPiso(-400);
 		enemigos.push_back(nuevoEnemigo);
+		contadorEnemigosSpawneados++;
 
 		lock.unlock();
 
@@ -232,12 +269,13 @@ Enemigo* Juego::spawnBoss(micros tiempoCreacion) {
 		nuevoEnemigo->getTamanio().x = 400;				//configurar para enemigo 
 		nuevoEnemigo->getTamanio().y = 400;				//configurar para enemigo
 		nuevoEnemigo->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista();
+		nuevoEnemigo->getPos().y = 150;
 		nuevoEnemigo->setTipo(Tipo::Boss3);
-		contadorEnemigosSpawneados++;
 		lock.lock();
+		nuevoEnemigo->setDistanciaPiso(escenario.getAnchoVista());
 		nuevoEnemigo->caminar(Direccion::IZQUIERDA);
-		nuevoEnemigo->setDistanciaPiso(-180);
 		enemigos.push_back(nuevoEnemigo);
+		contadorEnemigosSpawneados++;
 
 		lock.unlock();
 
@@ -252,26 +290,26 @@ Enemigo* Juego::spawnBoss(micros tiempoCreacion) {
 }
 
 
-Enemigo* Juego::spawnEnemigo(micros tiempoCreacion){
+Enemigo* Juego::spawnEnemigo(micros tiempoCreacion) {
 	Enemigo* nuevoEnemigo = new Enemigo(++contador, configuracion);
-		
+
 	nuevoEnemigo->getTamanio().x = configuracion.getTamanioJugador().x;				//configurar para enemigo 
 	nuevoEnemigo->getTamanio().y = configuracion.getTamanioJugador().y;				//configurar para enemigo
 	nuevoEnemigo->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista();
 	nuevoEnemigo->setTiempoCreacion(tiempoCreacion);
 	nuevoEnemigo->setTipo(Tipo::Enemigo);
 	nuevoEnemigo->setDistanciaPiso(-nuevoEnemigo->getTamanio().y - nuevoEnemigo->getPos().y);
-	contadorEnemigosSpawneados++;
 	lock.lock();
 	nuevoEnemigo->caminar(Direccion::IZQUIERDA);
 	enemigos.push_back(nuevoEnemigo);
+	contadorEnemigosSpawneados++;
 
 	lock.unlock();
 
 	cambios = true;
 
 	info("Enemigo creado");
-	
+
 
 	return nuevoEnemigo;
 }
@@ -285,14 +323,14 @@ bool Juego::getEstado(Bytes& bytes) {
 	//Actualizar posiciones de jugadores y encontrar el minimo en X
 	int minX = 0;
 	auto it = jugadores.begin();
-	 
+
 	for (auto it = jugadores.begin(); it != jugadores.end();) {
 		Jugador* unJugador = *it;
 		cambios |= unJugador->tieneCambios(plataformas);
 		bool colisionan = false;
 		if ((minX == 0 || unJugador->getPos().x < minX) && unJugador->getEstado() != Estado::Desconectado)
 			minX = unJugador->getPos().x + unJugador->getTamanio().x / 2;
-			minPosXJugador = minX;
+		minPosXJugador = minX;
 
 		auto it4 = pickups.begin();
 		while ((it4 != pickups.end()) && !colisionan) {
@@ -324,93 +362,99 @@ bool Juego::getEstado(Bytes& bytes) {
 		it++;
 	}
 
+	if (!enemigos.empty()) {
+		minX = ultimoMinX;
+	}
+
+	ultimoMinX = minX;
+
 	auto it2 = enemigos.begin();
-	minX = 0;
 	while (it2 != enemigos.end()) {
 		Enemigo* enemigo = *it2;
 		cambios |= enemigo->tieneCambios(plataformas);
-		if (enemigo->getPos().x < minX) {
-			enemigos.erase(it2);
-			contadorEnemigosSpawneados--; //elimino del total global
-		}
-
 		it2++;
 	}
 
-	for(auto it3 = proyectilesAliados.begin(); it3 != proyectilesAliados.end();) {
+	for (auto it3 = proyectilesAliados.begin(); it3 != proyectilesAliados.end();) {
 		Proyectil* unProyectil = *it3;
-		cambios |= unProyectil->tieneCambios(plataformas);
-		bool colisionan = false;
-		it2 = enemigos.begin();
-		while ((it2 != enemigos.end()) && !colisionan) {
-			Enemigo *unEnemigo = *it2;
- 			if (((unProyectil->getPos().x + unProyectil->getTamanio().x) < (unEnemigo->getPos().x)) || (unProyectil->getPos().x > unEnemigo->getPos().x + unEnemigo->getTamanio().x)) {
-				colisionan = false;
-			}
-			else if (((unProyectil->getPos().y + unProyectil->getTamanio().y) < (unEnemigo->getPos().y)) || (unProyectil->getPos().y > unEnemigo->getPos().y + unEnemigo->getTamanio().y)) {
-				colisionan = false;
-			}
-			else { colisionan = true; }
-
-			if (colisionan) {
-				bool estaMuerto = unEnemigo->recibirDanio(unProyectil->getDanio());				
-				if (estaMuerto) {
-					contadorEnemigosSpawneados--; //elimino del total global
-					PickUp* nuevoPickup = unEnemigo->spawnPickUp();
-					if (nuevoPickup != NULL)
-						pickups.push_back(nuevoPickup);
-					it = jugadores.begin();
-					bool encontrado = false;
-					while ((it != jugadores.end()) && !encontrado) {
-						Jugador* jugadorQueEliminoAlEnemigo = *it;
-						if(unProyectil->getIdTirador() == jugadorQueEliminoAlEnemigo->getId())
-							jugadorQueEliminoAlEnemigo->recibirPuntos(unEnemigo->getPuntos());
-						it++;
-					}
-					efectos.push_back(new EnemigoMuriendo(++contador, unEnemigo->getPos(), unEnemigo->getTamanio()));
-					enemigos.erase(it2);
+		if (unProyectil != NULL) {
+			cambios |= unProyectil->tieneCambios(plataformas);
+			bool colisionan = false;
+			it2 = enemigos.begin();
+			while ((it2 != enemigos.end()) && !colisionan) {
+				Enemigo *unEnemigo = *it2;
+				if (((unProyectil->getPos().x + unProyectil->getTamanio().x) < (unEnemigo->getPos().x)) || (unProyectil->getPos().x > unEnemigo->getPos().x + unEnemigo->getTamanio().x)) {
+					colisionan = false;
 				}
-			}
-			it2++;
-		}
-		if(colisionan || !unProyectil->esVisible()) {
-			efectos.push_back(new ImpactoBala(++contador, unProyectil));
-			it3 = proyectilesAliados.erase(it3);
-		} else
-			it3++;
+				else if (((unProyectil->getPos().y + unProyectil->getTamanio().y) < (unEnemigo->getPos().y)) || (unProyectil->getPos().y > unEnemigo->getPos().y + unEnemigo->getTamanio().y)) {
+					colisionan = false;
+				}
+				else { colisionan = true; }
 
+				if (colisionan) {
+					bool estaMuerto = unEnemigo->recibirDanio(unProyectil->getDanio());
+					if (estaMuerto) {
+						contadorEnemigosSpawneados--; //elimino del total global
+						PickUp* nuevoPickup = unEnemigo->spawnPickUp();
+						if (nuevoPickup != NULL)
+							pickups.push_back(nuevoPickup);
+						it = jugadores.begin();
+						bool encontrado = false;
+						while ((it != jugadores.end()) && !encontrado) {
+							Jugador* jugadorQueEliminoAlEnemigo = *it;
+							if (unProyectil->getIdTirador() == jugadorQueEliminoAlEnemigo->getId())
+								jugadorQueEliminoAlEnemigo->recibirPuntos(unEnemigo->getPuntos());
+							it++;
+						}
+						efectos.push_back(new EnemigoMuriendo(++contador, unEnemigo->getPos(), unEnemigo->getTamanio()));
+						enemigos.erase(it2);
+					}
+				}
+				it2++;
+			}
+
+			if (colisionan || !unProyectil->esVisible()) {
+				efectos.push_back(new ImpactoBala(++contador, unProyectil));
+				it3 = proyectilesAliados.erase(it3);
+			}
+			else
+				it3++;
+		}
 	}
 
 	for (auto it6 = proyectilesEnemigos.begin(); it6 != proyectilesEnemigos.end();) {
 		Proyectil* unProyectil = *it6;
-		cambios |= unProyectil->tieneCambios(plataformas);
-		bool colisionan = false;
-		it = jugadores.begin();
-		while ((it != jugadores.end()) && !colisionan) {
-			Jugador *unJugador = *it;
-			if (((unProyectil->getPos().x + unProyectil->getTamanio().x) < (unJugador->getPos().x)) || (unProyectil->getPos().x > unJugador->getPos().x + unJugador->getTamanio().x)) {
-				colisionan = false;
-			}
-			else if (((unProyectil->getPos().y + unProyectil->getTamanio().y) < (unJugador->getPos().y)) || (unProyectil->getPos().y > unJugador->getPos().y + unJugador->getTamanio().y)) {
-				colisionan = false;
-			}
-			else { colisionan = true; }
+		if (unProyectil != NULL) {
+			cambios |= unProyectil->tieneCambios(plataformas);
+			bool colisionan = false;
+			it = jugadores.begin();
+			while ((it != jugadores.end()) && !colisionan) {
+				Jugador *unJugador = *it;
+				if (((unProyectil->getPos().x + unProyectil->getTamanio().x) < (unJugador->getPos().x)) || (unProyectil->getPos().x > unJugador->getPos().x + unJugador->getTamanio().x)) {
+					colisionan = false;
+				}
+				else if (((unProyectil->getPos().y + unProyectil->getTamanio().y) < (unJugador->getPos().y)) || (unProyectil->getPos().y > unJugador->getPos().y + unJugador->getTamanio().y)) {
+					colisionan = false;
+				}
+				else { colisionan = true; }
 
-			if (colisionan) {
-				unJugador->recibirDanio(unProyectil->getDanio());
+				if (colisionan) {
+					unJugador->recibirDanio(unProyectil->getDanio());
+				}
+				it++;
 			}
-			it++;
+			if (colisionan || !unProyectil->esVisible())
+				it6 = proyectilesEnemigos.erase(it6);
+			else
+				it6++;
 		}
-		if (colisionan || !unProyectil->esVisible())
-			it6 = proyectilesEnemigos.erase(it6);
-		else
-			it6++;
+
 	}
 
 	//Actualizar el offset si es necesario
-	if (minX > escenario.getOffsetVista() + escenario.getAnchoVista()/2) {
+	if (minX > escenario.getOffsetVista() + escenario.getAnchoVista() / 2) {
 		cambios = true;
-		int offset = std::min<int>(minX - escenario.getAnchoVista()/2, escenario.getOffsetVista() + maxOffsetDelta);
+		int offset = std::min<int>(minX - escenario.getAnchoVista() / 2, escenario.getOffsetVista() + maxOffsetDelta);
 		offset = std::min<int>(offset, escenario.getLongitud());
 		escenario.setOffsetVista(offset);
 	}
@@ -422,7 +466,7 @@ bool Juego::getEstado(Bytes& bytes) {
 
 		if ((obj->getPos().x + obj->getTamanio().x) > (escenario.getOffsetVista() + escenario.getAnchoVista())) {
 			cambios = true;
-			obj->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista()- obj->getTamanio().x;
+			obj->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista() - obj->getTamanio().x;
 		}
 
 		if (obj->getPos().x < escenario.getOffsetVista()) {
@@ -491,7 +535,7 @@ bool Juego::getEstado(Bytes& bytes) {
 			estadoObj.setTamanio(obj->getTamanio());
 			estadoObj.setFrame(obj->getFrame());
 			estadoObj.setOrientacion(obj->getOrientacion());
-			
+
 			estado.push_back(estadoObj);
 			it2++;
 		}
@@ -499,7 +543,7 @@ bool Juego::getEstado(Bytes& bytes) {
 		auto it3 = proyectilesAliados.begin();
 		while (it3 != proyectilesAliados.end()) {
 			Objeto* obj = *it3;
-			
+
 			EstadoObj estadoObj;
 			estadoObj.setId(obj->getId());
 			estadoObj.setTipo(obj->getTipo());
@@ -521,7 +565,7 @@ bool Juego::getEstado(Bytes& bytes) {
 			Objeto* obj = *it4;
 
 			EstadoObj estadoObj;
-  			estadoObj.setId(obj->getId());
+			estadoObj.setId(obj->getId());
 			estadoObj.setTipo(obj->getTipo());
 			estadoObj.setEstado(obj->getEstado());
 			Punto pos;

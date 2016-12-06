@@ -13,13 +13,16 @@ Boss0::Boss0(int id, Config & _configuracion) : Boss(id, _configuracion) {
 	cambios = false;
 	arma = new GunS(++contador, id);
 	tiempoUltimaBomba = 0;
+	tiempoUltimoDisparo = 0;
+	this->getArma()->setCantidad(1000000);
+	distanciaPiso = 200;
 }
 
 
 
 void Boss0::comportamiento(micros tiempoActual, std::vector<Proyectil*>* proyectilesEnemigos, std::vector<Enemigo*>* enemigos) {
 	if ((tiempoActual - tiempoUltimoDisparo) > (6 * (rand() % 500) * 1000)) {
-		Proyectil* nuevoProyectil = this->disparar(Direccion::IZQUIERDA);
+ 		Proyectil* nuevoProyectil = this->disparar(Direccion::IZQUIERDA);
 		if (nuevoProyectil != NULL)
 			proyectilesEnemigos->push_back(nuevoProyectil);
 		nuevoProyectil = this->disparar(Direccion::DERECHA);
@@ -28,7 +31,7 @@ void Boss0::comportamiento(micros tiempoActual, std::vector<Proyectil*>* proyect
 		tiempoUltimoDisparo = tiempo();
 	}
 
-	if ((tiempo() - tiempoUltimaBomba) > TIEMPO_ENTRE_BOMBAS) {
+	if ((tiempo() - tiempoUltimaBomba) > (TIEMPO_ENTRE_BOMBAS * 1000)) {
 		Proyectil* nuevoProyectil = this->dispararBomba();
 		if (nuevoProyectil != NULL)
 			proyectilesEnemigos->push_back(nuevoProyectil);
@@ -38,8 +41,6 @@ void Boss0::comportamiento(micros tiempoActual, std::vector<Proyectil*>* proyect
 			proyectilesEnemigos->push_back(nuevoProyectil);
 		tiempoUltimaBomba = tiempo();
 	}
-
-	//agregar movimiento
 }
 
 Proyectil * Boss0::disparar(Direccion direccion){
@@ -52,7 +53,7 @@ Proyectil * Boss0::disparar(Direccion direccion){
 		pos.x = getPos().x + (getOrientacion() ? 0 : getTamanio().x);
 		pos.y = getPos().y - getTamanio().y * 0.6;
 		nuevoProyectil->setPos(pos);
-		nuevoProyectil->setSiElDisparadorEstaSaltando(tiempoSalto != 0);
+		nuevoProyectil->setSiElDisparadorEstaSaltando(true);
 		nuevoProyectil->setOrientacionY(1);
 		nuevoProyectil->setOrientacionX(direccion == Direccion::IZQUIERDA);
 		nuevoProyectil->aumentarDanio(aumentoDeDanio);
@@ -68,7 +69,7 @@ Proyectil * Boss0::dispararBomba()
 		pos.x = getPos().x + (getOrientacion() ? 0 : getTamanio().x);
 		pos.y = getPos().y - getTamanio().y * 0.6;
 		nuevoProyectil->setPos(pos);
-		nuevoProyectil->setSiElDisparadorEstaSaltando(tiempoSalto != 0);
+		nuevoProyectil->setSiElDisparadorEstaSaltando(true);
 		nuevoProyectil->setOrientacionY(1);   //apunta abajo
 	}
 	return nuevoProyectil;
