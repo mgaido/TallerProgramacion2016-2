@@ -159,7 +159,7 @@ void Juego::updateWorld() {
 		if (elJuegoEmpezo) {
 			if ((BossFinal != NULL || minPosXJugador < 5500)) {
 				if (contadorEnemigosSpawneados < 6) {
-					//	enemigoSpawneado = spawnEnemigo(tiempo());
+					enemigoSpawneado = spawnEnemigo(tiempo());
 				}
 			}
 			else {
