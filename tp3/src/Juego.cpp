@@ -37,6 +37,13 @@ Juego::~Juego() {
 		jugadores.erase(it);
 	}
 
+	auto it7 = jugadoresEnJuego.begin();
+	while (it7 != jugadoresEnJuego.end()) {
+		Jugador* obj = *it7;
+		delete obj;
+		jugadoresEnJuego.erase(it7);
+	}
+
 	auto it1 = enemigos.begin();
 	while (it1 != enemigos.end()) {
 		Enemigo* obj = *it1;
@@ -124,7 +131,15 @@ void Juego::updateIA() {
 void Juego::chequearGameOverYComienzoDeJuego() {
 	while (!detenido) {
 		if (elJuegoEmpezo) {
-			if(jugadores.empty())
+			int contador = 0;
+			auto it = jugadores.begin();
+			while (it != jugadores.end()) {
+				Jugador* unJugador = *it;
+				if (unJugador->estamuerto())
+					contador++;
+				it++;
+			}
+		if(contador == 1)			//configuracion.getCantidadMaximaJugadores()
 				this->gameOver(false);
 		} else {
 			if(jugadores.size() == 1)   //configuracion.getCantidadMaximaJugadores()
@@ -136,8 +151,8 @@ void Juego::chequearGameOverYComienzoDeJuego() {
 			bossEliminado = false;
 			pasarDeNivel();
 		}
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000));				//lo duermo para q no consuma tanto recurso
 	}
-	std::this_thread::sleep_for(std::chrono::milliseconds(1000));				//lo duermo para q no consuma tanto recurso
 }
 
 void Juego::pasarDeNivel() {
@@ -157,6 +172,8 @@ void Juego::updateWorld() {
 	Enemigo* enemigoSpawneado;
 	while (!detenido) {
 		if (elJuegoEmpezo) {
+			srand(time(NULL));
+			std::this_thread::sleep_for(std::chrono::milliseconds(1000 * ((rand() % 7) + 1)));
 			if ((BossFinal != NULL || minPosXJugador < 5500)) {
 				if (contadorEnemigosSpawneados < 6) {
 					enemigoSpawneado = spawnEnemigo(tiempo());
@@ -171,6 +188,7 @@ void Juego::updateWorld() {
 				Proyectil* unProyectil = *it;
 				if (((unProyectil->getPos().x < escenario.getOffsetVista()) || unProyectil->getPos().x > (escenario.getOffsetVista() + escenario.getAnchoVista())) || (
 					((unProyectil->getPos().y < 0) || unProyectil->getPos().y > configuracion.getTamanioVentana().y))) {
+					delete unProyectil;
 					proyectilesAliados.erase(it);
 				}
 				else
@@ -181,13 +199,12 @@ void Juego::updateWorld() {
 				Proyectil* unProyectil = *it;
 				if (((unProyectil->getPos().x < escenario.getOffsetVista()) || unProyectil->getPos().x > (escenario.getOffsetVista() + escenario.getAnchoVista())) || (
 					((unProyectil->getPos().y < 0) || unProyectil->getPos().y > configuracion.getTamanioVentana().y))) {
+					delete unProyectil;
 					proyectilesEnemigos.erase(it);
 				}
 				else
 					it++;
 			}
-			srand(time(NULL));
-			std::this_thread::sleep_for(std::chrono::milliseconds(1000 * (rand() % 7)));
 		}
 	}
 }
@@ -227,7 +244,7 @@ Jugador* Juego::nuevoJugador(std::string nombre) {
 	jugador->getPos().x = escenario.getOffsetVista();
 	lock.lock();
 	jugadores.push_back(jugador);
-
+	jugadoresEnJuego.push_back(jugador);
 	if (!iniciado && jugadores.size() >= configuracion.getCantidadMinimaJugadores()) { //config
 		iniciado = true;
 		for (auto it = jugadores.begin(); it != jugadores.end(); it++)
@@ -369,6 +386,7 @@ bool Juego::getEstado(Bytes& bytes) {
 				if (colisionan) {
 					unJugador->recibirBonus(unPickUp);
 					//if(unJugador->getArma->getTipo() == Gunc)  buscarEnemigoMasCercano , setEnemigomas cercano
+					delete unPickUp;
 					pickups.erase(it4);
 					if (unJugador->getKillAll()) {
 						auto it2 = enemigos.begin();
@@ -435,6 +453,7 @@ bool Juego::getEstado(Bytes& bytes) {
 									it++;
 								}
 							efectos.push_back(new EnemigoMuriendo(++contador, unEnemigo->getPos(), unEnemigo->getTamanio()));
+							delete unEnemigo;
 							enemigos.erase(it2);
 						}
 					}
@@ -443,6 +462,7 @@ bool Juego::getEstado(Bytes& bytes) {
 
 				if (colisionan || !unProyectil->esVisible()) {
 					efectos.push_back(new ImpactoBala(++contador, unProyectil));
+					delete unProyectil;
 					it3 = proyectilesAliados.erase(it3);
 				}
 				else
@@ -468,6 +488,7 @@ bool Juego::getEstado(Bytes& bytes) {
 					if (colisionan) {
 						estaMuerto = unJugador->recibirDanio(unProyectil->getDanio());
 						if (estaMuerto && modoDeJuego != MODO_DIOS) {
+							unJugador->setEstaMuerto(true);
 							jugadores.erase(it);
 						}
 						else
@@ -477,8 +498,10 @@ bool Juego::getEstado(Bytes& bytes) {
 						it++;
 					}
 				}
-				if (colisionan || !unProyectil->esVisible())
+				if (colisionan || !unProyectil->esVisible()) {
+					delete unProyectil;
 					it6 = proyectilesEnemigos.erase(it6);
+				}
 				else
 					it6++;
 			}

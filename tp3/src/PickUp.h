@@ -8,7 +8,7 @@
 #include "GunR.h"
 #include "GunS.h"
 
-enum class Bonus {GunH, GunC, GunS, GunR, Vida, KillAll};
+enum class Bonus {GunH, GunS, GunR, Vida, KillAll, GunC};
 class PickUp : public Objeto {
 public:
 	PickUp(int id);

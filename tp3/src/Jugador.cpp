@@ -36,13 +36,13 @@ void Jugador::recibirBonus(PickUp* unPickUp) {
 			this->arma->recargar();
 		break;
 	}
-	case (int)Bonus::GunC: {
+	/*case (int)Bonus::GunC: {
 		if (unPickUp->getBonus() != (Bonus) arma->getTipo())
 			this->arma = new GunC(++contador,id);
 		else
 			this->arma->recargar();
 		break;
-	}
+	}*/
 	case (int)Bonus::GunS: {
 		if (unPickUp->getBonus() != (Bonus)arma->getTipo())
 			this->arma = new GunS(++contador,id);
@@ -79,6 +79,10 @@ void Jugador::recibirPuntos(int puntosObtenidos){
 
 void Jugador::cambiarArma(Proyectil *armaNueva) {
 	arma = armaNueva;
+}
+
+bool Jugador::estamuerto(){
+	return estaMuerto;
 }
 
 bool Jugador::getKillAll() {

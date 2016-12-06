@@ -7,15 +7,15 @@ PickUp::PickUp(int id) : Objeto(id) {
 	this->orientacion = false;
 	this->frame = 0;
 	energiaACurar = 0;
-	int valor = rand() % 6;
+	int valor = rand() % 5;
 	bonus = (Bonus)valor;
   	switch (valor) {
 	case (int) Bonus::GunH:
 		this->tipo = Tipo::BonusArma;
 		break;
-	case (int)Bonus::GunC:
+	/*case (int)Bonus::GunC:
 		this->tipo = Tipo::BonusArma;
-		break;
+		break;*/
 	case (int)Bonus::GunS:
 		this->tipo = Tipo::BonusArma;
 		break;

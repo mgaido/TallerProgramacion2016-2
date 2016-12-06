@@ -65,6 +65,7 @@ private:
 	std::mutex lockColisiones;
 	Escenario escenario;
 	std::vector<Plataforma*> plataformas;
+	std::vector<Jugador*> jugadoresEnJuego;
 	std::vector<Jugador*> jugadores;
 	std::vector<Proyectil*> proyectilesAliados;
 	std::vector<Proyectil*> proyectilesEnemigos;

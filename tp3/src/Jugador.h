@@ -17,6 +17,7 @@ public:
 	Jugador(int id, std::string nombre, Config& configuracion);
 	~Jugador();
 	void cambiarArma(Proyectil*);
+	bool estamuerto();
 	virtual bool esEnemigo();
 	bool getKillAll();
 	void setConectado(bool conectado);
