@@ -50,6 +50,8 @@ public:
 	void agregarProyectilEnemigo(Proyectil* nuevoProyectil);
 
 private:
+	bool elJuegoEmpezo;
+	void gameOver();
 	int ultimoMinX;
 	char modoDeJuego; 
 	void crearPlataformas();
@@ -72,12 +74,11 @@ private:
 	void updateWorld();
 	std::thread t_updateIA;
 	void updateIA();
-	std::thread t_chequearGameOver;
-	void chequearGameOver();
+	std::thread t_chequearGameOverYComienzoDeJuego;
+	void chequearGameOverYComienzoDeJuego();
 	int contadorEnemigosSpawneados; //Para el tema de los Boss
 	int minPosXJugador;
 	int minPosXEnemigo;
-
 };
 
 #endif /* JUEGO_H_ */

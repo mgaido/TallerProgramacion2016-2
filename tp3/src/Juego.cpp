@@ -21,8 +21,9 @@ Juego::Juego(Config& _configuracion) : configuracion(_configuracion) {
 	maxOffsetDelta = round(configuracion.getVelocidadX() * 2 * 1000000.0 / configuracion.getFrameRate());
 	t_updateWorld = std::thread(&Juego::updateWorld, this);
 	t_updateIA = std::thread(&Juego::updateIA, this);
-	t_chequearGameOver = std::thread(&Juego::chequearGameOver, this);
+	t_chequearGameOverYComienzoDeJuego = std::thread(&Juego::chequearGameOverYComienzoDeJuego, this);
 	BossFinal = NULL;
+	elJuegoEmpezo = false;
 	ultimoMinX = 0;
 }
 
@@ -77,6 +78,9 @@ Juego::~Juego() {
 	}
 }
 
+void Juego::gameOver(){
+}
+
 void Juego::crearPlataformas() {
 	std::vector<Plataformas> plataformasConfig = configuracion.getPlataformas();
 	auto it = plataformasConfig.begin();
@@ -110,62 +114,55 @@ void Juego::updateIA() {
 	}
 }
 
-void Juego::chequearGameOver() {
+void Juego::chequearGameOverYComienzoDeJuego() {
 	while (!detenido) {
-		auto it = jugadores.begin();
-		while (it != jugadores.end()) {
-			Jugador* obj = *it;
-			switch (modoDeJuego) {
-			case MODO_INDIVIDUAL: {
-
-			}
-			case MODO_COOP: {
-
-			}
-			case MODO_GRUPAL: {
-
-			}
-			case MODO_DIOS: {
-
-			}
-			}
+		if (elJuegoEmpezo) {
+			if(jugadores.empty())
+				this->gameOver();
+		} else {
+			if(jugadores.size() == 1)   //configuracion.getCantidadMaximaJugadores()
+				elJuegoEmpezo = true;
 		}
 	}
+	std::this_thread::sleep_for(std::chrono::milliseconds(1000));				//lo duermo para q no consuma tanto recurso
 }
 
 void Juego::updateWorld() {
 	std::thread t_detenerEnemigoAnterior;
 	Enemigo* enemigoSpawneado;
 	while (!detenido) {
-		if ((BossFinal != NULL || minPosXJugador < 5500) && (contadorEnemigosSpawneados < 6)) {
-			enemigoSpawneado = spawnEnemigo(tiempo());
-		}
-		else {
-			enemigoSpawneado = spawnBoss(tiempo());
-			break;
-		}
-
-		for (auto it = proyectilesAliados.begin(); it != proyectilesAliados.end();) {
-			Proyectil* unProyectil = *it;
-			if (((unProyectil->getPos().x < escenario.getOffsetVista()) || unProyectil->getPos().x > (escenario.getOffsetVista() + escenario.getAnchoVista())) || (
-				((unProyectil->getPos().y < 0) || unProyectil->getPos().y > configuracion.getTamanioVentana().y))) {
-				proyectilesAliados.erase(it);
+		if (elJuegoEmpezo) {
+			if ((BossFinal != NULL || minPosXJugador < 5500)) {
+				if (contadorEnemigosSpawneados < 6)
+					enemigoSpawneado = spawnEnemigo(tiempo());
 			}
-			else
-				it++;
-		}
-
-		for (auto it = proyectilesEnemigos.begin(); it != proyectilesEnemigos.end();) {
-			Proyectil* unProyectil = *it;
-			if (((unProyectil->getPos().x < escenario.getOffsetVista()) || unProyectil->getPos().x > (escenario.getOffsetVista() + escenario.getAnchoVista())) || (
-				((unProyectil->getPos().y < 0) || unProyectil->getPos().y > configuracion.getTamanioVentana().y))) {
-				proyectilesEnemigos.erase(it);
+			else {
+				enemigoSpawneado = spawnBoss(tiempo());
+				break;
 			}
-			else
-				it++;
+
+			for (auto it = proyectilesAliados.begin(); it != proyectilesAliados.end();) {
+				Proyectil* unProyectil = *it;
+				if (((unProyectil->getPos().x < escenario.getOffsetVista()) || unProyectil->getPos().x > (escenario.getOffsetVista() + escenario.getAnchoVista())) || (
+					((unProyectil->getPos().y < 0) || unProyectil->getPos().y > configuracion.getTamanioVentana().y))) {
+					proyectilesAliados.erase(it);
+				}
+				else
+					it++;
+			}
+
+			for (auto it = proyectilesEnemigos.begin(); it != proyectilesEnemigos.end();) {
+				Proyectil* unProyectil = *it;
+				if (((unProyectil->getPos().x < escenario.getOffsetVista()) || unProyectil->getPos().x > (escenario.getOffsetVista() + escenario.getAnchoVista())) || (
+					((unProyectil->getPos().y < 0) || unProyectil->getPos().y > configuracion.getTamanioVentana().y))) {
+					proyectilesEnemigos.erase(it);
+				}
+				else
+					it++;
+			}
+
+			std::this_thread::sleep_for(std::chrono::milliseconds(1000 * (rand() % 7)));
 		}
-		
-		std::this_thread::sleep_for(std::chrono::milliseconds(1000 * (rand() % 7)));
 	}
 }
 
@@ -176,8 +173,8 @@ void Juego::detener() {
 		debug("Thread updateWorld termino");
 		t_updateIA.join();
 		debug("Thread updateIA termino");
-		t_chequearGameOver.join();
-		debug("Thread chequeargameover termino");
+		t_chequearGameOverYComienzoDeJuego.join();
+		debug("Thread chequeargameoverycomeinzodejuego termino");
 	}
 }
 
@@ -317,368 +314,378 @@ Enemigo* Juego::spawnEnemigo(micros tiempoCreacion) {
 bool Juego::getEstado(Bytes& bytes) {
 	bool rv = false;;
 	std::vector<EstadoObj> estado;
+	if (elJuegoEmpezo) {
+		lock.lock();
 
-	lock.lock();
+		//Actualizar posiciones de jugadores y encontrar el minimo en X
+		int minX = 0;
+		auto it = jugadores.begin();
 
-	//Actualizar posiciones de jugadores y encontrar el minimo en X
-	int minX = 0;
-	auto it = jugadores.begin();
-
-	for (auto it = jugadores.begin(); it != jugadores.end();) {
-		Jugador* unJugador = *it;
-		cambios |= unJugador->tieneCambios(plataformas);
-		bool colisionan = false;
-		if ((minX == 0 || unJugador->getPos().x < minX) && unJugador->getEstado() != Estado::Desconectado)
-			minX = unJugador->getPos().x + unJugador->getTamanio().x / 2;
-		minPosXJugador = minX;
-
-		auto it4 = pickups.begin();
-		while ((it4 != pickups.end()) && !colisionan) {
-			PickUp *unPickUp = *it4;
-			if (((unJugador->getPos().x + unJugador->getTamanio().x) < (unPickUp->getPos().x)) || (unJugador->getPos().x > unPickUp->getPos().x + unPickUp->getTamanio().x)) {
-				colisionan = false;
-			}
-			else if (((unJugador->getPos().y + unJugador->getTamanio().y) < (unPickUp->getPos().y)) || (unJugador->getPos().y > unPickUp->getPos().y + unPickUp->getTamanio().y)) {
-				colisionan = false;
-			}
-			else { colisionan = true; }
-
-			if (colisionan) {
-				unJugador->recibirBonus(unPickUp);
-				//if(unJugador->getArma->getTipo() == Gunc)  buscarEnemigoMasCercano , setEnemigomas cercano
-				pickups.erase(it4);
-				if (unJugador->getKillAll()) {
-					auto it2 = enemigos.begin();
-					while (it2 != enemigos.end()) {
-						Enemigo* obj = *it2;
-						delete (*it2);
-						efectos.push_back(new EnemigoMuriendo(++contador, obj->getPos(), obj->getTamanio()));
-						enemigos.erase(it2);;
-					}
-				}
-			}
-			it4++;
-		}
-		it++;
-	}
-
-	if (!enemigos.empty()) {
-		minX = ultimoMinX;
-	}
-
-	ultimoMinX = minX;
-
-	auto it2 = enemigos.begin();
-	while (it2 != enemigos.end()) {
-		Enemigo* enemigo = *it2;
-		cambios |= enemigo->tieneCambios(plataformas);
-		it2++;
-	}
-
-	for (auto it3 = proyectilesAliados.begin(); it3 != proyectilesAliados.end();) {
-		Proyectil* unProyectil = *it3;
-		if (unProyectil != NULL) {
-			cambios |= unProyectil->tieneCambios(plataformas);
+		for (auto it = jugadores.begin(); it != jugadores.end();) {
+			Jugador* unJugador = *it;
+			cambios |= unJugador->tieneCambios(plataformas);
 			bool colisionan = false;
-			it2 = enemigos.begin();
-			while ((it2 != enemigos.end()) && !colisionan) {
-				Enemigo *unEnemigo = *it2;
-				if (((unProyectil->getPos().x + unProyectil->getTamanio().x) < (unEnemigo->getPos().x)) || (unProyectil->getPos().x > unEnemigo->getPos().x + unEnemigo->getTamanio().x)) {
+			if ((minX == 0 || unJugador->getPos().x < minX) && unJugador->getEstado() != Estado::Desconectado)
+				minX = unJugador->getPos().x + unJugador->getTamanio().x / 2;
+			minPosXJugador = minX;
+
+			auto it4 = pickups.begin();
+			while ((it4 != pickups.end()) && !colisionan) {
+				PickUp *unPickUp = *it4;
+				if (((unJugador->getPos().x + unJugador->getTamanio().x) < (unPickUp->getPos().x)) || (unJugador->getPos().x > unPickUp->getPos().x + unPickUp->getTamanio().x)) {
 					colisionan = false;
 				}
-				else if (((unProyectil->getPos().y + unProyectil->getTamanio().y) < (unEnemigo->getPos().y)) || (unProyectil->getPos().y > unEnemigo->getPos().y + unEnemigo->getTamanio().y)) {
+				else if (((unJugador->getPos().y + unJugador->getTamanio().y) < (unPickUp->getPos().y)) || (unJugador->getPos().y > unPickUp->getPos().y + unPickUp->getTamanio().y)) {
 					colisionan = false;
 				}
 				else { colisionan = true; }
 
 				if (colisionan) {
-					bool estaMuerto = unEnemigo->recibirDanio(unProyectil->getDanio());
-					if (estaMuerto) {
-						contadorEnemigosSpawneados--; //elimino del total global
-						PickUp* nuevoPickup = unEnemigo->spawnPickUp();
-						if (nuevoPickup != NULL)
-							pickups.push_back(nuevoPickup);
-						it = jugadores.begin();
-						bool encontrado = false;
-						while ((it != jugadores.end()) && !encontrado) {
-							Jugador* jugadorQueEliminoAlEnemigo = *it;
-							if (unProyectil->getIdTirador() == jugadorQueEliminoAlEnemigo->getId())
-								jugadorQueEliminoAlEnemigo->recibirPuntos(unEnemigo->getPuntos());
-							it++;
+					unJugador->recibirBonus(unPickUp);
+					//if(unJugador->getArma->getTipo() == Gunc)  buscarEnemigoMasCercano , setEnemigomas cercano
+					pickups.erase(it4);
+					if (unJugador->getKillAll()) {
+						auto it2 = enemigos.begin();
+						while (it2 != enemigos.end()) {
+							Enemigo* obj = *it2;
+							delete (*it2);
+							efectos.push_back(new EnemigoMuriendo(++contador, obj->getPos(), obj->getTamanio()));
+							enemigos.erase(it2);;
 						}
-						efectos.push_back(new EnemigoMuriendo(++contador, unEnemigo->getPos(), unEnemigo->getTamanio()));
-						enemigos.erase(it2);
 					}
 				}
-				it2++;
+				it4++;
 			}
-
-			if (colisionan || !unProyectil->esVisible()) {
-				efectos.push_back(new ImpactoBala(++contador, unProyectil));
-				it3 = proyectilesAliados.erase(it3);
-			}
-			else
-				it3++;
-		}
-	}
-
-	for (auto it6 = proyectilesEnemigos.begin(); it6 != proyectilesEnemigos.end();) {
-		Proyectil* unProyectil = *it6;
-		if (unProyectil != NULL) {
-			cambios |= unProyectil->tieneCambios(plataformas);
-			bool colisionan = false;
-			it = jugadores.begin();
-			while ((it != jugadores.end()) && !colisionan) {
-				Jugador *unJugador = *it;
-				if (((unProyectil->getPos().x + unProyectil->getTamanio().x) < (unJugador->getPos().x)) || (unProyectil->getPos().x > unJugador->getPos().x + unJugador->getTamanio().x)) {
-					colisionan = false;
-				}
-				else if (((unProyectil->getPos().y + unProyectil->getTamanio().y) < (unJugador->getPos().y)) || (unProyectil->getPos().y > unJugador->getPos().y + unJugador->getTamanio().y)) {
-					colisionan = false;
-				}
-				else { colisionan = true; }
-
-				if (colisionan) {
-					unJugador->recibirDanio(unProyectil->getDanio());
-				}
-				it++;
-			}
-			if (colisionan || !unProyectil->esVisible())
-				it6 = proyectilesEnemigos.erase(it6);
-			else
-				it6++;
-		}
-
-	}
-
-	//Actualizar el offset si es necesario
-	if (minX > escenario.getOffsetVista() + escenario.getAnchoVista() / 2) {
-		cambios = true;
-		int offset = std::min<int>(minX - escenario.getAnchoVista() / 2, escenario.getOffsetVista() + maxOffsetDelta);
-		offset = std::min<int>(offset, escenario.getLongitud());
-		escenario.setOffsetVista(offset);
-	}
-
-	//Actualizar posiciones de jugadores para que no se salgan de pantalla
-	it = jugadores.begin();
-	while (it != jugadores.end()) {
-		Jugador* obj = *it;
-
-		if ((obj->getPos().x + obj->getTamanio().x) > (escenario.getOffsetVista() + escenario.getAnchoVista())) {
-			cambios = true;
-			obj->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista() - obj->getTamanio().x;
-		}
-
-		if (obj->getPos().x < escenario.getOffsetVista()) {
-			cambios = true;
-			obj->getPos().x = escenario.getOffsetVista();
-		}
-		it++;
-	}
-
-	auto efectosIt = efectos.begin();
-	while (efectosIt != efectos.end()) {
-		Efecto* obj = *efectosIt;
-		cambios |= obj->tieneCambios(plataformas);
-
-		if (obj->esVisible())
-			efectosIt++;
-		else
-			efectosIt = efectos.erase(efectosIt);
-	}
-
-	//Generar estado para la vista
-	if (cambios) {
-		it = jugadores.begin();
-		while (it != jugadores.end()) {
-			Objeto* obj = *it;
-
-			EstadoObj estadoObj;
-			estadoObj.setId(obj->getId());
-			estadoObj.setTipo(obj->getTipo());
-			estadoObj.setEstado(obj->getEstado());
-			estadoObj.setTipo(Tipo::Jugador);
-			Punto pos;
-			pos.x = obj->getPos().x - escenario.getOffsetVista();
-			pos.y = escenario.getNivelPiso() - obj->getTamanio().y - obj->getPos().y;
-			estadoObj.setPos(pos);
-			//std::cout << obj->getPos().x << std::endl;
-			//std::cout << minPosXJugador << std::endl;
-
-			estadoObj.setTamanio(obj->getTamanio());
-			estadoObj.setFrame(obj->getFrame());
-			estadoObj.setOrientacion(obj->getOrientacion());
-
-			if (obj->getTipo() == Tipo::Jugador)
-				estadoObj.setNombre(((Jugador*)obj)->getNombre());
-
-			estado.push_back(estadoObj);
 			it++;
 		}
 
-		it2 = enemigos.begin();
+		if (!enemigos.empty()) {
+			minX = ultimoMinX;
+		}
+
+		ultimoMinX = minX;
+
+		auto it2 = enemigos.begin();
 		while (it2 != enemigos.end()) {
-			Enemigo* obj = *it2;
-
-			EstadoObj estadoObj;
-			estadoObj.setId(obj->getId());
-			estadoObj.setTipo(obj->getTipo());
-			estadoObj.setEstado(obj->getEstado());
-			estadoObj.setEstado(obj->getEstado());
-			estadoObj.setTipo(obj->getTipo());
-
-
-			Punto pos;
-			pos.x = obj->getPos().x - escenario.getOffsetVista();
-			pos.y = escenario.getNivelPiso() + obj->getDistanciaPiso() - obj->getPos().y;
-			estadoObj.setPos(pos);
-			estadoObj.setTamanio(obj->getTamanio());
-			estadoObj.setFrame(obj->getFrame());
-			estadoObj.setOrientacion(obj->getOrientacion());
-
-			estado.push_back(estadoObj);
+			Enemigo* enemigo = *it2;
+			cambios |= enemigo->tieneCambios(plataformas);
 			it2++;
 		}
 
-		auto it3 = proyectilesAliados.begin();
-		while (it3 != proyectilesAliados.end()) {
-			Objeto* obj = *it3;
+		for (auto it3 = proyectilesAliados.begin(); it3 != proyectilesAliados.end();) {
+			Proyectil* unProyectil = *it3;
+			if (unProyectil != NULL) {
+				cambios |= unProyectil->tieneCambios(plataformas);
+				bool colisionan = false;
+				it2 = enemigos.begin();
+				while ((it2 != enemigos.end()) && !colisionan) {
+					Enemigo *unEnemigo = *it2;
+					if (((unProyectil->getPos().x + unProyectil->getTamanio().x) < (unEnemigo->getPos().x)) || (unProyectil->getPos().x > unEnemigo->getPos().x + unEnemigo->getTamanio().x)) {
+						colisionan = false;
+					}
+					else if (((unProyectil->getPos().y + unProyectil->getTamanio().y) < (unEnemigo->getPos().y)) || (unProyectil->getPos().y > unEnemigo->getPos().y + unEnemigo->getTamanio().y)) {
+						colisionan = false;
+					}
+					else { colisionan = true; }
 
-			EstadoObj estadoObj;
-			estadoObj.setId(obj->getId());
-			estadoObj.setTipo(obj->getTipo());
-			estadoObj.setEstado(obj->getEstado());
-			Punto pos;
-			pos.x = obj->getPos().x - escenario.getOffsetVista();
-			pos.y = escenario.getNivelPiso() - obj->getTamanio().y - obj->getPos().y;
-			estadoObj.setPos(pos);
-			estadoObj.setTamanio(obj->getTamanio());
-			estadoObj.setFrame(obj->getFrame());
-			estadoObj.setOrientacion(obj->getOrientacion());
+					if (colisionan) {
+						bool estaMuerto = unEnemigo->recibirDanio(unProyectil->getDanio());
+						if (estaMuerto) {
+							contadorEnemigosSpawneados--; //elimino del total global
+							PickUp* nuevoPickup = unEnemigo->spawnPickUp();
+							if (nuevoPickup != NULL)
+								pickups.push_back(nuevoPickup);
+							it = jugadores.begin();
+							bool encontrado = false;
+							while ((it != jugadores.end()) && !encontrado) {
+								Jugador* jugadorQueEliminoAlEnemigo = *it;
+								if (unProyectil->getIdTirador() == jugadorQueEliminoAlEnemigo->getId())
+									jugadorQueEliminoAlEnemigo->recibirPuntos(unEnemigo->getPuntos());
+								it++;
+							}
+							efectos.push_back(new EnemigoMuriendo(++contador, unEnemigo->getPos(), unEnemigo->getTamanio()));
+							enemigos.erase(it2);
+						}
+					}
+					it2++;
+				}
 
-			estado.push_back(estadoObj);
-			it3++;
+				if (colisionan || !unProyectil->esVisible()) {
+					efectos.push_back(new ImpactoBala(++contador, unProyectil));
+					it3 = proyectilesAliados.erase(it3);
+				}
+				else
+					it3++;
+			}
 		}
 
-		auto it4 = pickups.begin();
-		while (it4 != pickups.end()) {
-			Objeto* obj = *it4;
+		for (auto it6 = proyectilesEnemigos.begin(); it6 != proyectilesEnemigos.end();) {
+			Proyectil* unProyectil = *it6;
+			if (unProyectil != NULL) {
+				cambios |= unProyectil->tieneCambios(plataformas);
+				bool colisionan = false;
+				for (auto it = jugadores.begin(); (it != jugadores.end()) && !colisionan;) {
+					Jugador *unJugador = *it;
+					if (((unProyectil->getPos().x + unProyectil->getTamanio().x) < (unJugador->getPos().x)) || (unProyectil->getPos().x > unJugador->getPos().x + unJugador->getTamanio().x)) {
+						colisionan = false;
+					}
+					else if (((unProyectil->getPos().y + unProyectil->getTamanio().y) < (unJugador->getPos().y)) || (unProyectil->getPos().y > unJugador->getPos().y + unJugador->getTamanio().y)) {
+						colisionan = false;
+					}
+					else { colisionan = true; }
+					bool estaMuerto = false;
+					if (colisionan) {
+						estaMuerto = unJugador->recibirDanio(unProyectil->getDanio());
+						if (estaMuerto && modoDeJuego != MODO_DIOS) {
+							jugadores.erase(it);
+						}
+						else
+							it++;
+					}
+					else {
+						it++;
+					}
+				}
+				if (colisionan || !unProyectil->esVisible())
+					it6 = proyectilesEnemigos.erase(it6);
+				else
+					it6++;
+			}
 
-			EstadoObj estadoObj;
-			estadoObj.setId(obj->getId());
-			estadoObj.setTipo(obj->getTipo());
-			estadoObj.setEstado(obj->getEstado());
-			Punto pos;
-			pos.x = obj->getPos().x - escenario.getOffsetVista();
-			pos.y = escenario.getNivelPiso() - obj->getTamanio().y - obj->getPos().y;
-			estadoObj.setPos(pos);
-			estadoObj.setTamanio(obj->getTamanio());
-			estadoObj.setFrame(obj->getFrame());
-			estadoObj.setOrientacion(obj->getOrientacion());
-
-			estado.push_back(estadoObj);
-			it4++;
 		}
 
-		auto it5 = plataformas.begin();
-		while (it5 != plataformas.end()) {
-			Objeto* obj = *it5;
+		//Actualizar el offset si es necesario
+		if (minX > escenario.getOffsetVista() + escenario.getAnchoVista() / 2) {
+			cambios = true;
+			int offset = std::min<int>(minX - escenario.getAnchoVista() / 2, escenario.getOffsetVista() + maxOffsetDelta);
+			offset = std::min<int>(offset, escenario.getLongitud());
+			escenario.setOffsetVista(offset);
+		}
 
-			int inicio = obj->getPos().x;
-			int fin = obj->getPos().x + obj->getTamanio().x;
+		//Actualizar posiciones de jugadores para que no se salgan de pantalla
+		it = jugadores.begin();
+		while (it != jugadores.end()) {
+			Jugador* obj = *it;
 
-			if (fin >= escenario.getOffsetVista() && inicio <= escenario.getOffsetVista() + escenario.getAnchoVista()) {
-				inicio = inicio - escenario.getOffsetVista();
-				fin = std::max<int>(fin - escenario.getOffsetVista(), 0);
-				fin = std::min<int>(escenario.getAnchoVista(), fin);
+			if ((obj->getPos().x + obj->getTamanio().x) > (escenario.getOffsetVista() + escenario.getAnchoVista())) {
+				cambios = true;
+				obj->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista() - obj->getTamanio().x;
+			}
+
+			if (obj->getPos().x < escenario.getOffsetVista()) {
+				cambios = true;
+				obj->getPos().x = escenario.getOffsetVista();
+			}
+			it++;
+		}
+
+		auto efectosIt = efectos.begin();
+		while (efectosIt != efectos.end()) {
+			Efecto* obj = *efectosIt;
+			cambios |= obj->tieneCambios(plataformas);
+
+			if (obj->esVisible())
+				efectosIt++;
+			else
+				efectosIt = efectos.erase(efectosIt);
+		}
+
+		//Generar estado para la vista
+		if (cambios) {
+			it = jugadores.begin();
+			while (it != jugadores.end()) {
+				Objeto* obj = *it;
+
+				EstadoObj estadoObj;
+				estadoObj.setId(obj->getId());
+				estadoObj.setTipo(obj->getTipo());
+				estadoObj.setEstado(obj->getEstado());
+				estadoObj.setTipo(Tipo::Jugador);
+				Punto pos;
+				pos.x = obj->getPos().x - escenario.getOffsetVista();
+				pos.y = escenario.getNivelPiso() - obj->getTamanio().y - obj->getPos().y;
+				estadoObj.setPos(pos);
+				//std::cout << obj->getPos().x << std::endl;
+				//std::cout << minPosXJugador << std::endl;
+
+				estadoObj.setTamanio(obj->getTamanio());
+				estadoObj.setFrame(obj->getFrame());
+				estadoObj.setOrientacion(obj->getOrientacion());
+
+				if (obj->getTipo() == Tipo::Jugador)
+					estadoObj.setNombre(((Jugador*)obj)->getNombre());
+
+				estado.push_back(estadoObj);
+				it++;
+			}
+
+			it2 = enemigos.begin();
+			while (it2 != enemigos.end()) {
+				Enemigo* obj = *it2;
+
+				EstadoObj estadoObj;
+				estadoObj.setId(obj->getId());
+				estadoObj.setTipo(obj->getTipo());
+				estadoObj.setEstado(obj->getEstado());
+				estadoObj.setEstado(obj->getEstado());
+				estadoObj.setTipo(obj->getTipo());
+
+
+				Punto pos;
+				pos.x = obj->getPos().x - escenario.getOffsetVista();
+				pos.y = escenario.getNivelPiso() + obj->getDistanciaPiso() - obj->getPos().y;
+				estadoObj.setPos(pos);
+				estadoObj.setTamanio(obj->getTamanio());
+				estadoObj.setFrame(obj->getFrame());
+				estadoObj.setOrientacion(obj->getOrientacion());
+
+				estado.push_back(estadoObj);
+				it2++;
+			}
+
+			auto it3 = proyectilesAliados.begin();
+			while (it3 != proyectilesAliados.end()) {
+				Objeto* obj = *it3;
 
 				EstadoObj estadoObj;
 				estadoObj.setId(obj->getId());
 				estadoObj.setTipo(obj->getTipo());
 				estadoObj.setEstado(obj->getEstado());
 				Punto pos;
-				pos.x = inicio;
-				pos.y = escenario.getNivelPiso() - obj->getPos().y;
+				pos.x = obj->getPos().x - escenario.getOffsetVista();
+				pos.y = escenario.getNivelPiso() - obj->getTamanio().y - obj->getPos().y;
 				estadoObj.setPos(pos);
-				Punto tamanio;
-				tamanio.x = fin - inicio;
-				tamanio.y = GROSOR_PLATAFORMA;
-				estadoObj.setTamanio(tamanio);
+				estadoObj.setTamanio(obj->getTamanio());
 				estadoObj.setFrame(obj->getFrame());
 				estadoObj.setOrientacion(obj->getOrientacion());
 
 				estado.push_back(estadoObj);
+				it3++;
 			}
-			it5++;
+
+			auto it4 = pickups.begin();
+			while (it4 != pickups.end()) {
+				Objeto* obj = *it4;
+
+				EstadoObj estadoObj;
+				estadoObj.setId(obj->getId());
+				estadoObj.setTipo(obj->getTipo());
+				estadoObj.setEstado(obj->getEstado());
+				Punto pos;
+				pos.x = obj->getPos().x - escenario.getOffsetVista();
+				pos.y = escenario.getNivelPiso() - obj->getTamanio().y - obj->getPos().y;
+				estadoObj.setPos(pos);
+				estadoObj.setTamanio(obj->getTamanio());
+				estadoObj.setFrame(obj->getFrame());
+				estadoObj.setOrientacion(obj->getOrientacion());
+
+				estado.push_back(estadoObj);
+				it4++;
+			}
+
+			auto it5 = plataformas.begin();
+			while (it5 != plataformas.end()) {
+				Objeto* obj = *it5;
+
+				int inicio = obj->getPos().x;
+				int fin = obj->getPos().x + obj->getTamanio().x;
+
+				if (fin >= escenario.getOffsetVista() && inicio <= escenario.getOffsetVista() + escenario.getAnchoVista()) {
+					inicio = inicio - escenario.getOffsetVista();
+					fin = std::max<int>(fin - escenario.getOffsetVista(), 0);
+					fin = std::min<int>(escenario.getAnchoVista(), fin);
+
+					EstadoObj estadoObj;
+					estadoObj.setId(obj->getId());
+					estadoObj.setTipo(obj->getTipo());
+					estadoObj.setEstado(obj->getEstado());
+					Punto pos;
+					pos.x = inicio;
+					pos.y = escenario.getNivelPiso() - obj->getPos().y;
+					estadoObj.setPos(pos);
+					Punto tamanio;
+					tamanio.x = fin - inicio;
+					tamanio.y = GROSOR_PLATAFORMA;
+					estadoObj.setTamanio(tamanio);
+					estadoObj.setFrame(obj->getFrame());
+					estadoObj.setOrientacion(obj->getOrientacion());
+
+					estado.push_back(estadoObj);
+				}
+				it5++;
+			}
+
+			auto it6 = proyectilesEnemigos.begin();
+			while (it6 != proyectilesEnemigos.end()) {
+				Objeto* obj = *it6;
+
+				EstadoObj estadoObj;
+				estadoObj.setId(obj->getId());
+				estadoObj.setTipo(Tipo::BalaEnemigo);
+				estadoObj.setEstado(obj->getEstado());
+				Punto pos;
+				pos.x = obj->getPos().x - escenario.getOffsetVista();
+				pos.y = escenario.getNivelPiso() - obj->getTamanio().y - obj->getPos().y;
+				estadoObj.setPos(pos);
+				estadoObj.setTamanio(obj->getTamanio());
+				estadoObj.setFrame(obj->getFrame());
+				estadoObj.setOrientacion(obj->getOrientacion());
+
+				estado.push_back(estadoObj);
+				it6++;
+			}
+
+			auto efectosIt = efectos.begin();
+			while (efectosIt != efectos.end()) {
+				Efecto* obj = *efectosIt;
+
+				EstadoObj estadoObj;
+				estadoObj.setId(obj->getId());
+				estadoObj.setTipo(obj->getTipo());
+				estadoObj.setEstado(obj->getEstado());
+				Punto pos;
+				pos.x = obj->getPos().x - escenario.getOffsetVista();
+				pos.y = escenario.getNivelPiso() - obj->getTamanio().y - obj->getPos().y;
+				estadoObj.setPos(pos);
+				estadoObj.setTamanio(obj->getTamanio());
+				estadoObj.setFrame(obj->getFrame());
+				estadoObj.setOrientacion(obj->getOrientacion());
+				estadoObj.setNombre(obj->getNombre());
+				estado.push_back(estadoObj);
+				efectosIt++;
+			}
 		}
 
-		auto it6 = proyectilesEnemigos.begin();
-		while (it6 != proyectilesEnemigos.end()) {
-			Objeto* obj = *it6;
+		std::vector<InfoJugador> hudInfo;
 
-			EstadoObj estadoObj;
-			estadoObj.setId(obj->getId());
-			estadoObj.setTipo(Tipo::BalaEnemigo);
-			estadoObj.setEstado(obj->getEstado());
-			Punto pos;
-			pos.x = obj->getPos().x - escenario.getOffsetVista();
-			pos.y = escenario.getNivelPiso() - obj->getTamanio().y - obj->getPos().y;
-			estadoObj.setPos(pos);
-			estadoObj.setTamanio(obj->getTamanio());
-			estadoObj.setFrame(obj->getFrame());
-			estadoObj.setOrientacion(obj->getOrientacion());
+		auto jugadorIt = jugadores.begin();
+		while (jugadorIt != jugadores.end()) {
+			Jugador* jugador = *jugadorIt;
+			InfoJugador info;
 
-			estado.push_back(estadoObj);
-			it6++;
+			info.arma = jugador->getArma()->getTipo();
+			info.balas = jugador->getArma()->getCantidad();
+			setCharArray(jugador->getNombre(), info.nombre);
+			info.puntos = jugador->getPuntos();
+			info.energia = jugador->getEnergia();
+			hudInfo.push_back(info);
+
+			jugadorIt++;
 		}
 
-		auto efectosIt = efectos.begin();
-		while (efectosIt != efectos.end()) {
-			Efecto* obj = *efectosIt;
 
-			EstadoObj estadoObj;
-			estadoObj.setId(obj->getId());
-			estadoObj.setTipo(obj->getTipo());
-			estadoObj.setEstado(obj->getEstado());
-			Punto pos;
-			pos.x = obj->getPos().x - escenario.getOffsetVista();
-			pos.y = escenario.getNivelPiso() - obj->getTamanio().y - obj->getPos().y;
-			estadoObj.setPos(pos);
-			estadoObj.setTamanio(obj->getTamanio());
-			estadoObj.setFrame(obj->getFrame());
-			estadoObj.setOrientacion(obj->getOrientacion());
-			estadoObj.setNombre(obj->getNombre());
-			estado.push_back(estadoObj);
-			efectosIt++;
+		rv = cambios;
+		cambios = false;
+		lock.unlock();
+
+		if (rv) {
+			bytes.put(escenario.getOffsetVista());
+			bytes.putAll(estado);
+			bytes.putAll(hudInfo);
 		}
+		return rv;
+	} else {
+		//devolver pantalla carga
+		return false;
 	}
-
-	std::vector<InfoJugador> hudInfo;
-
-	auto jugadorIt = jugadores.begin();
-	while (jugadorIt != jugadores.end()) {
-		Jugador* jugador = *jugadorIt;
-		InfoJugador info;
-
-		info.arma = jugador->getArma()->getTipo();
-		info.balas = jugador->getArma()->getCantidad();
-		setCharArray(jugador->getNombre(), info.nombre);
-		info.puntos = jugador->getPuntos();
-		info.energia = jugador->getEnergia();
-		hudInfo.push_back(info);
-
-		jugadorIt++;
-	}
-
-
-	rv = cambios;
-	cambios = false;
-	lock.unlock();
-
-	if (rv) {
-		bytes.put(escenario.getOffsetVista());
-		bytes.putAll(estado);
-		bytes.putAll(hudInfo);
-	}
-	return rv;
 }

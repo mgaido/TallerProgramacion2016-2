@@ -16,7 +16,7 @@ Jugador::Jugador(int id, std::string nombre, Config& _configuracion) : Personaje
 	puntos = 0;
 	estado = Estado::Desconectado;
 	tipo = Tipo::Jugador;
-
+	estaMuerto = false;
 	cambios = false;
 }
 
@@ -93,6 +93,10 @@ bool Jugador::esEnemigo() {
 
 int Jugador::getPuntos() {
 	return puntos;
+}
+
+void Jugador::setEstaMuerto(bool estaMuerto){
+	this->estaMuerto = estaMuerto;
 }
 
 void Jugador::setConectado(bool conectado) {

@@ -24,10 +24,12 @@ public:
 	void recibirBonus(PickUp* unPickUp);
 	void recibirPuntos(int puntosObtenidos);
 	int getPuntos();
+	void setEstaMuerto(bool estaMuerto);
 private:
 	bool killAll;
 	std::string nombre;
 	int puntos;
+	bool estaMuerto;
 };
 
 #endif /* JUGADOR_H_ */
