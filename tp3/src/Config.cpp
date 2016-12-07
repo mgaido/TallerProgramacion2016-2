@@ -632,3 +632,19 @@ bool Nodo::siguiente() {
 	ptr = ptr->next_sibling();
 	return ptr != 0;
 }
+
+bool Config::esInmortal() {
+	return inmortal;
+}
+
+char Config::getModoJuego() {
+	return modoJuego;
+}
+
+void Config::setInmortal(bool inmortal) {
+	this->inmortal = inmortal;
+}
+
+void Config::setModoJuego(char modoJuego) {
+	this->modoJuego = modoJuego;
+}

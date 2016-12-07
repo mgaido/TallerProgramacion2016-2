@@ -20,11 +20,6 @@
 #include "Objeto.h"
 #include "EnemigoFactory.h"
 
-const char MODO_INDIVIDUAL = 0;
-const char MODO_COOP = 1;
-const char MODO_GRUPAL = 2;
-const char MODO_DIOS = 3;
-
 class Jugador;
 class Enemigo;
 class Objeto;
@@ -59,13 +54,8 @@ public:
 private:
 	void crearPlataformas();
 
-	bool ganado;
-	bool perdido;
 	Config& configuracion;
 	Escenario escenario;
-	bool iniciado;
-
-	int cantidadJugadores;
 
 	EnemigoFactory* enemigoFactory;
 
@@ -73,13 +63,12 @@ private:
 	std::vector<Objeto*> nuevosObjetos;
 	std::vector<Plataforma*> plataformas;
 	std::vector<Jugador*> jugadores;
-	bool cambios;
 
+	bool cambios;
 	std::recursive_mutex lock;
 	std::recursive_mutex nuevosLock;
 
-	char modoDeJuego;
-
+	EstadoJuego estado;
 
 	Boss* BossFinal;
 };

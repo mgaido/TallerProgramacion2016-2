@@ -53,8 +53,9 @@ void Servidor::avanzarJuego() {
 			continue;
 		} else if (juego->estaPerdido()){
 			detenido = true;
-			break;
-		} else if (cambios) {
+		}
+
+		if (cambios) {
 			auto it = sesiones.begin();
 			while (it != sesiones.end()) {
 				(*it)->cambioDeEstado(bytes);

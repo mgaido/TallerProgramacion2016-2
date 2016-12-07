@@ -14,9 +14,14 @@ Jugador::Jugador(int id, std::string nombre, Config& _configuracion) : Soldado(i
 	tipo = Tipo::Jugador;
 	energia = 1000;
 	cambios = false;
+	inmortal = configuracion.esInmortal();
+}
 
-	tamanio.x = configuracion.getTamanioJugador().x;
-	tamanio.y = configuracion.getTamanioJugador().y;
+bool Jugador::recibirDanio(int danio) {
+	if (inmortal)
+		return false;
+
+	return Soldado::recibirDanio(danio);
 }
 
 Jugador::~Jugador() {
@@ -32,10 +37,6 @@ void Jugador::restablecerEnergia() {
 
 void Jugador::recibirPuntos(int puntosObtenidos){
 	puntos += puntosObtenidos;
-}
-
-bool Jugador::esEnemigo() {
-	return false;
 }
 
 int Jugador::getPuntos() {

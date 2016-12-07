@@ -7,6 +7,10 @@
 #include "Enums.h"
 #include "Utils.h"
 
+const char MODO_INDIVIDUAL = 0;
+const char MODO_COOP = 1;
+const char MODO_GRUPAL = 2;
+
 struct ConfigCapa {
 	std::array<char, 512> imagen;
 	int zIndex;
@@ -51,9 +55,19 @@ public:
 
 	void defaultConfig();
 
+	bool esInmortal();
+	void setInmortal(bool inmortal);
+
+	char getModoJuego();
+	void setModoJuego(char modoJuego);
+
 	std::string toString();
 
+
 private:
+	bool inmortal;
+	char modoJuego;
+
 	Punto tamanioVentana;
 	Punto tamanioJugador;
 	unsigned int cantidadMinimaJugadores;

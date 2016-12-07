@@ -18,6 +18,10 @@ Vista::Vista(ColaBloqueante<int>& _eventosTeclado, std::string nombreJugador, in
 	this->nombreJugador = nombreJugador;
 	this->configuracion = configuracion;
 	frameDelay = 1000000.0/configuracion.getFrameRate();
+
+	espera = nullptr;
+	gameOver = nullptr;
+
 	initSDL();
 }
 
@@ -27,6 +31,12 @@ Vista::~Vista() {
 		delete *rendererIt;
 		renderers.erase(rendererIt);
 	}
+
+	if (espera != nullptr)
+		delete espera;
+
+	if (gameOver != nullptr)
+		delete gameOver;
 
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(ventana);
@@ -58,6 +68,16 @@ void Vista::iniciar() {
 	if (ventana == nullptr) {
 		error("Window could not be created! SDL_Error: " + std::string(SDL_GetError()));
 	} else {
+		espera = new Pantalla("img/espera.png", configuracion.getTamanioVentana());
+		espera->cargar(renderer);
+		{
+			RendererPantalla(espera).aplicar(renderer, fuente);
+			SDL_RenderPresent(renderer);
+		}
+
+		gameOver = new Pantalla("img/gameOver.jpg", configuracion.getTamanioVentana());
+		gameOver->cargar(renderer);
+
 		auto capaIt = configuracion.getConfigCapas().begin();
 		while (capaIt != configuracion.getConfigCapas().end()) {
 			std::shared_ptr<Capa> capa = std::make_shared<Capa>(configuracion.getTamanioVentana(),
@@ -100,11 +120,12 @@ void Vista::cicloPrincipal() {
 	}
 }
 
-void Vista::nuevoEstado(int offsetVista, std::vector<EstadoObj>& estado, std::vector<InfoJugador>& hudInfo) {
+void Vista::nuevoEstado(EstadoJuego estado, int offsetVista, std::vector<EstadoObj>& estadoObjs, std::vector<InfoJugador>& hudInfo) {
 	lockEstado.lock();
-	this->offsetVista = offsetVista;
-	this->estado.clear();
 	this->estado = estado;
+	this->offsetVista = offsetVista;
+	this->estadoObjs.clear();
+	this->estadoObjs = estadoObjs;
 	this->hudInfo.clear();
 	this->hudInfo = hudInfo;
 	lockEstado.unlock();
@@ -157,53 +178,62 @@ void Vista::enviarEventos() {
 void Vista::actualizar() {
 	lockEstado.lock();
 
-	if (estado.size() > 0) {
-		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-		SDL_RenderClear(renderer);
+	if (estado == EstadoJuego::NoIniciado)
+		RendererPantalla(espera).aplicar(renderer, fuente);
+	if (estado == EstadoJuego::Perdido) {
+		RendererPantalla(gameOver).aplicar(renderer, fuente);
+	}
+
+	if (estado != EstadoJuego::EnJuego || estadoObjs.size() > 0) {
+		auto rendererIt = renderers.begin();
+		while (rendererIt != renderers.end()) {
+			delete *rendererIt;
+			renderers.erase(rendererIt);
+		}
+	}
+
+	if (estado == EstadoJuego::EnJuego) {
+		if (estadoObjs.size() > 0) {
+			SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+			SDL_RenderClear(renderer);
+
+			auto capa = capas.begin();
+			while (capa != capas.end()) {
+				renderers.push_back(new RendererCapa(capa->get(), offsetVista));
+				capa++;
+			}
+
+			auto it = estadoObjs.begin();
+			while (it != estadoObjs.end()) {
+
+				bool encontrado = false;
+				auto map = spritess.find(it->getTipo());
+				if (map != spritess.end()) {
+					auto map2 = map->second.find(it->getEstado());
+					if (map2 != map->second.end()) {
+						encontrado = true;
+						auto configSprite = map2->second;
+						renderers.push_back(new RendererSprite(configSprite.get(), it->getPos(), it->getTamanio(), it->getNombre(), it->getFrame(), it->getOrientacion(), it->getId() == idJugador));
+					}
+				}
+				if (! encontrado)
+					error("Falta sprite " + it->toString());
+
+				//info(it->toString(), true);
+
+				estadoObjs.erase(it);
+			}
+
+			sort(renderers.begin(), renderers.end(), [](Renderer* a, Renderer* b) -> bool {
+				return a->getZindex() < b->getZindex();
+			});
+		}
 
 		auto rendererIt = renderers.begin();
 		while (rendererIt != renderers.end()) {
 			(*rendererIt)->aplicar(renderer, fuente);
-			delete *rendererIt;
-			renderers.erase(rendererIt);
+			rendererIt++;
 		}
-
-		auto capa = capas.begin();
-		while (capa != capas.end()) {
-			renderers.push_back(new RendererCapa(capa->get(), offsetVista));
-			capa++;
-		}
-
-		auto it = estado.begin();
-		while (it != estado.end()) {
-
-			bool encontrado = false;
-			auto map = spritess.find(it->getTipo());
-			if (map != spritess.end()) {
-				auto map2 = map->second.find(it->getEstado());
-				if (map2 != map->second.end()) {
-					encontrado = true;
-					auto configSprite = map2->second;
-					renderers.push_back(new RendererSprite(configSprite.get(), it->getPos(), it->getTamanio(), it->getNombre(), it->getFrame(), it->getOrientacion(), it->getId() == idJugador));
-				}
-			}
-			if (! encontrado)
-				error("Falta sprite " + it->toString());
-
-			//info(it->toString(), true);
-
-			estado.erase(it);
-		}
-
-		sort(renderers.begin(), renderers.end(), [](Renderer* a, Renderer* b) -> bool {
-			return a->getZindex() < b->getZindex();
-		});
-	}
-
-	auto rendererIt = renderers.begin();
-	while (rendererIt != renderers.end()) {
-		(*rendererIt)->aplicar(renderer, fuente);
-		rendererIt++;
 	}
 
 	mostrarHud();
@@ -225,14 +255,14 @@ void Vista::mostrarHud() {
 		else
 			color = { 180, 180, 180, 255 };
 
-		std::string energia = it->energia > 0 ? std::to_string(it->energia) : "inf";
+		std::string energia = configuracion.esInmortal() ? "inf" : std::to_string(it->energia);
 		std::string texto = nombre + ": " + energia;
 		escribirLineaHud(0, i, hudInfo.size(), texto, color);
 
 		std::string arma;
 		switch (it->arma) {
 		case Tipo::GunH:
-			arma = "Heavy";
+			arma = "HMG";
 			break;
 		case Tipo::GunS:
 			arma = "Shotgun";
@@ -280,8 +310,7 @@ Imagen::~Imagen() {
 		SDL_DestroyTexture(img);
 }
 
-void Imagen::cargarImagen(SDL_Renderer* renderer, std::array<char, 512>& _path) {
-	std::string path = std::string(_path.data());
+void Imagen::cargarImagen(SDL_Renderer* renderer, std::string path) {
 	SDL_Surface* imagen = IMG_Load(path.c_str());
 	if (! imagen) {
 		error( "No se pudo cargar la imagen \"" + path + "\". Error: " + std::string(IMG_GetError()), true);
@@ -302,10 +331,11 @@ Capa::Capa(Punto ventana, int longitud, ConfigCapa& _config) : Imagen(), config(
 	this->tamanioDestino = ventana;
 	this->longitud = longitud;
 	this->tiles = 1;
+	this->escala = 1;
 }
 
 void Capa::cargar(SDL_Renderer* renderer) {
-	cargarImagen(renderer, config.imagen);
+	cargarImagen(renderer, std::string(config.imagen.data()));
 	this->escala = (double) tamanio.y / tamanioDestino.y;
 	if (tamanioDestino.x * escala > tamanio.x)
 		this->tiles = ceil(tamanioDestino.x / (double) tamanio.x);
@@ -321,7 +351,7 @@ Sprite::Sprite(ConfigSprite& _config) : Imagen(), config(_config) {
 }
 
 void Sprite::cargar(SDL_Renderer* renderer) {
-	cargarImagen(renderer, config.imagen);
+	cargarImagen(renderer, std::string(config.imagen.data()));
 }
 
 int Sprite::getZindex() {
@@ -442,7 +472,31 @@ void RendererSprite::dibujarTexto(SDL_Renderer* renderer, TTF_Font* fuente) {
 	SDL_DestroyTexture(texture);
 }
 
-
 Renderer::~Renderer() {
 }
 
+Pantalla::Pantalla(std::string imagen, Punto ventana) : Imagen() {
+	this->imagen = imagen;
+	this->ventana = ventana;
+}
+
+void Pantalla::cargar(SDL_Renderer* renderer) {
+	cargarImagen(renderer, imagen);
+}
+
+int Pantalla::getZindex() {
+	return 20;
+}
+
+RendererPantalla::RendererPantalla(Pantalla* pantalla) {
+	this->pantalla = pantalla;
+}
+
+int RendererPantalla::getZindex() {
+	return pantalla->getZindex();
+}
+
+void RendererPantalla::aplicar(SDL_Renderer* renderer, TTF_Font* fuente) {
+	SDL_RenderCopy(renderer, pantalla->img, 0, 0);
+
+}

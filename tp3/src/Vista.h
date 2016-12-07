@@ -27,9 +27,22 @@ public:
 	virtual void cargar(SDL_Renderer* renderer)=0;
 	virtual int getZindex() = 0;
 protected:
-	void cargarImagen(SDL_Renderer* renderer, std::array<char, 512>& path);
+	void cargarImagen(SDL_Renderer* renderer, std::string imagen);
 	Punto tamanio;
 	SDL_Texture* img;
+};
+
+
+class RendererPantalla;
+class Pantalla: public Imagen {
+	friend class RendererPantalla;
+public:
+	Pantalla(std::string imagen, Punto ventana);
+	virtual void cargar(SDL_Renderer* renderer);
+	virtual int getZindex();
+private:
+	std::string imagen;
+	Punto ventana;
 };
 
 class RendererSprite;
@@ -65,6 +78,15 @@ public:
 	virtual ~Renderer();
 	virtual int getZindex() = 0;
 	virtual void aplicar(SDL_Renderer* renderer, TTF_Font* fuente) = 0;
+};
+
+class RendererPantalla : public Renderer {
+public:
+	RendererPantalla(Pantalla* pantalla);
+	virtual int getZindex();
+	virtual void aplicar(SDL_Renderer* renderer, TTF_Font* fuente);
+private:
+	Pantalla* pantalla;
 };
 
 class RendererSprite : public Renderer {
@@ -106,7 +128,7 @@ public:
 
 	void iniciar();
 	void detener();
-	void nuevoEstado(int offsetVista, std::vector<EstadoObj>& estado, std::vector<InfoJugador>& hudInfo);
+	void nuevoEstado(EstadoJuego estado, int offsetVista, std::vector<EstadoObj>& estadoObjs, std::vector<InfoJugador>& hudInfo);
 
 private:
 	void cicloPrincipal();
@@ -125,14 +147,17 @@ private:
 	ColaBloqueante<int>& eventosTeclado;
 
 	std::mutex lockEstado;
+	EstadoJuego estado;
 	int offsetVista;
-	std::vector<EstadoObj> estado;
+	std::vector<EstadoObj> estadoObjs;
 	std::vector<InfoJugador> hudInfo;
 
 	SDL_Window* ventana;
 	SDL_Renderer* renderer;
 	std::vector<std::shared_ptr<Capa>> capas;
 	HashMap<Tipo, HashMap<Estado, std::shared_ptr<Sprite>>> spritess;
+	Pantalla* espera;
+	Pantalla* gameOver;
 
 	std::vector<Renderer*> renderers;
 

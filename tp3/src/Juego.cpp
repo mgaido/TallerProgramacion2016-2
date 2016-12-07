@@ -20,15 +20,10 @@ int maxOffsetDelta;
 int contador = 0;
 
 Juego::Juego(Config& _configuracion) : configuracion(_configuracion) {
-	iniciado = false;
-	cantidadJugadores = 0;
+	estado = EstadoJuego::NoIniciado;
 	BossFinal = nullptr;
 	cambios = true;
-	perdido = false;
-	ganado = false;
 	crearPlataformas();
-
-	modoDeJuego = MODO_INDIVIDUAL;
 
 	escenario = Escenario(configuracion.getLongitud(), configuracion.getTamanioVentana().x, configuracion.getTamanioVentana().y, configuracion.getNivelPiso());
 	maxOffsetDelta = round(configuracion.getVelocidadX() * 2 * 1000000.0 / configuracion.getFrameRate());
@@ -97,11 +92,11 @@ void Juego::agregarObjeto(Objeto *objeto){
 }
 
 unsigned int Juego::getCantdadJugadores(){
-	return cantidadJugadores;
+	return jugadores.size();
 }
 
 bool Juego::estaIniciado() {
-	return iniciado;
+	return estado != EstadoJuego::NoIniciado;
 }
 
 Jugador* Juego::nuevoJugador(std::string nombre) {
@@ -112,9 +107,8 @@ Jugador* Juego::nuevoJugador(std::string nombre) {
 	lock.lock();
 	agregarObjeto(jugador);
 	jugadores.push_back(jugador);
-	cantidadJugadores++;
-	if (! iniciado && getCantdadJugadores() >= configuracion.getCantidadMinimaJugadores()) { //config
-		iniciado = true;
+	if (estado == EstadoJuego::NoIniciado && getCantdadJugadores() >= configuracion.getCantidadMinimaJugadores()) { //config
+		estado = EstadoJuego::EnJuego;
 		for (auto it = objetos.begin(); it != objetos.end(); it++) {
 			if ((*it)->getTipo() == Tipo::Jugador) {
 				Jugador* jugador = (Jugador*) *it;
@@ -131,7 +125,7 @@ Jugador* Juego::nuevoJugador(std::string nombre) {
 
 bool Juego::getEstado(Bytes& bytes) {
 	bool rv = false;;
-	std::vector<EstadoObj> estado;
+	std::vector<EstadoObj> estadoObjs;
 	std::vector<InfoJugador> hudInfo;
 
 	lock.lock();
@@ -228,7 +222,7 @@ bool Juego::getEstado(Bytes& bytes) {
 			Objeto* obj = *it;
 			if (obj->esVisible()) {
 				EstadoObj estadoObj = obj->getEstadoObj(escenario);
-				estado.push_back(estadoObj);
+				estadoObjs.push_back(estadoObj);
 			}
 			it++;
 		}
@@ -260,7 +254,7 @@ bool Juego::getEstado(Bytes& bytes) {
 				estadoObj.setFrame(obj->getFrame());
 				estadoObj.setOrientacion(obj->getOrientacion());
 
-				estado.push_back(estadoObj);
+				estadoObjs.push_back(estadoObj);
 			}
 			itPlataformas++;
 		}
@@ -282,13 +276,13 @@ bool Juego::getEstado(Bytes& bytes) {
 				jugadoresVivos --;
 		}
 
-		if (iniciado && jugadoresVivos == 0) {
-			perdido = true;
+		if (estaIniciado() && jugadoresVivos == 0) {
+			estado = EstadoJuego::Perdido;
 			info("GAME OVER", true);
 		}
 
 		if (BossFinal != nullptr && ! BossFinal->esVisible()) {
-			ganado = true;
+			estado = EstadoJuego::Ganado;
 			info("STAGE CLEAR", true);
 		}
 	}
@@ -297,8 +291,9 @@ bool Juego::getEstado(Bytes& bytes) {
 	lock.unlock();
 
 	if (rv) {
+		bytes.put(estado);
 		bytes.put(escenario.getOffsetVista());
-		bytes.putAll(estado);
+		bytes.putAll(estadoObjs);
 		bytes.putAll(hudInfo);
 	}
 	return rv;
@@ -337,10 +332,10 @@ void Juego::setEnemigoFactory(EnemigoFactory* enemigoFactory) {
 }
 
 bool Juego::estaPerdido() {
-	return perdido;
+	return estado == EstadoJuego::Perdido;
 }
 
 bool Juego::estaGanado() {
-	return ganado;
+	return estado == EstadoJuego::Ganado;
 }
 

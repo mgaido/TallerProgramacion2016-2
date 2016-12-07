@@ -19,17 +19,19 @@ public:
 	Jugador(int id, std::string nombre, Config& configuracion);
 	~Jugador();
 
+	virtual bool recibirDanio(int a);
 	void restablecerEnergia();
-	virtual std::string getNombre();
+
 	int getPuntos();
 	void recibirPuntos(int puntosObtenidos);
-	void setConectado(bool conectado);
 
-	void cambiarArma(Proyectil*);
-	virtual bool esEnemigo();
+	virtual std::string getNombre();
+
+	void setConectado(bool conectado);
 private:
 	std::string nombre;
 	int puntos;
+	bool inmortal;
 };
 
 #endif /* JUGADOR_H_ */
