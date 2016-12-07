@@ -278,7 +278,7 @@ void Config::defaultConfig() {
 	sprite = ConfigSprite();
 	sprite.estado = Estado::Caminando;
 	sprite.tipo = Tipo::EnemigoFuerte;
-	setCharArray("img/EnemigoCaminando.png", sprite.imagen);
+	setCharArray("img/EnemigoCaminandoF.png", sprite.imagen);
 	sprite.frames = 16;
 	sprite.tiempo = 1000;
 	sprite.zIndex = 10;
@@ -287,7 +287,7 @@ void Config::defaultConfig() {
 	sprite = ConfigSprite();
 	sprite.estado = Estado::Saltando;
 	sprite.tipo = Tipo::EnemigoFuerte;
-	setCharArray("img/EnemigoSaltando.png", sprite.imagen);
+	setCharArray("img/EnemigoSaltandoF.png", sprite.imagen);
 	sprite.frames = 1;
 	sprite.tiempo = 1000;
 	sprite.zIndex = 10;
@@ -295,7 +295,7 @@ void Config::defaultConfig() {
 
 	sprite = ConfigSprite();
 	sprite.estado = Estado::Quieto;
-	setCharArray("img/EnemigoDisparando.png", sprite.imagen);
+	setCharArray("img/EnemigoDisparandoF.png", sprite.imagen);
 	sprite.tipo = Tipo::EnemigoFuerte;
 	sprite.frames = 1;
 	sprite.tiempo = 1000;
@@ -459,7 +459,7 @@ void Config::defaultConfig() {
 	sprite.estado = Estado::Efecto;
 	setCharArray("img/impactoShot.png", sprite.imagen);
 	sprite.tipo = Tipo::GunS;
-	sprite.frames = 10;
+	sprite.frames = 16;
 	sprite.tiempo = 500;
 	sprite.zIndex = 10;
 	this->configSprites.push_back(sprite);
@@ -468,7 +468,7 @@ void Config::defaultConfig() {
 	sprite.estado = Estado::Efecto;
 	setCharArray("img/impactoExplosion.png", sprite.imagen);
 	sprite.tipo = Tipo::GunR;
-	sprite.frames = 10;
+	sprite.frames = 14;
 	sprite.tiempo = 500;
 	sprite.zIndex = 10;
 	this->configSprites.push_back(sprite);
