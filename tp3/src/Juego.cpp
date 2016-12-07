@@ -31,7 +31,7 @@ Juego::Juego(Config& _configuracion) : configuracion(_configuracion) {
 	modoDeJuego = MODO_INDIVIDUAL;
 
 	escenario = Escenario(configuracion.getLongitud(), configuracion.getTamanioVentana().x, configuracion.getTamanioVentana().y, configuracion.getNivelPiso());
-	maxOffsetDelta = round(configuracion.getVelocidadX() * 4 * 1000000.0 / configuracion.getFrameRate());
+	maxOffsetDelta = round(configuracion.getVelocidadX() * 2 * 1000000.0 / configuracion.getFrameRate());
 
 	enemigoFactory = new EnemigoFactory(6, -1, [&](Juego* juego){ return new Enemigo(++contador, configuracion, escenario); });
 }
@@ -150,7 +150,7 @@ bool Juego::getEstado(Bytes& bytes) {
 		}
 	}
 
-	minX = std::max<int>(minX, 6800);
+	//minX = std::max<int>(minX, 6800);
 
 	//Actualizar el offset si es necesario
 	if (minX > escenario.getOffsetVista() + escenario.getAnchoVista()/2) {
