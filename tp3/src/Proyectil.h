@@ -28,6 +28,7 @@ public:
 	virtual void setOrientacionY(char orientacion);
 	virtual void setVelocidadY(double velocidadProyectilY);
 
+	virtual EstadoObj getEstadoObj(Escenario& escenario);
 
 
 	int getDanio();

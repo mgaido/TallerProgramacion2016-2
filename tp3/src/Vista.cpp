@@ -213,13 +213,14 @@ void Vista::actualizar() {
 					if (map2 != map->second.end()) {
 						encontrado = true;
 						auto configSprite = map2->second;
-						renderers.push_back(new RendererSprite(configSprite.get(), it->getPos(), it->getTamanio(), it->getNombre(), it->getFrame(), it->getOrientacion(), it->getId() == idJugador));
+						renderers.push_back(new RendererSprite(configSprite.get(), it->getPos(), it->getTamanio(), it->getNombre(),
+								it->getFrame(), it->getOrientacion(), it->getRotacion(), it->getId() == idJugador));
 					}
 				}
 				if (! encontrado)
-					error("Falta sprite " + it->toString());
+					error("Falta sprite " + it->toString(), true);
 
-				//info(it->toString(), true);
+				info(it->toString(), true);
 
 				estadoObjs.erase(it);
 			}
@@ -391,13 +392,14 @@ void RendererCapa::aplicar(SDL_Renderer* renderer, TTF_Font* fuente) {
 	}
 }
 
-RendererSprite::RendererSprite(Sprite* sprite, Punto pos, Punto tamanio, std::string texto, int frame, bool orientacion, bool esJugador) {
+RendererSprite::RendererSprite(Sprite* sprite, Punto pos, Punto tamanio, std::string texto, int frame, bool orientacion, double rotacion, bool esJugador) {
 	this->sprite = sprite;
 	this->pos = pos;
 	this->tamanio = tamanio;
 	this->texto = texto;
 	this->frame = frame;
 	this->orientacion = orientacion;
+	this->rotacion = rotacion;
 	this->esJugador = esJugador;
 }
 
@@ -418,7 +420,7 @@ void RendererSprite::aplicar(SDL_Renderer* renderer, TTF_Font* fuente) {
 	SDL_Rect rect;
 
 	double anchoEscalado = tamanio.y / (double) sprite->tamanio.y * sprite->tamanio.x;
-	if (anchoEscalado < tamanio.x)
+	if (anchoEscalado < tamanio.x / 2)
 		rect.w = anchoEscalado;
 	else
 		rect.w = tamanio.x;
@@ -428,10 +430,12 @@ void RendererSprite::aplicar(SDL_Renderer* renderer, TTF_Font* fuente) {
 	rect.x = pos.x;
 
 	do {
+		SDL_RendererFlip flipType = SDL_FLIP_NONE;
+
 		if (orientacion)
-		    SDL_RenderCopyEx(renderer, sprite->img, &seccion, &rect, 0, 0, SDL_FLIP_HORIZONTAL);
-		else
-			SDL_RenderCopy(renderer, sprite->img, &seccion, &rect);
+			flipType = SDL_FLIP_HORIZONTAL;
+
+		SDL_RenderCopyEx(renderer, sprite->img, &seccion, &rect, rotacion, 0, flipType);
 
 		rect.x += rect.w;
 		rect.w = std::min<int>(anchoEscalado, tamanio.x - (rect.x - pos.x));

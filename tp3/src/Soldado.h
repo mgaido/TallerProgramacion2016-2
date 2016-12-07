@@ -22,6 +22,7 @@ protected:
 	bool actualizar(Juego* juego);
 
 	bool cambios;
+	bool dispara;
 	char apunta;
 
 	double velocCaminar, velocSaltoX, velocSaltoY;

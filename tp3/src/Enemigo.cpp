@@ -27,18 +27,18 @@ PickUp* Enemigo::spawnPickUp() {
 
 	int valor = rand() % 100;
 
-	if (valor < 30) { //30% dropear bonus al morir
-		if (valor < 5) //16%
+	if (valor <= 60) {
+		if (valor < 7)
 			nuevoPickup = new PickUpKillAll(contador++, getPos());
-		else if (valor < 15) //33% vida
+		else if (valor < 20)
 			nuevoPickup = new PickUpVida(contador++, getPos());
-		else if (valor < 21) //20% H
+		else if (valor < 34)
 			nuevoPickup = new PickUpArma(contador++, getPos(), Tipo::GunH);
-		else if (valor < 25)  // 13% S
+		else if (valor < 46)
 			nuevoPickup = new PickUpArma(contador++, getPos(), Tipo::GunS);
-		else if (valor < 28)  // 10% R
+		else if (valor < 54)
 			nuevoPickup = new PickUpArma(contador++, getPos(), Tipo::GunR);
-		else // 6% C
+		else
 			nuevoPickup = new PickUpArma(contador++, getPos(), Tipo::GunC);
 	}
 	return nuevoPickup;

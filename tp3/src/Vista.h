@@ -91,7 +91,7 @@ private:
 
 class RendererSprite : public Renderer {
 public:
-	RendererSprite(Sprite* sprite, Punto pos, Punto tamanio, std::string texto, int frame, bool orientacion, bool esJugador);
+	RendererSprite(Sprite* sprite, Punto pos, Punto tamanio, std::string texto, int frame, bool orientacion, double rotacion, bool esJugador);
 	virtual int getZindex();
 	virtual void aplicar(SDL_Renderer* renderer, TTF_Font* fuente);
 
@@ -105,6 +105,7 @@ private:
 	std::string texto;
 	int frame;
 	bool orientacion;
+	double rotacion;
 	bool esJugador;
 };
 

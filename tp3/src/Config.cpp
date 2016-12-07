@@ -1,5 +1,11 @@
 #include "Config.h"
 
+Config::Config() {
+
+	inmortal = false;
+	modoJuego = MODO_INDIVIDUAL;
+}
+
 void Config::parsearXML(std::string archivo) {
 
 	if (archivo.size() == 0) {
@@ -388,7 +394,7 @@ void Config::defaultConfig() {
 
 	sprite = ConfigSprite();
 	sprite.estado = Estado::ProyectilEnMovimiento;
-	setCharArray("img/misil.png", sprite.imagen);
+	setCharArray("img/bala3.png", sprite.imagen);
 	sprite.tipo = Tipo::Misil;
 	sprite.frames = 1;
 	sprite.tiempo = 1000;
@@ -399,8 +405,17 @@ void Config::defaultConfig() {
 	sprite.estado = Estado::ProyectilEnMovimiento;
 	setCharArray("img/bomba.png", sprite.imagen);
 	sprite.tipo = Tipo::Bomba;
-	sprite.frames = 7;
+	sprite.frames = 1;
 	sprite.tiempo = 1000;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
+	sprite = ConfigSprite();
+	sprite.estado = Estado::ProyectilEnMovimiento;
+	setCharArray("img/laser.png", sprite.imagen);
+	sprite.tipo = Tipo::Laser;
+	sprite.frames = 3;
+	sprite.tiempo = 10000;
 	sprite.zIndex = 10;
 	this->configSprites.push_back(sprite);
 

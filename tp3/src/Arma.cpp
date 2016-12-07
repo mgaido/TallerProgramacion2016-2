@@ -12,6 +12,8 @@
 #include "GunC.h"
 #include "Misil.h"
 #include "Bomba.h"
+#include "Torreta.h"
+#include "Laser.h"
 
 Arma::Arma() {
 	tipo = Tipo::Void;
@@ -78,6 +80,12 @@ Proyectil* Arma::disparar() {
 			break;
 		case Tipo::Bomba:
 			proyectil = new Bomba(++contador);
+			break;
+		case Tipo::Torreta:
+			proyectil = new Torreta(++contador);
+			break;
+		case Tipo::Laser:
+			proyectil = new Laser(++contador);
 			break;
 		default:
 			break;

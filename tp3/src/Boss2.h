@@ -9,9 +9,6 @@ class Boss2 : public Boss {
 public:
 	Boss2(int id, Config& _configuracion);
 	virtual bool tieneCambios(Juego* juego);
-
-protected:
-	char numeroDeBoss;
 };
 
 #endif /* BOSS_H_ */

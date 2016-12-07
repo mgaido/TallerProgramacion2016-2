@@ -132,3 +132,37 @@ void Proyectil::setPos(Punto nuevaPosicion) {
 Efecto* Proyectil::efectoAlDesaparecer() {
 	return new ImpactoBala(++contador, this);
 }
+
+EstadoObj Proyectil::getEstadoObj(Escenario& escenario) {
+	EstadoObj estado = Objeto::getEstadoObj(escenario);
+
+	estado.setOrientacion(false);
+
+	if (velocidadProyectilX > 0 && velocidadProyectilY == 0)
+		estado.setRotacion(0);
+
+	if (velocidadProyectilX > 0 && velocidadProyectilY < 0)
+		estado.setRotacion(45);
+
+	if (velocidadProyectilX == 0 && velocidadProyectilY < 0)
+		estado.setRotacion(90);
+
+	if (velocidadProyectilX < 0 && velocidadProyectilY < 0)
+		estado.setRotacion(135);
+
+	if (velocidadProyectilX < 0 && velocidadProyectilY == 0)
+		estado.setRotacion(180);
+
+	if (velocidadProyectilX < 0 && velocidadProyectilY > 0)
+		estado.setRotacion(225);
+
+	if (velocidadProyectilX == 0 && velocidadProyectilY > 0)
+		estado.setRotacion(270);
+
+	if (velocidadProyectilX > 0 && velocidadProyectilY > 0)
+		estado.setRotacion(315);
+
+
+	return estado;
+}
+

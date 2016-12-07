@@ -11,7 +11,7 @@
 #include <string>
 
 enum class Tipo {  GunH, GunC, GunS, GunR, //Proyectiles jugador
-					Bomba, Misil, Laser, Canion, //Proyectiles bosses
+					Bomba, Misil, Laser, Torreta, //Proyectiles bosses
 					Jugador, Enemigo, EnemigoFuerte, Boss1, Boss2, Boss3, //Personajes
 					BonusVida, BonusKill, BonusArmaH, BonusArmaS, BonusArmaR, BonusArmaC, //PickUps
 					Plataforma, Efecto,
@@ -51,8 +51,8 @@ inline std::string nombreTipo(Tipo tipo) {
 	case Tipo::Laser:
 		str = "Laser";
 		break;
-	case Tipo::Canion:
-		str = "Canion";
+	case Tipo::Torreta:
+		str = "Torreta";
 		break;
 	case Tipo::Jugador:
 		str = "Jugador";
@@ -120,8 +120,8 @@ inline Tipo tipoPorNombre(std::string nombre) {
 	if (nombre == "Laser")
 		tipo = Tipo::Laser;
 
-	if (nombre == "Canion")
-		tipo = Tipo::Canion;
+	if (nombre == "Torreta")
+		tipo = Tipo::Torreta;
 
 	if (nombre == "Jugador")
 		tipo = Tipo::Jugador;

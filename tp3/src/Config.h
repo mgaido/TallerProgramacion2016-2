@@ -33,6 +33,8 @@ struct Plataformas {
 
 class Config : public Serializable {
 public:
+	Config();
+
 	virtual void toBytes(Bytes &bytes);
 	virtual void fromBytes(Bytes &bytes);
 

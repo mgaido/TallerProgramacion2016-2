@@ -6,8 +6,8 @@ Bomba::Bomba(int id) : Proyectil(id) {
 	this->estado = Estado::ProyectilEnMovimiento;
 	this->velocidadProyectilX = 0;
 	this->velocidadProyectilY = 0;
-	this->tamanio.x = 32;
-	this->tamanio.y = 50;
+	this->tamanio.x = 50;
+	this->tamanio.y = 32;
 	this->danio = 100;
 }
 

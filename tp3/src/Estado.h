@@ -15,6 +15,7 @@ public:
 	EstadoObj() {
 		nombre[0] = '\0';
 		frame = 0;
+		rotacion = 0;
 	}
 
 	inline Estado getEstado() const {
@@ -74,12 +75,20 @@ public:
 		this->frame = frame;
 	}
 
-	bool getOrientacion() {
+	inline bool getOrientacion() {
 		return orientacion;
 	}
 
-	void setOrientacion(bool orientacion) {
+	inline void setOrientacion(bool orientacion) {
 		this->orientacion = orientacion;
+	}
+
+	inline double getRotacion() {
+		return rotacion;
+	}
+
+	inline void setRotacion(double rotacion) {
+		this->rotacion = rotacion;
 	}
 
 	inline std::string toString() {
@@ -117,6 +126,7 @@ private:
 	std::array<char, 100> nombre;
 	int frame;
 	bool orientacion;
+	double rotacion;
 };
 
 

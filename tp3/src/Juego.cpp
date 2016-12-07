@@ -300,7 +300,7 @@ bool Juego::getEstado(Bytes& bytes) {
 }
 
 void Juego::spawnBoss() {
-	int nivel = 1;
+	int nivel = 0;
 	Boss* boss = nullptr;
 
 	if (nivel == 0 )
