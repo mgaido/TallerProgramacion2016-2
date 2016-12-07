@@ -16,7 +16,7 @@ Proyectil::Proyectil(int id) : Objeto(id) {
 	tipoTirador = Tipo::Void;
 	puntosOtorgados = 0;
 	danio = 0;
-	this->estado = Estado::ProyectilEnMovimiento;
+	this->estado = Estado::Normal;
 }
 
 Proyectil::~Proyectil() {}
@@ -54,9 +54,6 @@ bool Proyectil::tieneCambios(Juego* juego) {
 				colisionan = colisionaCon(objeto);
 				if (colisionan) {
 					Enemigo* unEnemigo = (Enemigo*) objeto;
-
-					std::cout << puntosOtorgados << std::endl;
-
 
 					tirador->recibirPuntos(puntosOtorgados);
 					bool estaMuerto = unEnemigo->recibirDanio(danio);

@@ -48,7 +48,7 @@ int Jugador::getPuntos() {
 
 void Jugador::setConectado(bool conectado) {
 	if (estado == Estado::Desconectado && conectado) {
-		estado = Estado::Quieto;
+		estado = Estado::Normal;
 		frame = 0;
 		cambios = true;
 	}

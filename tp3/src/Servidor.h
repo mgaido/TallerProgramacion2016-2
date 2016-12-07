@@ -13,7 +13,7 @@ class Sesion;
 class Servidor {
 
 public:
-	Servidor(int puerto, std::string archivo);
+	Servidor(int puerto, std::string archivo, bool inmortal, char modo);
 	~Servidor();
 
 	void iniciar();
@@ -28,6 +28,8 @@ private:
 	SOCKET socketD;
 	int puerto;
 	std::vector<std::string> archivos;
+	bool inmortal;
+	char modo;
 	std::vector<std::string>::iterator archivo;
 	Config config;
 	bool detenido;

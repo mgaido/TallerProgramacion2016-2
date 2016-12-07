@@ -5,7 +5,7 @@
 
 
 Personaje::Personaje(int id, Config & _configuracion) : Objeto(id), configuracion(_configuracion) {
-	estado = Estado::Quieto;
+	estado = Estado::Normal;
 	energia = 0;
 }
 

@@ -36,9 +36,9 @@ double Soldado::getVelocidadCaminar() {
 void Soldado::apuntar(char direcion){
 	apunta = direcion;
 	if (direcion == UP) {
-		estado = Estado::MirarAbajo;
+		//estado = Estado::MirarAbajo;
 	} else if(direcion == DOWN) {
-		estado = Estado::MirarAbajo;
+		//estado = Estado::MirarAbajo;
 	}
 }
 
@@ -132,7 +132,7 @@ bool Soldado::actualizar(Juego* juego) {
 		else if (tiempoCaminando > 0)
 			estado = Estado::Caminando;
 		else
-			estado = Estado::Quieto;
+			estado = Estado::Normal;
 
 		if (estado != this->estado) {
 			this->estado = estado;

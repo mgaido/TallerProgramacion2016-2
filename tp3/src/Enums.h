@@ -18,7 +18,7 @@ enum class Tipo {  GunH, GunC, GunS, GunR, //Proyectiles jugador
 					Void
 			};
 
-enum class Estado { Quieto, Caminando, Saltando, Desconectado, MirarArriba, MirarAbajo, Efecto, ProyectilEnMovimiento, ProyectilHaciaAbajo, ProyectilHaciaArriba, Bonus };
+enum class Estado { Normal, Caminando, Saltando, Desconectado, Efecto };
 
 enum class EstadoJuego { NoIniciado, EnJuego, Perdido, Ganado };
 

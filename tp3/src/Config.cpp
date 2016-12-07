@@ -1,14 +1,12 @@
 #include "Config.h"
 
 Config::Config() {
-
 	inmortal = false;
 	modoJuego = MODO_GRUPAL;
 	nivelBoss = 0;
 }
 
 void Config::parsearXML(std::string archivo) {
-
 	if (archivo.size() == 0) {
 		defaultConfig();
 		return;
@@ -20,6 +18,9 @@ void Config::parsearXML(std::string archivo) {
 
 	Nodo doc = Nodo(&root).hijo("configuracion");
 	std::string valor;
+
+	valor = doc.hijo("boss").valor();
+	nivelBoss = std::stoi(valor);
 
 	Nodo nodo = doc.hijo("ventana");
 	valor = nodo.hijo("ancho").valor();
@@ -87,23 +88,16 @@ void Config::parsearXML(std::string archivo) {
 		Estado estado;
 		if (valor == "Caminando")
 			estado = Estado::Caminando;
-
 		if (valor == "Saltando")
 			estado = Estado::Saltando;
-
-		if (valor == "Quieto")
-			estado = Estado::Quieto;
-
 		if (valor == "Desconectado")
 			estado = Estado::Desconectado;
+		if (valor == "Normal")
+			estado = Estado::Normal;
+		if (valor == "Efecto")
+			estado = Estado::Efecto;
 
-		if (valor == "ProyectilEnMovimiento")
-			estado = Estado::ProyectilEnMovimiento;
-
-		if (valor == "Bonus")
-			estado = Estado::Bonus;
-
-		valor = nodo.hijo("elemento").valor();
+		valor = nodo.hijo("tipo").valor();
 		Tipo tipo = tipoPorNombre(valor);
 
 		sprite.estado = estado;
@@ -112,24 +106,21 @@ void Config::parsearXML(std::string archivo) {
 
 	} while (nodo.siguiente());
 
-	//nodo = doc.hijo("plataformas").hijo("plataforma");
+	nodo = doc.hijo("plataformas").hijo("plataforma");
+	do {	//Plataformas
+		Plataformas plataforma;
+		valor = nodo.hijo("y").valor();
+		plataforma.punto.y = std::stoi(valor);
 
-	//do {	//Plataformas
-	//	Plataformas plataforma;
-	//	valor = nodo.hijo("y").valor();
-	//	plataforma.punto.y = std::stoi(valor);
-	//
-	//	valor = nodo.hijo("x").valor();
-	//	plataforma.punto.x = std::stoi(valor);
-	//
-	//	valor = nodo.hijo("ancho").valor();
-	//	plataforma.ancho = std::stoi(valor);
-	//
-	//	this->plataformas.push_back(plataforma);
-	//
-	//} while (nodo.siguiente());
+		valor = nodo.hijo("x").valor();
+		plataforma.punto.x = std::stoi(valor);
 
-	debug(toString());
+		valor = nodo.hijo("ancho").valor();
+		plataforma.ancho = std::stoi(valor);
+
+		this->plataformas.push_back(plataforma);
+
+	} while (nodo.siguiente());
 }
 
 void Config::toBytes(Bytes & bytes) {
@@ -187,7 +178,7 @@ void Config::defaultConfig() {
 	this->nivelPiso = (int) tamanioVentana.y * 0.833;
 
 	ConfigSprite sprite = ConfigSprite();
-	sprite.estado = Estado::Quieto;
+	sprite.estado = Estado::Normal;
 	sprite.tipo = Tipo::Plataforma;
 	setCharArray("img/Plataforma.png", sprite.imagen);
 	sprite.frames = 1;
@@ -205,24 +196,6 @@ void Config::defaultConfig() {
 	this->configSprites.push_back(sprite);
 
 	sprite = ConfigSprite();
-	sprite.estado = Estado::MirarArriba;
-	sprite.tipo = Tipo::Jugador;
-	setCharArray("img/PersonajeQuietoArriba.png", sprite.imagen);
-	sprite.frames = 1;
-	sprite.tiempo = 1000;
-	sprite.zIndex = 10;
-	this->configSprites.push_back(sprite);
-
-	sprite = ConfigSprite();
-	sprite.estado = Estado::MirarAbajo;
-	sprite.tipo = Tipo::Jugador;
-	setCharArray("img/PersonajeQuietoAbajo.png", sprite.imagen);
-	sprite.frames = 1;
-	sprite.tiempo = 1000;
-	sprite.zIndex = 10;
-	this->configSprites.push_back(sprite);
-
-	sprite = ConfigSprite();
 	sprite.estado = Estado::Saltando;
 	sprite.tipo = Tipo::Jugador;
 	setCharArray("img/Personaje-Saltando.png", sprite.imagen);
@@ -232,7 +205,7 @@ void Config::defaultConfig() {
 	this->configSprites.push_back(sprite);
 
 	sprite = ConfigSprite();
-	sprite.estado = Estado::Quieto;
+	sprite.estado = Estado::Normal;
 	setCharArray("img/PersonajeQuieto.png", sprite.imagen);
 	sprite.tipo = Tipo::Jugador;
 	sprite.frames = 1;
@@ -242,6 +215,15 @@ void Config::defaultConfig() {
 
 	sprite = ConfigSprite();
 	sprite.estado = Estado::Desconectado;
+	setCharArray("img/PersonajeDesconectado.png", sprite.imagen);
+	sprite.tipo = Tipo::Jugador;
+	sprite.frames = 1;
+	sprite.tiempo = 1000;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
+	sprite = ConfigSprite();
+	sprite.estado = Estado::Efecto;
 	setCharArray("img/PersonajeDesconectado.png", sprite.imagen);
 	sprite.tipo = Tipo::Jugador;
 	sprite.frames = 1;
@@ -268,10 +250,19 @@ void Config::defaultConfig() {
 	this->configSprites.push_back(sprite);
 
 	sprite = ConfigSprite();
-	sprite.estado = Estado::Quieto;
+	sprite.estado = Estado::Normal;
 	setCharArray("img/EnemigoDisparando.png", sprite.imagen);
 	sprite.tipo = Tipo::Enemigo;
 	sprite.frames = 1;
+	sprite.tiempo = 1000;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
+	sprite = ConfigSprite();
+	sprite.estado = Estado::Efecto;
+	setCharArray("img/EnemigoMuriendo.png", sprite.imagen);
+	sprite.tipo = Tipo::Enemigo;
+	sprite.frames = 12;
 	sprite.tiempo = 1000;
 	sprite.zIndex = 10;
 	this->configSprites.push_back(sprite);
@@ -295,7 +286,7 @@ void Config::defaultConfig() {
 	this->configSprites.push_back(sprite);
 
 	sprite = ConfigSprite();
-	sprite.estado = Estado::Quieto;
+	sprite.estado = Estado::Normal;
 	setCharArray("img/EnemigoDisparandoF.png", sprite.imagen);
 	sprite.tipo = Tipo::EnemigoFuerte;
 	sprite.frames = 1;
@@ -304,25 +295,25 @@ void Config::defaultConfig() {
 	this->configSprites.push_back(sprite);
 
 	sprite = ConfigSprite();
-	sprite.estado = Estado::Caminando;
-	sprite.tipo = Tipo::Boss1;
+	sprite.estado = Estado::Efecto;
+	setCharArray("img/EnemigoMuriendo.png", sprite.imagen);
+	sprite.tipo = Tipo::EnemigoFuerte;
+	sprite.frames = 12;
+	sprite.tiempo = 1000;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
+	sprite = ConfigSprite();
+	sprite.estado = Estado::Normal;
 	setCharArray("img/Enemigo HiDo.png", sprite.imagen);
+	sprite.tipo = Tipo::Boss1;
 	sprite.frames = 1;
 	sprite.tiempo = 1000;
 	sprite.zIndex = 10;
 	this->configSprites.push_back(sprite);
 
 	sprite = ConfigSprite();
-	sprite.estado = Estado::Quieto;
-	setCharArray("img/Enemigo HiDo.png", sprite.imagen);
-	sprite.tipo = Tipo::Boss1;
-	sprite.frames = 1;
-	sprite.tiempo = 1000;
-	sprite.zIndex = 10;
-	this->configSprites.push_back(sprite);
-
-	sprite = ConfigSprite();
-	sprite.estado = Estado::Caminando;
+	sprite.estado = Estado::Normal;
 	sprite.tipo = Tipo::Boss2;
 	setCharArray("img/Enemigo AirbusterRiberts.png", sprite.imagen);
 	sprite.frames = 1;
@@ -331,25 +322,7 @@ void Config::defaultConfig() {
 	this->configSprites.push_back(sprite);
 
 	sprite = ConfigSprite();
-	sprite.estado = Estado::Quieto;
-	setCharArray("img/Enemigo AirbusterRiberts.png", sprite.imagen);
-	sprite.tipo = Tipo::Boss2;
-	sprite.frames = 1;
-	sprite.tiempo = 1000;
-	sprite.zIndex = 10;
-	this->configSprites.push_back(sprite);
-
-	sprite = ConfigSprite();
-	sprite.estado = Estado::Caminando;
-	sprite.tipo = Tipo::Boss3;
-	setCharArray("img/Enemigo Tani Oh.png", sprite.imagen);
-	sprite.frames = 1;
-	sprite.tiempo = 1000;
-	sprite.zIndex = 10;
-	this->configSprites.push_back(sprite);
-
-	sprite = ConfigSprite();
-	sprite.estado = Estado::Quieto;
+	sprite.estado = Estado::Normal;
 	setCharArray("img/Enemigo Tani Oh.png", sprite.imagen);
 	sprite.tipo = Tipo::Boss3;
 	sprite.frames = 1;
@@ -358,7 +331,7 @@ void Config::defaultConfig() {
 	this->configSprites.push_back(sprite);
 
 	sprite = ConfigSprite();
-	sprite.estado = Estado::ProyectilEnMovimiento;
+	sprite.estado = Estado::Normal;
 	setCharArray("img/bala.png", sprite.imagen);
 	sprite.tipo = Tipo::GunH;
 	sprite.frames = 1;
@@ -367,16 +340,7 @@ void Config::defaultConfig() {
 	this->configSprites.push_back(sprite);
 
 	sprite = ConfigSprite();
-	sprite.estado = Estado::ProyectilEnMovimiento;
-	setCharArray("img/bala3.png", sprite.imagen);
-	sprite.tipo = Tipo::GunR;
-	sprite.frames = 1;
-	sprite.tiempo = 1000;
-	sprite.zIndex = 10;
-	this->configSprites.push_back(sprite);
-
-	sprite = ConfigSprite();
-	sprite.estado = Estado::ProyectilEnMovimiento;
+	sprite.estado = Estado::Normal;
 	setCharArray("img/bala2.png", sprite.imagen);
 	sprite.tipo = Tipo::GunS;
 	sprite.frames = 1;
@@ -385,7 +349,16 @@ void Config::defaultConfig() {
 	this->configSprites.push_back(sprite);
 
 	sprite = ConfigSprite();
-	sprite.estado = Estado::ProyectilEnMovimiento;
+	sprite.estado = Estado::Normal;
+	setCharArray("img/bala3.png", sprite.imagen);
+	sprite.tipo = Tipo::GunR;
+	sprite.frames = 1;
+	sprite.tiempo = 1000;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
+	sprite = ConfigSprite();
+	sprite.estado = Estado::Normal;
 	setCharArray("img/bala4.png", sprite.imagen);
 	sprite.tipo = Tipo::GunC;
 	sprite.frames = 1;
@@ -394,7 +367,7 @@ void Config::defaultConfig() {
 	this->configSprites.push_back(sprite);
 
 	sprite = ConfigSprite();
-	sprite.estado = Estado::ProyectilEnMovimiento;
+	sprite.estado = Estado::Normal;
 	setCharArray("img/bala3.png", sprite.imagen);
 	sprite.tipo = Tipo::Misil;
 	sprite.frames = 1;
@@ -403,7 +376,7 @@ void Config::defaultConfig() {
 	this->configSprites.push_back(sprite);
 
 	sprite = ConfigSprite();
-	sprite.estado = Estado::ProyectilEnMovimiento;
+	sprite.estado = Estado::Normal;
 	setCharArray("img/bomba.png", sprite.imagen);
 	sprite.tipo = Tipo::Bomba;
 	sprite.frames = 1;
@@ -412,7 +385,7 @@ void Config::defaultConfig() {
 	this->configSprites.push_back(sprite);
 
 	sprite = ConfigSprite();
-	sprite.estado = Estado::ProyectilEnMovimiento;
+	sprite.estado = Estado::Normal;
 	setCharArray("img/laser.png", sprite.imagen);
 	sprite.tipo = Tipo::Laser;
 	sprite.frames = 3;
@@ -420,8 +393,17 @@ void Config::defaultConfig() {
 	sprite.zIndex = 10;
 	this->configSprites.push_back(sprite);
 
+	sprite = ConfigSprite();
+	sprite.estado = Estado::Normal;
+	setCharArray("img/bala5.png", sprite.imagen);
+	sprite.tipo = Tipo::Torreta;
+	sprite.frames = 3;
+	sprite.tiempo = 10000;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
 	sprite = ConfigSprite(); 
-	sprite.estado = Estado::Bonus;
+	sprite.estado = Estado::Normal;
 	setCharArray("img/BonusEnergia.png", sprite.imagen);
 	sprite.tipo = Tipo::BonusVida;
 	sprite.frames = 1;
@@ -430,7 +412,7 @@ void Config::defaultConfig() {
 	this->configSprites.push_back(sprite);
 
 	sprite = ConfigSprite();
-	sprite.estado = Estado::Bonus;
+	sprite.estado = Estado::Normal;
 	setCharArray("img/BonusKill.png", sprite.imagen);
 	sprite.tipo = Tipo::BonusKill;
 	sprite.frames = 1;
@@ -439,9 +421,36 @@ void Config::defaultConfig() {
 	this->configSprites.push_back(sprite);
 
 	sprite = ConfigSprite();
-	sprite.estado = Estado::Bonus;
-	setCharArray("img/Armas.png", sprite.imagen);
+	sprite.estado = Estado::Normal;
+	setCharArray("img/BonusH.png", sprite.imagen);
 	sprite.tipo = Tipo::BonusArmaH;
+	sprite.frames = 1;
+	sprite.tiempo = 1000;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
+	sprite = ConfigSprite();
+	sprite.estado = Estado::Normal;
+	setCharArray("img/BonusS.png", sprite.imagen);
+	sprite.tipo = Tipo::BonusArmaS;
+	sprite.frames = 1;
+	sprite.tiempo = 1000;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
+	sprite = ConfigSprite();
+	sprite.estado = Estado::Normal;
+	setCharArray("img/BonusR.png", sprite.imagen);
+	sprite.tipo = Tipo::BonusArmaR;
+	sprite.frames = 1;
+	sprite.tiempo = 1000;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
+	sprite = ConfigSprite();
+	sprite.estado = Estado::Normal;
+	setCharArray("img/BonusC.png", sprite.imagen);
+	sprite.tipo = Tipo::BonusArmaC;
 	sprite.frames = 1;
 	sprite.tiempo = 1000;
 	sprite.zIndex = 10;
@@ -485,10 +494,37 @@ void Config::defaultConfig() {
 
 	sprite = ConfigSprite();
 	sprite.estado = Estado::Efecto;
-	setCharArray("img/EnemigoMuriendo.png", sprite.imagen);
-	sprite.tipo = Tipo::Enemigo;
-	sprite.frames = 12;
-	sprite.tiempo = 1000;
+	setCharArray("img/impactoExplosion.png", sprite.imagen);
+	sprite.tipo = Tipo::Misil;
+	sprite.frames = 14;
+	sprite.tiempo = 500;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
+	sprite = ConfigSprite();
+	sprite.estado = Estado::Efecto;
+	setCharArray("img/impactoExplosion.png", sprite.imagen);
+	sprite.tipo = Tipo::Bomba;
+	sprite.frames = 10;
+	sprite.tiempo = 500;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
+	sprite = ConfigSprite();
+	sprite.estado = Estado::Efecto;
+	setCharArray("img/impactoShot.png", sprite.imagen);
+	sprite.tipo = Tipo::Laser;
+	sprite.frames = 14;
+	sprite.tiempo = 500;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
+	sprite = ConfigSprite();
+	sprite.estado = Estado::Efecto;
+	setCharArray("img/impactoBala.png", sprite.imagen);
+	sprite.tipo = Tipo::Torreta;
+	sprite.frames = 10;
+	sprite.tiempo = 500;
 	sprite.zIndex = 10;
 	this->configSprites.push_back(sprite);
 
@@ -510,6 +546,24 @@ void Config::defaultConfig() {
 	plataforma.ancho = 400;
 	this->plataformas.push_back(plataforma);
 
+	plataforma = Plataformas();
+	plataforma.punto.y = 200;
+	plataforma.punto.x = 2500;
+	plataforma.ancho = 300;
+	this->plataformas.push_back(plataforma);
+
+	plataforma = Plataformas();
+	plataforma.punto.y = 200;
+	plataforma.punto.x = 3500;
+	plataforma.ancho = 300;
+	this->plataformas.push_back(plataforma);
+
+	plataforma = Plataformas();
+	plataforma.punto.y = 200;
+	plataforma.punto.x = 4500;
+	plataforma.ancho = 400;
+	this->plataformas.push_back(plataforma);
+
 	ConfigCapa capa = ConfigCapa();
 	setCharArray("img/cielo.png", capa.imagen);
 	capa.zIndex = 1;
@@ -519,56 +573,6 @@ void Config::defaultConfig() {
 	setCharArray("img/fondo.png", capa.imagen);
 	capa.zIndex = 2;
 	this->configCapas.push_back(capa);
-
-	debug(toString());
-}
-
-std::string Config::toString() {
-	std::stringstream ss;
-
-	ss << "Ventana: " << tamanioVentana.x << "x" << tamanioVentana.y << "; ";
-	ss << "FPS: " << framerate << "; ";
-	ss << "Jugador: " << tamanioJugador.x << "x" << tamanioJugador.y << "; ";
-	ss << "Veloc x: " << velocX << " Veloc y:  " << velocY << " Gravedad: " << gravedad << "; ";
-
-	ss << "Longitud: " << longitud << "; ";
-	ss << "Nivel piso: " << nivelPiso << "; ";
-	ss << "Cantidad maxima jugadores: " << cantidadMaximaJugadores << "; ";
-	ss << "Cantidad minima jugadores: " << cantidadMinimaJugadores << "; ";
-
-	auto capa = configCapas.begin();
-	while (capa != configCapas.end()){
-		ss << "Capa " << std::string(capa->imagen.data()) << " zindex " << capa->zIndex << "; ";
-		capa++;
-	}
-
-	auto sprite = configSprites.begin();
-	while (sprite != configSprites.end()) {
-
-		std::string estado;
-		switch (sprite->estado) {
-		case Estado::Caminando:
-			estado = "Caminando";
-			break;
-		case Estado::Saltando:
-			estado = "Saltando";
-			break;
-		case Estado::Quieto:
-			estado = "Quiero";
-			break;
-		case Estado::Desconectado:
-			estado = "Desconectado";
-			break;
-		default:
-			estado = "????";
-		}
-
-		ss << "Sprite " << estado << " " << std::string(sprite->imagen.data()) << " zindex " << sprite->zIndex << " frames "<< sprite->frames << "; ";
-
-		sprite++;
-	}
-
-	return ss.str();
 }
 
 std::vector<ConfigCapa>& Config::getConfigCapas() {

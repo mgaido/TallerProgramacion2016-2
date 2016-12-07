@@ -7,9 +7,9 @@
 #include "Enums.h"
 #include "Utils.h"
 
-const char MODO_INDIVIDUAL = 0;
-const char MODO_COOP = 1;
-const char MODO_GRUPAL = 2;
+const char MODO_INDIVIDUAL = 1;
+const char MODO_COOP = 2;
+const char MODO_GRUPAL = 3;
 
 struct ConfigCapa {
 	std::array<char, 512> imagen;
@@ -65,8 +65,6 @@ public:
 
 	int getNivelBoss();
 	void setNivelBoss(int nivelBoss);
-
-	std::string toString();
 
 private:
 	bool inmortal;

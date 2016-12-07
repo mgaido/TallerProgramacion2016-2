@@ -3,7 +3,7 @@
 
 PickUp::PickUp(int id, Punto pos) : Objeto(id) {
 	this->pos = pos;
-	this->estado = Estado::Bonus;
+	this->estado = Estado::Normal;
 	this->tamanio.x = 70;
 	this->tamanio.y = 70;
 	this->orientacion = false;

@@ -34,7 +34,6 @@ Proyectil* Boss0::disparar(Juego* juego) {
 	if (proyectil != nullptr && proyectil->getTipo() == Tipo::Bomba) {
 		bombas++;
 		if (bombas == BOMBAS_POR_VEZ) {
-			std::cout << "Listo Bombas" << std::endl;
 			tiempoUltimaBomba = tiempo();
 			arma.setTipo(Tipo::Misil);
 		}

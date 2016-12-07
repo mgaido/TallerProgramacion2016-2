@@ -97,7 +97,7 @@ public:
 			case Estado::Caminando:
 				estado = "caminando";
 				break;
-			case Estado::Quieto:
+			case Estado::Normal:
 				estado = "quieto";
 				break;
 			case Estado::Saltando:

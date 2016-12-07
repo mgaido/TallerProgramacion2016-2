@@ -3,7 +3,7 @@
 
 Bomba::Bomba(int id) : Proyectil(id) {
 	this->tipo = Tipo::Bomba;
-	this->estado = Estado::ProyectilEnMovimiento;
+	this->estado = Estado::Normal;
 	this->velocidadProyectilX = 0;
 	this->velocidadProyectilY = 0;
 	this->tamanio.x = 50;

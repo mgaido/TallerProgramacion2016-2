@@ -2,9 +2,11 @@
 
 double tickDelay;
 
-Servidor::Servidor(int puerto, std::string archivos) {
+Servidor::Servidor(int puerto, std::string archivos, bool inmortal, char modo) {
 	this->puerto = puerto;
 	this->archivos = split(archivos, ',');
+	this->inmortal = inmortal;
+	this->modo = modo;
 	archivo = this->archivos.begin();
 	juego = nullptr;
 	detenido = false;
@@ -27,7 +29,8 @@ void Servidor::iniciar() {
 
 void Servidor::crearJuego() {
 	config = Config();
-
+	config.setInmortal(inmortal);
+	config.setModoJuego(modo);
 	try {
 		config.parsearXML(*archivo);
 	} catch (...) {

@@ -8,7 +8,7 @@ GunC::GunC(int id) : Proyectil(id) {
 	this->danio = 150;
 	this->puntosOtorgados = 100;
 	this->tipo = Tipo::GunC;
-	this->estado = Estado::ProyectilEnMovimiento;
+	this->estado = Estado::Normal;
 	this->tamanio.x = 30;			//ver si este tamanio esta bien 
 	this->tamanio.y = 30;
 	this->orientacion = false;
@@ -36,10 +36,6 @@ bool GunC::tieneCambios(Juego* juego) {
 			double cosAngle = x * parteX + y * parteY;
 			double angle = acos(cosAngle);
 
-			int sign = 1;
-			if (acos(parteX) > acos(x))
-				sign = -1;
-
 			if (angle > 0.35) {
 				cosAngle = cos(sign*0.35);
 				double sinAngle = sin(sign*0.35);
@@ -52,6 +48,7 @@ bool GunC::tieneCambios(Juego* juego) {
 	}
 	return Proyectil::tieneCambios(juego);
 }
+
 
 Punto GunC::posEnemigoMasCercano(Juego* juego) {
 

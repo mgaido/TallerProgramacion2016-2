@@ -2,7 +2,7 @@
 
 Plataforma::Plataforma(int id, int x, int y, int ancho) : Objeto(id) {
 	this->tipo = Tipo::Plataforma;
-	this->estado = Estado::Quieto;
+	this->estado = Estado::Normal;
 	this->tamanio.x = ancho;
 	this->tamanio.y = GROSOR_PLATAFORMA;
 	this->pos.x = x; 
