@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
 	if (argc == 1)
 		return both();
 
-	bool server = true;
+	bool server = false;
 	bool client = false;
 
 	std::string host = "127.0.0.1";
