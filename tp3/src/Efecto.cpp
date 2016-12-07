@@ -7,33 +7,37 @@
 
 #include "Efecto.h"
 
+#include <string>
+
+#include "Enums.h"
+#include "Estado.h"
+#include "Utils.h"
+
 Efecto::Efecto(int id, Punto pos, Punto tamanio, int puntos) : Objeto(id) {
 	this->pos = pos;
 	this->tamanio = tamanio;
-	this->estado = Estado::Quieto;
+	this->tipo = Tipo::Efecto;
+	this->estado = Estado::Efecto;
 	this->frame = 0;
 	this->puntos = puntos;
 	this->inicio = tiempo();
+	this->duracion = 0;
 }
 
 Efecto::~Efecto() {
 }
 
-bool Efecto::esVisible() {
-	return (tiempo() - inicio)/1000 < duracion;
-}
-
-bool Efecto::tieneCambios(std::vector<Plataforma*>& plataformas) {
+bool Efecto::tieneCambios(Juego* juego) {
+	visible = (tiempo() - inicio)/1000 < duracion;
 	return true;
 }
 
-std::string Efecto::getNombre() {
+EstadoObj Efecto::getEstadoObj(Escenario& escenario) {
+	EstadoObj estadoObj = Objeto::getEstadoObj(escenario);
+	estadoObj.setTipo(tipoObjeto);
 	if (puntos > 0)
-		return std::to_string(puntos);
-	else
-		return "";
+		estadoObj.setNombre(std::to_string(puntos));
+	return estadoObj;
 }
-
-
 
 

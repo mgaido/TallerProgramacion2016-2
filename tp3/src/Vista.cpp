@@ -14,7 +14,6 @@ Vista::Vista(ColaBloqueante<int>& _eventosTeclado, std::string nombreJugador, in
 	ventana = nullptr;
 	renderer = nullptr;
 	detenido = false;
-	this->nivel = 0;
 	this->idJugador = idJugador;
 	this->nombreJugador = nombreJugador;
 	this->configuracion = configuracion;
@@ -101,9 +100,8 @@ void Vista::cicloPrincipal() {
 	}
 }
 
-void Vista::nuevoEstado(int nivel, int offsetVista, std::vector<EstadoObj>& estado, std::vector<InfoJugador>& hudInfo) {
+void Vista::nuevoEstado(int offsetVista, std::vector<EstadoObj>& estado, std::vector<InfoJugador>& hudInfo) {
 	lockEstado.lock();
-	this->nivel = nivel;
 	this->offsetVista = offsetVista;
 	this->estado.clear();
 	this->estado = estado;
@@ -189,9 +187,10 @@ void Vista::actualizar() {
 					renderers.push_back(new RendererSprite(configSprite.get(), it->getPos(), it->getTamanio(), it->getNombre(), it->getFrame(), it->getOrientacion(), it->getId() == idJugador));
 				}
 			}
-			if (! encontrado) {
-				std::cerr << "Falta sprite " << it->toString() << std::endl;
-			}
+			if (! encontrado)
+				error("Falta sprite " + it->toString());
+
+			//info(it->toString(), true);
 
 			estado.erase(it);
 		}
@@ -240,9 +239,6 @@ void Vista::mostrarHud() {
 			break;
 		case Tipo::GunR:
 			arma = "Rocket";
-			break;
-		case Tipo::GunF:
-			arma = "Flame";
 			break;
 		case Tipo::GunC:
 			arma = "Chaser";

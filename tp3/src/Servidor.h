@@ -23,7 +23,6 @@ public:
 
 	Config& getConfiguracion();
 	Juego* getJuego();
-	void enviarProyectilAJuego(Proyectil* nuevoProyectil);
 
 private:
 	SOCKET socketD;

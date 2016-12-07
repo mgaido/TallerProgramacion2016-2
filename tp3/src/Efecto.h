@@ -17,11 +17,11 @@ public:
 	Efecto(int id, Punto pos, Punto tamanio, int puntos);
 	virtual ~Efecto();
 
-	bool esVisible();
-	std::string getNombre();
-	virtual bool tieneCambios(std::vector<Plataforma*>& plataformas);
+	virtual bool tieneCambios(Juego* juego);
+	virtual EstadoObj getEstadoObj(Escenario& escenario);
 
 protected:
+	Tipo tipoObjeto;
 	micros inicio;
 	int duracion;
 	int puntos;

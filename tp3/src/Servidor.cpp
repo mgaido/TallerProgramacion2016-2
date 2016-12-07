@@ -41,17 +41,26 @@ void Servidor::crearJuego() {
 void Servidor::avanzarJuego() {
 	while (! detenido) {
 		micros t = tiempo();
-		lockJuego.lock();
 		Bytes bytes;
 		bytes.put(UPD);
-		if (juego->getEstado(bytes)) {
+
+		lockJuego.lock();
+		bool cambios = juego->getEstado(bytes);
+		lockJuego.unlock();
+
+		if (juego->estaGanado()) {
+			recargar();
+			continue;
+		} else if (juego->estaPerdido()){
+			detenido = true;
+			break;
+		} else if (cambios) {
 			auto it = sesiones.begin();
 			while (it != sesiones.end()) {
 				(*it)->cambioDeEstado(bytes);
 				it++;
 			}
 		}
-		lockJuego.unlock();
 		t = (micros) (tickDelay - (tiempo() - t));
 		if (t > 0)
 			std::this_thread::sleep_for(std::chrono::milliseconds((long) t/1000));
@@ -203,7 +212,6 @@ void Servidor::detener() {
 			}
 			sesiones.clear();
 			if (juego != nullptr) {
-				juego->detener();
 				delete juego;
 			}
 		}
@@ -217,8 +225,4 @@ Config& Servidor::getConfiguracion() {
 
 Juego* Servidor::getJuego() {
 	return juego;
-}
-
-void Servidor::enviarProyectilAJuego(Proyectil * nuevoProyectil){
-	juego->agregarProyectilAliado(nuevoProyectil);
 }

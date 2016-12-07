@@ -4,7 +4,7 @@
 #include "rapidxml.hpp"
 #include "rapidxml_utils.hpp"
 #include "Bytes.h"
-#include "Objeto.h"
+#include "Enums.h"
 #include "Utils.h"
 
 struct ConfigCapa {

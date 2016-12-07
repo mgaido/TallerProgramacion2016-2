@@ -7,17 +7,16 @@
 
 #include "Jugador.h"
 
-Jugador::Jugador(int id, std::string nombre, Config& _configuracion) : Personaje(id, _configuracion) {
+Jugador::Jugador(int id, std::string nombre, Config& _configuracion) : Soldado(id, _configuracion) {
 	this->nombre = nombre;
-	velocCaminar = 0, velocSaltoX = 0, velocSaltoY = 0;
-	tiempoCaminando = 0;
-	tiempoSalto = 0;
-	killAll = false;
 	puntos = 0;
 	estado = Estado::Desconectado;
 	tipo = Tipo::Jugador;
-	estaMuerto = false;
+	energia = 1000;
 	cambios = false;
+
+	tamanio.x = configuracion.getTamanioJugador().x;
+	tamanio.y = configuracion.getTamanioJugador().y;
 }
 
 Jugador::~Jugador() {
@@ -27,68 +26,12 @@ std::string Jugador::getNombre() {
 	return nombre;
 }
 
-void Jugador::recibirBonus(PickUp* unPickUp) {
-	switch ((int)unPickUp->getBonus()) {
-	case (int)Bonus::GunH: {
-		if (unPickUp->getBonus() != (Bonus)arma->getTipo())
-			this->arma = new GunH(++contador,id);
-		else
-			this->arma->recargar();
-		break;
-	}
-	/*case (int)Bonus::GunC: {
-		if (unPickUp->getBonus() != (Bonus) arma->getTipo())
-			this->arma = new GunC(++contador,id);
-		else
-			this->arma->recargar();
-		break;
-	}*/
-	case (int)Bonus::GunS: {
-		if (unPickUp->getBonus() != (Bonus)arma->getTipo())
-			this->arma = new GunS(++contador,id);
-		else
-			this->arma->recargar();
-		break;
-	}
-	case (int)Bonus::GunR: {
-		if (unPickUp->getBonus() != (Bonus)arma->getTipo())
-			this->arma = new GunR(++contador,id);
-		else
-			this->arma->recargar();
-		break;
-	}
-	case (int)Bonus::Vida: {
-		if (energia + unPickUp->getEnergiaACurar() > 1000) {
-			energia = 1000;
-		}
-		else {
-			energia += unPickUp->getEnergiaACurar();
-		}
-		break;
-	}
-	case(int)Bonus::KillAll: {
-		killAll = true;
-		break;
-	}
-	}
+void Jugador::restablecerEnergia() {
+	energia = 1000;
 }
 
 void Jugador::recibirPuntos(int puntosObtenidos){
 	puntos += puntosObtenidos;
-}
-
-void Jugador::cambiarArma(Proyectil *armaNueva) {
-	arma = armaNueva;
-}
-
-bool Jugador::estamuerto(){
-	return estaMuerto;
-}
-
-bool Jugador::getKillAll() {
-	bool kill = killAll;
-	killAll = false;
-	return kill;
 }
 
 bool Jugador::esEnemigo() {
@@ -97,10 +40,6 @@ bool Jugador::esEnemigo() {
 
 int Jugador::getPuntos() {
 	return puntos;
-}
-
-void Jugador::setEstaMuerto(bool estaMuerto){
-	this->estaMuerto = estaMuerto;
 }
 
 void Jugador::setConectado(bool conectado) {

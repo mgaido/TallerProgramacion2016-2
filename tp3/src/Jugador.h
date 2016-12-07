@@ -9,28 +9,27 @@
 #define JUGADOR_H_
 
 #include "Logger.h"
-#include "Personaje.h"
+#include "Soldado.h"
 #include "PickUp.h"
 
-class Jugador : public Personaje {
+#include "Juego.h"
+
+class Jugador : public Soldado {
 public:
 	Jugador(int id, std::string nombre, Config& configuracion);
 	~Jugador();
-	void cambiarArma(Proyectil*);
-	bool estamuerto();
-	virtual bool esEnemigo();
-	bool getKillAll();
-	void setConectado(bool conectado);
-	std::string getNombre();
-	void recibirBonus(PickUp* unPickUp);
-	void recibirPuntos(int puntosObtenidos);
+
+	void restablecerEnergia();
+	virtual std::string getNombre();
 	int getPuntos();
-	void setEstaMuerto(bool estaMuerto);
+	void recibirPuntos(int puntosObtenidos);
+	void setConectado(bool conectado);
+
+	void cambiarArma(Proyectil*);
+	virtual bool esEnemigo();
 private:
-	bool killAll;
 	std::string nombre;
 	int puntos;
-	bool estaMuerto;
 };
 
 #endif /* JUGADOR_H_ */

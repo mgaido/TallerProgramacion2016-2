@@ -7,12 +7,11 @@
 //Arma Basica
 class Bomba : public Proyectil {
 public:
-	Bomba(int id, int idJugador);
-private:
-protected:
-	virtual Proyectil* crearProyectil();
+	Bomba(int id);
 
+	virtual bool tieneCambios(Juego* juego);
 
+	virtual void setOrientacionX(bool orientacion);
 };
 
 #endif /* GUNH_H_ */

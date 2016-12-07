@@ -6,93 +6,34 @@
  */
 
 #include "Juego.h"
+#include "Efecto.h"
+#include "Enemigo.h"
+#include "Jugador.h"
+
+#include "Boss.h"
+#include "Boss0.h"
+#include "Boss1.h"
+#include "Boss2.h"
+
 
 int maxOffsetDelta;
 int contador = 0;
 
 Juego::Juego(Config& _configuracion) : configuracion(_configuracion) {
 	iniciado = false;
+	cantidadJugadores = 0;
+	BossFinal = nullptr;
 	cambios = true;
-	detenido = false;
-	contadorEnemigosSpawneados = 0;
+	perdido = false;
+	ganado = false;
 	crearPlataformas();
+
 	modoDeJuego = MODO_INDIVIDUAL;
-	escenario = Escenario(configuracion.getLongitud(), configuracion.getTamanioVentana().x, configuracion.getNivelPiso());
-	maxOffsetDelta = round(configuracion.getVelocidadX() * 2 * 1000000.0 / configuracion.getFrameRate());
-	t_updateWorld = std::thread(&Juego::updateWorld, this);
-	t_updateIA = std::thread(&Juego::updateIA, this);
-	t_chequearGameOverYComienzoDeJuego = std::thread(&Juego::chequearGameOverYComienzoDeJuego, this);
-	BossFinal = NULL;
-	bossEliminado = false;
-	nivel = 0;
-	elJuegoEmpezo = false;
-	ultimoMinX = 0;
-}
 
-Juego::~Juego() {
-	auto it = jugadores.begin();
-	while (it != jugadores.end()) {
-		Jugador* obj = *it;
-		delete obj;
-		jugadores.erase(it);
-	}
+	escenario = Escenario(configuracion.getLongitud(), configuracion.getTamanioVentana().x, configuracion.getTamanioVentana().y, configuracion.getNivelPiso());
+	maxOffsetDelta = round(configuracion.getVelocidadX() * 4 * 1000000.0 / configuracion.getFrameRate());
 
-	auto it7 = jugadoresEnJuego.begin();
-	while (it7 != jugadoresEnJuego.end()) {
-		Jugador* obj = *it7;
-		delete obj;
-		jugadoresEnJuego.erase(it7);
-	}
-
-	auto it1 = enemigos.begin();
-	while (it1 != enemigos.end()) {
-		Enemigo* obj = *it1;
-		delete obj;
-		enemigos.erase(it1);
-	}
-
-	auto it2 = proyectilesAliados.begin();
-	while (it2 != proyectilesAliados.end()) {
-		Proyectil* obj = *it2;
-		delete obj;
-		proyectilesAliados.erase(it2);
-	}
-
-	auto it3 = proyectilesEnemigos.begin();
-	while (it3 != proyectilesEnemigos.end()) {
-		Proyectil* obj = *it3;
-		delete obj;
-		proyectilesEnemigos.erase(it3);
-	}
-
-	auto it4 = pickups.begin();
-	while (it4 != pickups.end()) {
-		PickUp* obj = *it4;
-		delete obj;
-		pickups.erase(it4);
-	}
-
-	auto it5 = plataformas.begin();
-	while (it5 != plataformas.end()) {
-		Plataforma* obj = *it5;
-		delete obj;
-		plataformas.erase(it5);
-	}
-
-	auto it6 = efectos.begin();
-	while (it6 != efectos.end()) {
-		Efecto* obj = *it6;
-		delete obj;
-		efectos.erase(it6);
-	}
-}
-
-void Juego::gameOver(bool juegoGanado){
-	if(juegoGanado){
-		//pantalla de felicitaciones
-	} else {
-		//pantalla de game over 
-	}
+	enemigoFactory = new EnemigoFactory(6, -1, [&](Juego* juego){ return new Enemigo(++contador, configuracion, escenario); });
 }
 
 void Juego::crearPlataformas() {
@@ -105,132 +46,58 @@ void Juego::crearPlataformas() {
 	}
 }
 
-void Juego::updateIA() {
-	while (!detenido) {
-		auto it = enemigos.begin();
-		while (it != enemigos.end()) {
-			Enemigo *unEnemigo = *it;
-			if (unEnemigo != NULL) {
-				unEnemigo->comportamiento(tiempo(), &proyectilesEnemigos, &enemigos);
-				
-					if ((unEnemigo->getTipo() == Tipo::Boss1) || (unEnemigo->getTipo() == Tipo::Boss2) || (unEnemigo->getTipo() == Tipo::Boss3)) {
-						if (unEnemigo->getPos().x < (escenario.getOffsetVista() + unEnemigo->getTamanio().x)) {
-							unEnemigo->caminar(Direccion::DERECHA);
-						}
-						else if (unEnemigo->getPos().x > (escenario.getOffsetVista() + escenario.getAnchoVista() - unEnemigo->getTamanio().x)) {
-							unEnemigo->caminar(Direccion::IZQUIERDA);
-						}
-					}
-			}
-			it++;
-		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(1500));				//lo duermo para q no consuma tanto recurso
+Juego::~Juego() {
+	auto it = objetos.begin();
+	while (it != objetos.end()) {
+		Objeto* obj = *it;
+		if (obj->getTipo() != Tipo::Jugador)
+			delete obj;
+		objetos.erase(it);
+	}    
+
+	auto it2 = plataformas.begin();
+	while (it2 != plataformas.end()) {
+		Plataforma* obj = *it2;
+		delete obj;
+		plataformas.erase(it2);
 	}
-}
 
-void Juego::chequearGameOverYComienzoDeJuego() {
-	while (!detenido) {
-		if (elJuegoEmpezo) {
-			int contador = 0;
-			auto it = jugadores.begin();
-			while (it != jugadores.end()) {
-				Jugador* unJugador = *it;
-				if (unJugador->estamuerto())
-					contador++;
-				it++;
-			}
-		if(contador == 1)			//configuracion.getCantidadMaximaJugadores()
-				this->gameOver(false);
-		} else {
-			if(jugadores.size() == 1)   //configuracion.getCantidadMaximaJugadores()
-				elJuegoEmpezo = true;
-		}
-
-		if (bossEliminado) {
-			elJuegoEmpezo = false;
-			bossEliminado = false;
-			pasarDeNivel();
-		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(1000));				//lo duermo para q no consuma tanto recurso
+	auto it3 = jugadores.begin();
+	while (it3 != jugadores.end()) {
+		Jugador* obj = *it3;
+		delete obj;
+		jugadores.erase(it3);
 	}
+
+	if (enemigoFactory != nullptr)
+		delete enemigoFactory;
 }
 
-void Juego::pasarDeNivel() {
-	if (nivel < 2) {
-		nivel++;
-		auto it = jugadores.begin();
-		while (it != jugadores.end()) {
-			Jugador* unJugador = *it;
-			unJugador->getPos().x = 0;
-			it++;
-		}
-	}
+std::vector<Objeto*>& Juego::getObjetos() {
+	return objetos;
 }
 
-void Juego::updateWorld() {
-	std::thread t_detenerEnemigoAnterior;
-	Enemigo* enemigoSpawneado;
-	while (!detenido) {
-		if (elJuegoEmpezo) {
-			srand(time(NULL));
-			std::this_thread::sleep_for(std::chrono::milliseconds(1000 * ((rand() % 7) + 1)));
-			if ((BossFinal != NULL || minPosXJugador < 5500)) {
-				if (contadorEnemigosSpawneados < 6) {
-					enemigoSpawneado = spawnEnemigo(tiempo());
-				}
-			}
-			else {
-				enemigoSpawneado = spawnBoss(tiempo());
-				break;
-			}
-
-			for (auto it = proyectilesAliados.begin(); it != proyectilesAliados.end();) {
-				Proyectil* unProyectil = *it;
-				if (((unProyectil->getPos().x < escenario.getOffsetVista()) || unProyectil->getPos().x > (escenario.getOffsetVista() + escenario.getAnchoVista())) || (
-					((unProyectil->getPos().y < 0) || unProyectil->getPos().y > configuracion.getTamanioVentana().y))) {
-					delete unProyectil;
-					proyectilesAliados.erase(it);
-				}
-				else
-					it++;
-			}
-
-			for (auto it = proyectilesEnemigos.begin(); it != proyectilesEnemigos.end();) {
-				Proyectil* unProyectil = *it;
-				if (((unProyectil->getPos().x < escenario.getOffsetVista()) || unProyectil->getPos().x > (escenario.getOffsetVista() + escenario.getAnchoVista())) || (
-					((unProyectil->getPos().y < 0) || unProyectil->getPos().y > configuracion.getTamanioVentana().y))) {
-					delete unProyectil;
-					proyectilesEnemigos.erase(it);
-				}
-				else
-					it++;
-			}
-		}
-	}
+std::vector<Plataforma*>& Juego::getPlataformas() {
+	return plataformas;
 }
 
-void Juego::detener() {
-	if (!detenido) {
-		detenido = true;
-		t_updateWorld.join();
-		debug("Thread updateWorld termino");
-		t_updateIA.join();
-		debug("Thread updateIA termino");
-		t_chequearGameOverYComienzoDeJuego.join();
-		debug("Thread chequeargameoverycomeinzodejuego termino");
-	}
+Config& Juego::getConfiguracion(){
+	return configuracion;
 }
 
-void Juego::agregarProyectilAliado(Proyectil * nuevoProyectil) {
-	proyectilesAliados.push_back(nuevoProyectil);
+Escenario& Juego::getEscenario(){
+	return escenario;
 }
 
-void Juego::agregarProyectilEnemigo(Proyectil * nuevoProyectil) {
-	proyectilesEnemigos.push_back(nuevoProyectil);
+void Juego::agregarObjeto(Objeto *objeto){
+	nuevosLock.lock();
+	nuevosObjetos.push_back(objeto);
+	nuevosLock.unlock();
+	cambios = true;
 }
 
-unsigned int Juego::getCantdadJugadores() {
-	return jugadores.size();
+unsigned int Juego::getCantdadJugadores(){
+	return cantidadJugadores;
 }
 
 bool Juego::estaIniciado() {
@@ -243,504 +110,237 @@ Jugador* Juego::nuevoJugador(std::string nombre) {
 	jugador->getTamanio().y = configuracion.getTamanioJugador().y;
 	jugador->getPos().x = escenario.getOffsetVista();
 	lock.lock();
+	agregarObjeto(jugador);
 	jugadores.push_back(jugador);
-	jugadoresEnJuego.push_back(jugador);
-	if (!iniciado && jugadores.size() >= configuracion.getCantidadMinimaJugadores()) { //config
+	cantidadJugadores++;
+	if (! iniciado && getCantdadJugadores() >= configuracion.getCantidadMinimaJugadores()) { //config
 		iniciado = true;
-		for (auto it = jugadores.begin(); it != jugadores.end(); it++)
-			(*it)->setConectado(true);
+		for (auto it = objetos.begin(); it != objetos.end(); it++) {
+			if ((*it)->getTipo() == Tipo::Jugador) {
+				Jugador* jugador = (Jugador*) *it;
+				jugador->setConectado(true);
+			}
+		}
 	}
 	cambios = true;
 	lock.unlock();
 
 	info("Jugador '" + nombre + "' creado");
-
 	return jugador;
-}
-
-Enemigo* Juego::spawnBoss(micros tiempoCreacion) {
-	Enemigo* nuevoEnemigo = NULL;
-	int nivel = 0;
-	if (nivel == 0) { //Se crea el Boss HI-DO
-		nuevoEnemigo = new Boss0(++contador, configuracion);
-		nuevoEnemigo->getTamanio().x = 200;				//configurar para enemigo 
-		nuevoEnemigo->getTamanio().y = 250;				//configurar para enemigo
-		nuevoEnemigo->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista();
-		nuevoEnemigo->getPos().y = 300;
-		nuevoEnemigo->setTipo(Tipo::Boss1);
-		lock.lock();
-		nuevoEnemigo->setDistanciaPiso(escenario.getAnchoVista());
-		nuevoEnemigo->caminar(Direccion::IZQUIERDA);
-		enemigos.push_back(nuevoEnemigo);
-		contadorEnemigosSpawneados++;
-
-		lock.unlock();
-		if (BossFinal == NULL)
-			BossFinal = nuevoEnemigo;
-
-		cambios = true;
-
-		info("Boss HI-DO creado");
-	}
-	else if (nivel == 1 && (BossFinal == NULL)) { //Se crea el Boss AirbusterRiberts
-		nuevoEnemigo = new Boss1(++contador, configuracion);
-		nuevoEnemigo->getTamanio().x = 400;				//configurar para enemigo 
-		nuevoEnemigo->getTamanio().y = 250;				//configurar para enemigo
-		nuevoEnemigo->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista();
-		nuevoEnemigo->getPos().y = 300;
-		nuevoEnemigo->setTipo(Tipo::Boss2);
-		lock.lock();
-		nuevoEnemigo->setDistanciaPiso(escenario.getAnchoVista());
-		nuevoEnemigo->caminar(Direccion::IZQUIERDA);
-		enemigos.push_back(nuevoEnemigo);
-		contadorEnemigosSpawneados++;
-
-		lock.unlock();
-
-		if (BossFinal == NULL)
-			BossFinal = nuevoEnemigo;
-
-		cambios = true;
-
-		info("Boss creado");
-	}
-	else if (nivel == 2 && (BossFinal == NULL)) { //Se crea el Boss TANI OH
-		nuevoEnemigo = new Boss2(++contador, configuracion);
-		nuevoEnemigo->getTamanio().x = 400;				//configurar para enemigo 
-		nuevoEnemigo->getTamanio().y = 400;				//configurar para enemigo
-		nuevoEnemigo->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista();
-		nuevoEnemigo->getPos().y = 150;
-		nuevoEnemigo->setTipo(Tipo::Boss3);
-		lock.lock();
-		nuevoEnemigo->setDistanciaPiso(escenario.getAnchoVista());
-		nuevoEnemigo->caminar(Direccion::IZQUIERDA);
-		enemigos.push_back(nuevoEnemigo);
-		contadorEnemigosSpawneados++;
-
-		lock.unlock();
-
-		if (BossFinal == NULL)
-			BossFinal = nuevoEnemigo;
-
-		cambios = true;
-
-		info("Boss creado");
-	}
-	return nuevoEnemigo;
-}
-
-
-Enemigo* Juego::spawnEnemigo(micros tiempoCreacion) {
-	Enemigo* nuevoEnemigo = new Enemigo(++contador, configuracion);
-
-	nuevoEnemigo->getTamanio().x = configuracion.getTamanioJugador().x;				//configurar para enemigo 
-	nuevoEnemigo->getTamanio().y = configuracion.getTamanioJugador().y;				//configurar para enemigo
-	nuevoEnemigo->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista();
-	nuevoEnemigo->setTiempoCreacion(tiempoCreacion);
-	nuevoEnemigo->setTipo(Tipo::Enemigo);
-	nuevoEnemigo->setDistanciaPiso(-nuevoEnemigo->getTamanio().y - nuevoEnemigo->getPos().y);
-	lock.lock();
-	nuevoEnemigo->caminar(Direccion::IZQUIERDA);
-	enemigos.push_back(nuevoEnemigo);
-	contadorEnemigosSpawneados++;
-
-	lock.unlock();
-
-	cambios = true;
-
-	info("Enemigo creado");
-
-
-	return nuevoEnemigo;
 }
 
 bool Juego::getEstado(Bytes& bytes) {
 	bool rv = false;;
 	std::vector<EstadoObj> estado;
-	if (elJuegoEmpezo) {
-		lock.lock();
+	std::vector<InfoJugador> hudInfo;
 
-		//Actualizar posiciones de jugadores y encontrar el minimo en X
-		int minX = 0;
-		auto it = jugadores.begin();
+	lock.lock();
 
-		for (auto it = jugadores.begin(); it != jugadores.end();) {
-			Jugador* unJugador = *it;
-			cambios |= unJugador->tieneCambios(plataformas);
-			bool colisionan = false;
-			if ((minX == 0 || unJugador->getPos().x < minX) && unJugador->getEstado() != Estado::Desconectado)
-				minX = unJugador->getPos().x + unJugador->getTamanio().x / 2;
-			minPosXJugador = minX;
+	//Actualizar posiciones de objetos y encontrar el minimo en X de jugadores
+	int minX = 0;
 
-			auto it4 = pickups.begin();
-			while ((it4 != pickups.end()) && !colisionan) {
-				PickUp *unPickUp = *it4;
-				if (((unJugador->getPos().x + unJugador->getTamanio().x) < (unPickUp->getPos().x)) || (unJugador->getPos().x > unPickUp->getPos().x + unPickUp->getTamanio().x)) {
-					colisionan = false;
+	for (auto it = objetos.begin(); it != objetos.end(); it++) {
+		Objeto* objeto = *it;
+		bool tieneCambios = objeto->tieneCambios(this);
+		cambios |= tieneCambios;
+
+		if (objeto->getTipo() == Tipo::Jugador) {
+			if ((minX == 0 || objeto->getPos().x < minX) && objeto->getEstado() != Estado::Desconectado)
+				minX = objeto->getPos().x + objeto->getTamanio().x / 2;
+		}
+	}
+
+	minX = std::max<int>(minX, 6800);
+
+	//Actualizar el offset si es necesario
+	if (minX > escenario.getOffsetVista() + escenario.getAnchoVista()/2) {
+		cambios = true;
+		int offset = std::min<int>(minX - escenario.getAnchoVista()/2, escenario.getOffsetVista() + maxOffsetDelta);
+		offset = std::min<int>(offset, escenario.getLongitud());
+		escenario.setOffsetVista(offset);
+	}
+
+	//Spawnear boss si se llego al final
+	if (BossFinal == nullptr && escenario.getOffsetVista()>= escenario.getLongitud())
+		spawnBoss();
+
+	if (BossFinal == nullptr)
+		cambios |= enemigoFactory->spawnEnemigo(this);
+
+	//Segunda pasada
+	auto it = objetos.begin();
+	while (it != objetos.end()) {
+		Objeto* objeto = *it;
+		bool remover = false;
+		Efecto* efecto = nullptr;
+
+
+		if (! objeto->esVisible()) {
+			remover = true;
+			efecto = objeto->efectoAlDesaparecer();
+		} else if (objeto->getPos().y < (escenario.getNivelPiso() - escenario.getAltoVista())|| objeto->getPos().y > escenario.getAltoVista()) {
+			remover = true;
+			efecto = objeto->efectoAlDesaparecer();
+		} else if (objeto->getPos().x < escenario.getOffsetVista() - objeto->getTamanio().x || objeto->getPos().x > escenario.getOffsetVista() + escenario.getAnchoVista())
+			remover = true;
+
+		if (remover) {
+			if (dynamic_cast<Enemigo*>(objeto))
+				enemigoFactory->decrementarCantidadEnemigos();
+			objetos.erase(it);
+			if (objeto->getTipo() != Tipo::Jugador)
+				delete objeto;
+		} else {
+			//Actualizar posiciones de jugadores para que no se salgan de pantalla
+			if (objeto->getTipo() == Tipo::Jugador) {
+				Jugador* jugador = (Jugador*) objeto;
+
+				if ((jugador->getPos().x + jugador->getTamanio().x) > (escenario.getOffsetVista() + escenario.getAnchoVista())) {
+					cambios = true;
+					jugador->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista()- jugador->getTamanio().x;
 				}
-				else if (((unJugador->getPos().y + unJugador->getTamanio().y) < (unPickUp->getPos().y)) || (unJugador->getPos().y > unPickUp->getPos().y + unPickUp->getTamanio().y)) {
-					colisionan = false;
-				}
-				else { colisionan = true; }
 
-				if (colisionan) {
-					unJugador->recibirBonus(unPickUp);
-					//if(unJugador->getArma->getTipo() == Gunc)  buscarEnemigoMasCercano , setEnemigomas cercano
-					delete unPickUp;
-					pickups.erase(it4);
-					if (unJugador->getKillAll()) {
-						auto it2 = enemigos.begin();
-						while (it2 != enemigos.end()) {
-							Enemigo* obj = *it2;
-							delete (*it2);
-							efectos.push_back(new EnemigoMuriendo(++contador, obj->getPos(), obj->getTamanio()));
-							enemigos.erase(it2);;
-						}
-					}
+				if (jugador->getPos().x < escenario.getOffsetVista()) {
+					cambios = true;
+					jugador->getPos().x = escenario.getOffsetVista();
 				}
-				it4++;
 			}
 			it++;
 		}
 
-		if (!enemigos.empty()) {
-			minX = ultimoMinX;
-		}
+		if (efecto != nullptr)
+			agregarObjeto(efecto);
+	}
 
-		ultimoMinX = minX;
+	nuevosLock.lock();
+	it = nuevosObjetos.begin();
+	while (it != nuevosObjetos.end()) {
+		objetos.push_back(*it);
+		nuevosObjetos.erase(it);
+	}
 
-		auto it2 = enemigos.begin();
-		while (it2 != enemigos.end()) {
-			Enemigo* enemigo = *it2;
-			cambios |= enemigo->tieneCambios(plataformas);
-			it2++;
-		}
+	nuevosLock.unlock();
 
-		for (auto it3 = proyectilesAliados.begin(); it3 != proyectilesAliados.end();) {
-			Proyectil* unProyectil = *it3;
-			if (unProyectil != NULL) {
-				cambios |= unProyectil->tieneCambios(plataformas);
-				bool colisionan = false;
-				it2 = enemigos.begin();
-				while ((it2 != enemigos.end()) && !colisionan) {
-					Enemigo *unEnemigo = *it2;
-					if (((unProyectil->getPos().x + unProyectil->getTamanio().x) < (unEnemigo->getPos().x)) || (unProyectil->getPos().x > unEnemigo->getPos().x + unEnemigo->getTamanio().x)) {
-						colisionan = false;
-					}
-					else if (((unProyectil->getPos().y + unProyectil->getTamanio().y) < (unEnemigo->getPos().y)) || (unProyectil->getPos().y > unEnemigo->getPos().y + unEnemigo->getTamanio().y)) {
-						colisionan = false;
-					}
-					else { colisionan = true; }
-
-					if (colisionan) {
-						bool estaMuerto = unEnemigo->recibirDanio(unProyectil->getDanio());
-						if (estaMuerto) {
-							if ((unEnemigo->getTipo() == Tipo::Boss1) || (unEnemigo->getTipo() == Tipo::Boss2) || (unEnemigo->getTipo() == Tipo::Boss3)) {
-								bossEliminado = true;
-								contadorEnemigosSpawneados--; //elimino del total global
-							} else {
-								contadorEnemigosSpawneados--; //elimino del total global
-								PickUp* nuevoPickup = unEnemigo->spawnPickUp();
-								if (nuevoPickup != NULL)
-									pickups.push_back(nuevoPickup);
-							}
-								it = jugadores.begin();
-								bool encontrado = false;
-								while ((it != jugadores.end()) && !encontrado) {
-									Jugador* jugadorQueEliminoAlEnemigo = *it;
-									if (unProyectil->getIdTirador() == jugadorQueEliminoAlEnemigo->getId())
-										jugadorQueEliminoAlEnemigo->recibirPuntos(unEnemigo->getPuntos());
-									it++;
-								}
-							efectos.push_back(new EnemigoMuriendo(++contador, unEnemigo->getPos(), unEnemigo->getTamanio()));
-							delete unEnemigo;
-							enemigos.erase(it2);
-						}
-					}
-					it2++;
-				}
-
-				if (colisionan || !unProyectil->esVisible()) {
-					efectos.push_back(new ImpactoBala(++contador, unProyectil));
-					delete unProyectil;
-					it3 = proyectilesAliados.erase(it3);
-				}
-				else
-					it3++;
-			}
-		}
-
-		for (auto it6 = proyectilesEnemigos.begin(); it6 != proyectilesEnemigos.end();) {
-			Proyectil* unProyectil = *it6;
-			if (unProyectil != NULL) {
-				cambios |= unProyectil->tieneCambios(plataformas);
-				bool colisionan = false;
-				for (auto it = jugadores.begin(); (it != jugadores.end()) && !colisionan;) {
-					Jugador *unJugador = *it;
-					if (((unProyectil->getPos().x + unProyectil->getTamanio().x) < (unJugador->getPos().x)) || (unProyectil->getPos().x > unJugador->getPos().x + unJugador->getTamanio().x)) {
-						colisionan = false;
-					}
-					else if (((unProyectil->getPos().y + unProyectil->getTamanio().y) < (unJugador->getPos().y)) || (unProyectil->getPos().y > unJugador->getPos().y + unJugador->getTamanio().y)) {
-						colisionan = false;
-					}
-					else { colisionan = true; }
-					bool estaMuerto = false;
-					if (colisionan) {
-						estaMuerto = unJugador->recibirDanio(unProyectil->getDanio());
-						if (estaMuerto && modoDeJuego != MODO_DIOS) {
-							unJugador->setEstaMuerto(true);
-							jugadores.erase(it);
-						}
-						else
-							it++;
-					}
-					else {
-						it++;
-					}
-				}
-				if (colisionan || !unProyectil->esVisible()) {
-					delete unProyectil;
-					it6 = proyectilesEnemigos.erase(it6);
-				}
-				else
-					it6++;
-			}
-
-		}
-
-		//Actualizar el offset si es necesario
-		if (minX > escenario.getOffsetVista() + escenario.getAnchoVista() / 2) {
-			cambios = true;
-			int offset = std::min<int>(minX - escenario.getAnchoVista() / 2, escenario.getOffsetVista() + maxOffsetDelta);
-			offset = std::min<int>(offset, escenario.getLongitud());
-			escenario.setOffsetVista(offset);
-		}
-
-		//Actualizar posiciones de jugadores para que no se salgan de pantalla
-		it = jugadores.begin();
-		while (it != jugadores.end()) {
-			Jugador* obj = *it;
-
-			if ((obj->getPos().x + obj->getTamanio().x) > (escenario.getOffsetVista() + escenario.getAnchoVista())) {
-				cambios = true;
-				obj->getPos().x = escenario.getOffsetVista() + escenario.getAnchoVista() - obj->getTamanio().x;
-			}
-
-			if (obj->getPos().x < escenario.getOffsetVista()) {
-				cambios = true;
-				obj->getPos().x = escenario.getOffsetVista();
+	//Generar estado para la vista
+	if (cambios) {
+		it = objetos.begin();
+		while (it != objetos.end()) {
+			Objeto* obj = *it;
+			if (obj->esVisible()) {
+				EstadoObj estadoObj = obj->getEstadoObj(escenario);
+				estado.push_back(estadoObj);
 			}
 			it++;
 		}
 
-		auto efectosIt = efectos.begin();
-		while (efectosIt != efectos.end()) {
-			Efecto* obj = *efectosIt;
-			cambios |= obj->tieneCambios(plataformas);
+		auto itPlataformas = plataformas.begin();
+		while (itPlataformas != plataformas.end()) {
+			Objeto* obj = *itPlataformas;
 
-			if (obj->esVisible())
-				efectosIt++;
-			else
-				efectosIt = efectos.erase(efectosIt);
+			int inicio = obj->getPos().x;
+			int fin = obj->getPos().x + obj->getTamanio().x;
+
+			if (fin >= escenario.getOffsetVista() && inicio <= escenario.getOffsetVista() + escenario.getAnchoVista()) {
+				inicio = inicio - escenario.getOffsetVista();
+				fin = std::max<int>(fin - escenario.getOffsetVista(), 0);
+				fin = std::min<int>(escenario.getAnchoVista(), fin);
+
+				EstadoObj estadoObj;
+				estadoObj.setId(obj->getId());
+				estadoObj.setTipo(obj->getTipo());
+				estadoObj.setEstado(obj->getEstado());
+				Punto pos;
+				pos.x = inicio;
+				pos.y = escenario.getNivelPiso() - obj->getPos().y;
+				estadoObj.setPos(pos);
+				Punto tamanio;
+				tamanio.x = fin - inicio;
+				tamanio.y = GROSOR_PLATAFORMA;
+				estadoObj.setTamanio(tamanio);
+				estadoObj.setFrame(obj->getFrame());
+				estadoObj.setOrientacion(obj->getOrientacion());
+
+				estado.push_back(estadoObj);
+			}
+			itPlataformas++;
 		}
 
-		//Generar estado para la vista
-		if (cambios) {
-			it = jugadores.begin();
-			while (it != jugadores.end()) {
-				Objeto* obj = *it;
+		int jugadoresVivos = jugadores.size();
 
-				EstadoObj estadoObj;
-				estadoObj.setId(obj->getId());
-				estadoObj.setTipo(obj->getTipo());
-				estadoObj.setEstado(obj->getEstado());
-				estadoObj.setTipo(Tipo::Jugador);
-				Punto pos;
-				pos.x = obj->getPos().x - escenario.getOffsetVista();
-				pos.y = escenario.getNivelPiso() - obj->getTamanio().y - obj->getPos().y;
-				estadoObj.setPos(pos);
-				//std::cout << obj->getPos().x << std::endl;
-				//std::cout << minPosXJugador << std::endl;
+		for (auto itJugadores = jugadores.begin(); itJugadores != jugadores.end(); itJugadores++) {
+			Jugador* jugador = *itJugadores;
 
-				estadoObj.setTamanio(obj->getTamanio());
-				estadoObj.setFrame(obj->getFrame());
-				estadoObj.setOrientacion(obj->getOrientacion());
-
-				if (obj->getTipo() == Tipo::Jugador)
-					estadoObj.setNombre(((Jugador*)obj)->getNombre());
-
-				estado.push_back(estadoObj);
-				it++;
-			}
-
-			it2 = enemigos.begin();
-			while (it2 != enemigos.end()) {
-				Enemigo* obj = *it2;
-
-				EstadoObj estadoObj;
-				estadoObj.setId(obj->getId());
-				estadoObj.setTipo(obj->getTipo());
-				estadoObj.setEstado(obj->getEstado());
-				estadoObj.setEstado(obj->getEstado());
-				estadoObj.setTipo(obj->getTipo());
-
-
-				Punto pos;
-				pos.x = obj->getPos().x - escenario.getOffsetVista();
-				pos.y = escenario.getNivelPiso() + obj->getDistanciaPiso() - obj->getPos().y;
-				estadoObj.setPos(pos);
-				estadoObj.setTamanio(obj->getTamanio());
-				estadoObj.setFrame(obj->getFrame());
-				estadoObj.setOrientacion(obj->getOrientacion());
-
-				estado.push_back(estadoObj);
-				it2++;
-			}
-
-			auto it3 = proyectilesAliados.begin();
-			while (it3 != proyectilesAliados.end()) {
-				Objeto* obj = *it3;
-
-				EstadoObj estadoObj;
-				estadoObj.setId(obj->getId());
-				estadoObj.setTipo(obj->getTipo());
-				estadoObj.setEstado(obj->getEstado());
-				Punto pos;
-				pos.x = obj->getPos().x - escenario.getOffsetVista();
-				pos.y = escenario.getNivelPiso() - obj->getTamanio().y - obj->getPos().y;
-				estadoObj.setPos(pos);
-				estadoObj.setTamanio(obj->getTamanio());
-				estadoObj.setFrame(obj->getFrame());
-				estadoObj.setOrientacion(obj->getOrientacion());
-
-				estado.push_back(estadoObj);
-				it3++;
-			}
-
-			auto it4 = pickups.begin();
-			while (it4 != pickups.end()) {
-				Objeto* obj = *it4;
-
-				EstadoObj estadoObj;
-				estadoObj.setId(obj->getId());
-				estadoObj.setTipo(obj->getTipo());
-				estadoObj.setEstado(obj->getEstado());
-				Punto pos;
-				pos.x = obj->getPos().x - escenario.getOffsetVista();
-				pos.y = escenario.getNivelPiso() - obj->getTamanio().y - obj->getPos().y;
-				estadoObj.setPos(pos);
-				estadoObj.setTamanio(obj->getTamanio());
-				estadoObj.setFrame(obj->getFrame());
-				estadoObj.setOrientacion(obj->getOrientacion());
-
-				estado.push_back(estadoObj);
-				it4++;
-			}
-
-			auto it5 = plataformas.begin();
-			while (it5 != plataformas.end()) {
-				Objeto* obj = *it5;
-
-				int inicio = obj->getPos().x;
-				int fin = obj->getPos().x + obj->getTamanio().x;
-
-				if (fin >= escenario.getOffsetVista() && inicio <= escenario.getOffsetVista() + escenario.getAnchoVista()) {
-					inicio = inicio - escenario.getOffsetVista();
-					fin = std::max<int>(fin - escenario.getOffsetVista(), 0);
-					fin = std::min<int>(escenario.getAnchoVista(), fin);
-
-					EstadoObj estadoObj;
-					estadoObj.setId(obj->getId());
-					estadoObj.setTipo(obj->getTipo());
-					estadoObj.setEstado(obj->getEstado());
-					Punto pos;
-					pos.x = inicio;
-					pos.y = escenario.getNivelPiso() - obj->getPos().y;
-					estadoObj.setPos(pos);
-					Punto tamanio;
-					tamanio.x = fin - inicio;
-					tamanio.y = GROSOR_PLATAFORMA;
-					estadoObj.setTamanio(tamanio);
-					estadoObj.setFrame(obj->getFrame());
-					estadoObj.setOrientacion(obj->getOrientacion());
-
-					estado.push_back(estadoObj);
-				}
-				it5++;
-			}
-
-			auto it6 = proyectilesEnemigos.begin();
-			while (it6 != proyectilesEnemigos.end()) {
-				Objeto* obj = *it6;
-
-				EstadoObj estadoObj;
-				estadoObj.setId(obj->getId());
-				estadoObj.setTipo(Tipo::BalaEnemigo);
-				estadoObj.setEstado(obj->getEstado());
-				Punto pos;
-				pos.x = obj->getPos().x - escenario.getOffsetVista();
-				pos.y = escenario.getNivelPiso() - obj->getTamanio().y - obj->getPos().y;
-				estadoObj.setPos(pos);
-				estadoObj.setTamanio(obj->getTamanio());
-				estadoObj.setFrame(obj->getFrame());
-				estadoObj.setOrientacion(obj->getOrientacion());
-
-				estado.push_back(estadoObj);
-				it6++;
-			}
-
-			auto efectosIt = efectos.begin();
-			while (efectosIt != efectos.end()) {
-				Efecto* obj = *efectosIt;
-
-				EstadoObj estadoObj;
-				estadoObj.setId(obj->getId());
-				estadoObj.setTipo(obj->getTipo());
-				estadoObj.setEstado(obj->getEstado());
-				Punto pos;
-				pos.x = obj->getPos().x - escenario.getOffsetVista();
-				pos.y = escenario.getNivelPiso() - obj->getTamanio().y - obj->getPos().y;
-				estadoObj.setPos(pos);
-				estadoObj.setTamanio(obj->getTamanio());
-				estadoObj.setFrame(obj->getFrame());
-				estadoObj.setOrientacion(obj->getOrientacion());
-				estadoObj.setNombre(obj->getNombre());
-				estado.push_back(estadoObj);
-				efectosIt++;
-			}
-		}
-
-		std::vector<InfoJugador> hudInfo;
-
-		auto jugadorIt = jugadores.begin();
-		while (jugadorIt != jugadores.end()) {
-			Jugador* jugador = *jugadorIt;
 			InfoJugador info;
-
-			info.arma = jugador->getArma()->getTipo();
-			info.balas = jugador->getArma()->getCantidad();
+			info.arma = jugador->getArma().getTipo();
+			info.balas = jugador->getArma().getBalas();
 			setCharArray(jugador->getNombre(), info.nombre);
 			info.puntos = jugador->getPuntos();
 			info.energia = jugador->getEnergia();
 			hudInfo.push_back(info);
 
-			jugadorIt++;
+			if (! jugador->esVisible())
+				jugadoresVivos --;
 		}
 
-
-		rv = cambios;
-		cambios = false;
-		lock.unlock();
-
-		if (rv) {
-			bytes.put(nivel);
-			bytes.put(escenario.getOffsetVista());
-			bytes.putAll(estado);
-			bytes.putAll(hudInfo);
+		if (iniciado && jugadoresVivos == 0) {
+			perdido = true;
+			info("GAME OVER", true);
 		}
-		return rv;
-	} else {
-		//devolver pantalla carga
-		return false;
+
+		if (BossFinal != nullptr && ! BossFinal->esVisible()) {
+			ganado = true;
+			info("STAGE CLEAR", true);
+		}
+	}
+	rv = cambios;
+	cambios = false;
+	lock.unlock();
+
+	if (rv) {
+		bytes.put(escenario.getOffsetVista());
+		bytes.putAll(estado);
+		bytes.putAll(hudInfo);
+	}
+	return rv;
+}
+
+void Juego::spawnBoss() {
+	int nivel = 1;
+	Boss* boss = nullptr;
+
+	if (nivel == 0 )
+		boss = new Boss0(++contador, configuracion);
+
+	if (nivel == 1 )
+		boss = new Boss1(++contador, configuracion);
+
+	if (nivel == 2 )
+		boss = new Boss2(++contador, configuracion);
+
+	if (boss != nullptr) {
+		info("Boss creado", true);
+		boss->getPos().x = escenario.getLongitud() + escenario.getAnchoVista();
+		agregarObjeto(boss);
+		BossFinal = boss;
+		cambios = true;
 	}
 }
+
+EnemigoFactory* Juego::getEnemigoFactory() {
+	return enemigoFactory;
+}
+
+void Juego::setEnemigoFactory(EnemigoFactory* enemigoFactory) {
+	if (this->enemigoFactory != nullptr)
+		delete this->enemigoFactory;
+	this->enemigoFactory = enemigoFactory;
+}
+
+bool Juego::estaPerdido() {
+	return perdido;
+}
+
+bool Juego::estaGanado() {
+	return ganado;
+}
+

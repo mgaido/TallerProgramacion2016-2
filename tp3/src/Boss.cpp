@@ -1,67 +1,40 @@
 #include "Boss.h"
+#include "Juego.h"
 
 
-Boss::Boss(int id, Config & _configuracion) : Enemigo(id, _configuracion) {
-	distanciaRecorrida = 0;
-	this->energia = 10000;
+Boss::Boss(int id, Config & _configuracion) : Personaje(id, _configuracion) {
+	velocidadX = 0.0001;
+	orientacion = true;
+	tiempoMovimiento = tiempo();
+	tiempoUltimoDisparo = tiempo();
+	estado = Estado::Quieto;
 }
 
-void Boss::comportamiento(micros tiempoActual, std::vector<Proyectil*>* proyectilesEnemigos, std::vector<Enemigo*>* enemigos)
-{
-}
+bool Boss::tieneCambios(Juego* juego) {
+	micros t = tiempo() - tiempoMovimiento;
+	pos.x += velocidadX * t * (orientacion ? -1 : 1);
 
-int modulo(int numero) {
-	if (numero < 0)
-		return -numero;
-	else
-		return numero;
-}
+	Escenario escenario = juego->getEscenario();
 
-bool Boss::tieneCambios(std::vector<Plataforma*>& plataformas){
-	std::unique_lock<std::mutex> lock(mutex);
-	int posXAntigua = pos.x;
-	bool valor =  actualizar(plataformas);
-	int posXNueva = pos.x;
-	distanciaRecorrida += modulo((posXNueva - posXAntigua));
-	return valor;
-}
+	int random = rand() % 100 + 15;
 
-bool Boss::actualizar(std::vector<Plataforma*>& plataformas){
-	micros t = 0;
-	double vx = 0;
-
-	 if (tiempoCaminando > 0) {
-		vx = velocCaminar;
-		t = tiempo() - tiempoCaminando;
-		tiempoCaminando += t;
+	if (orientacion && pos.x < escenario.getOffsetVista() + random) {
+		orientacion = false;
+		pos.x  = escenario.getOffsetVista() + random;
+	} else if (! orientacion && pos.x > escenario.getOffsetVista() + escenario.getAnchoVista() - tamanio.x - random) {
+		pos.x = escenario.getOffsetVista() + escenario.getAnchoVista() - tamanio.x - random;
+		orientacion = true;
 	}
 
-	cambios |= t != 0;
+	tiempoMovimiento += t;
 
-	if (vx != 0)
-		orientacion = vx < 0;
+	int millisUltimoDisparo = (tiempo() - tiempoUltimoDisparo) / 1000;
+	int millis = (rand() % 20 + 5) * 100;
 
-
-	pos.x = pos.x + (int)round(vx*t);
-
-	if (t > 0 && pos.x < 0)
-		pos.x = 0;
-
-	if (tiempoCaminando > 0)
-		estado = Estado::Caminando;
-	else
-		estado = Estado::Quieto;
-
-	if (estado != this->estado) {
-		this->estado = estado;
-		cambios = true;
-		frame = 0;
+	if (millisUltimoDisparo > millis) {
+		this->disparar(juego);
+		tiempoUltimoDisparo = tiempo();
 	}
 
-
-	bool rv = cambios;
-	cambios = false;
-	return rv;
+	return true;
 }
-
-

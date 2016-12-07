@@ -2,34 +2,28 @@
 #ifndef ENEMIGO_H_
 #define ENEMIGO_H_
 
-#include "Personaje.h"
+#include "Soldado.h"
 #include "PickUp.h"
-#include <cstdlib>
+#include "Escenario.h"
  
-class Enemigo : public Personaje {
+class Enemigo : public Soldado {
 public:
 	Enemigo(int id, Config& _configuracion);
+	Enemigo(int id, Config& _configuracion, Escenario& escenario);
 	~Enemigo();
-	virtual bool esEnemigo();
+
+	virtual bool tieneCambios(Juego* juego);
+	virtual bool comportamiento(Juego* juego);
+
 	PickUp* spawnPickUp();
-	//void caminar(Direccion direc);
-	int getPuntos();
-	int getDistanciaPiso();
-	void setDistanciaPiso(int distancia);
-	virtual void caminar(Direccion direcc);
+
+	void caminar(Direccion direcc);
 	void saltar();
-	virtual Proyectil* disparar();
-	virtual void comportamiento(micros tiempoActual, std::vector<Proyectil*>* proyectilesEnemigos, std::vector<Enemigo*>* enemigos);
 	void setTiempoCreacion(micros tiempoCreacion);
-	void aumentarEnergia();
-	void aumentarDanio();
 
 protected:
 	micros tiempoCreacion;
 	micros tiempoUltimoDisparo;
-	int aumentoDeDanio;
-	int puntosQueDaAlMorir;
-	int distanciaPiso;
 };
 
 #endif /* ENEMIGO_H_ */

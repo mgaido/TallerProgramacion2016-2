@@ -105,45 +105,42 @@ void Sesion::eventoTeclado(Bytes& bytes) {
 		servidor->recargar();
 		return;
 	}
-	if (!jugador->estamuerto()) {
-		if (teclas.saltar()) {
-			jugador->saltar();
-			debug(ip + " tecla saltar");
 
-		}
-		if (teclas.der() && !teclas.izq()) {
-			jugador->caminar(Direccion::DERECHA);
-			debug(ip + " tecla derecha");
-			sePresionoTeclaMovimiento = true;
-		}
-		if (teclas.izq() && !teclas.der()) {
-			jugador->caminar(Direccion::IZQUIERDA);
-			debug(ip + " tecla izquierda");
-			sePresionoTeclaMovimiento = true;
-		}
-		if (teclas.disparar()) {
-			Proyectil* nuevoProyectil = jugador->disparar();
-			if (nuevoProyectil != NULL)
-				servidor->enviarProyectilAJuego(nuevoProyectil);
-			debug(ip + " disparar ");
-		}
-		if (teclas.arriba() && !teclas.abajo()) {
-			jugador->apuntar(UP);
-			debug(ip + " tecla arriba");
-		}
-		if (teclas.abajo() && !teclas.arriba()) {
-			jugador->apuntar(DOWN);
-			debug(ip + " tecla abajo");
-		}
-		if (teclas.dejarApuntar()) {
-			jugador->apuntar(NEUTRO);
-			debug(ip + " dejar de apuntar");
-		}
-
-		if (!sePresionoTeclaMovimiento) {
-			jugador->detenerse();
-			debug(ip + " sin teclas");
-		}
+	if (teclas.saltar()) {
+		jugador->saltar();
+		debug(ip + " tecla saltar");
+		
+	}
+	if (teclas.der() && !teclas.izq()) {
+		jugador->caminar(Direccion::DERECHA);
+		debug(ip + " tecla derecha");
+		sePresionoTeclaMovimiento = true;
+	}
+	if (teclas.izq() && !teclas.der()) {
+		jugador->caminar(Direccion::IZQUIERDA);
+		debug(ip + " tecla izquierda");
+		sePresionoTeclaMovimiento = true;
+	}
+	if (teclas.disparar()) {
+		jugador->disparar(servidor->getJuego());
+		debug(ip + " disparar "); 
+	}
+	if (teclas.arriba() && !teclas.abajo()) {
+		jugador->apuntar(UP);
+		debug(ip + " tecla arriba");
+	}
+	if (teclas.abajo() && !teclas.arriba()) {
+		jugador->apuntar(DOWN);
+		debug(ip + " tecla abajo");
+	}
+	if (teclas.dejarApuntar()) {
+		jugador->apuntar(NEUTRO);
+		debug(ip + " dejar de apuntar");
+	} 
+	
+	if(!sePresionoTeclaMovimiento){
+		jugador->detenerse();
+		debug(ip + " sin teclas");
 	}
 }
 

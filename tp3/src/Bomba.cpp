@@ -1,18 +1,23 @@
 #include "Bomba.h"
+#include "Juego.h"
 
-Bomba::Bomba(int id, int idJugador) : Proyectil(id, idJugador) {
-	this->danio = 300;
-	this->cantidad = 1000000;
-	this->cantidadRepuesto = 15;
-	this->puntosOtorgados = 100;
-	this->tamanio.x = 15;			//ver si este tamanio esta bien 
-	this->tamanio.y = 30;
-	this->orientacion = false;
-	this->frame = 0;
+Bomba::Bomba(int id) : Proyectil(id) {
 	this->tipo = Tipo::Bomba;
 	this->estado = Estado::ProyectilEnMovimiento;
+	this->velocidadProyectilX = 0;
+	this->velocidadProyectilY = 0;
+	this->tamanio.x = 32;
+	this->tamanio.y = 50;
+	this->danio = 100;
 }
 
-Proyectil * Bomba::crearProyectil(){
-	return new Bomba(++contador, idTirador);
+bool Bomba::tieneCambios(Juego* juego) {
+	micros  t = tiempo() - tiempoEnMovimiento;
+	velocidadProyectilY -= t*juego->getConfiguracion().getGravedad();
+	return Proyectil::tieneCambios(juego);
+}
+
+void Bomba::setOrientacionX(bool orientacion) {
+	orientacion = false;
+	this->velocidadProyectilX = 0;
 }

@@ -1,56 +1,49 @@
 #include "Enemigo.h"
 
-Enemigo::Enemigo(int id, Config& _configuracion) : Personaje(id, _configuracion) {
-	velocCaminar = 0 , velocSaltoX = 0, velocSaltoY = 0;
-	aumentoDeDanio = 0;
-	tiempoCaminando = 0;
-	tiempoSalto = 0;
-	tiempoUltimoDisparo = 0;
+#include "PickUpArma.h"
+#include "PickUpVida.h"
+#include "PickUpKillAll.h"
+#include "Juego.h"
+
+Enemigo::Enemigo(int id, Config& _configuracion) : Soldado(id, _configuracion) {
 	energia = 250;
-	puntosQueDaAlMorir = 50;				//chequear con tp la cantidad q piden
-	estado = Estado::Quieto;
 	tipo = Tipo::Enemigo;
-	distanciaPiso = 0;
-	cambios = false;
-	srand(time(NULL));
-	int valor = (rand() % 100);
-	if (valor < 20)
-		arma = new GunH(++contador, id);
-	else if (valor < 60)
-		arma = new GunS(++contador, id);
-	else
-		arma = NULL;
+	tiempoCreacion = tiempo();
+	tiempoUltimoDisparo = tiempo();
+	arma.setTipo(Tipo::GunH);
+	caminar(Direccion::IZQUIERDA);
+}
+
+Enemigo::Enemigo(int id, Config& _configuracion, Escenario& escenario) : Enemigo(id, _configuracion) {
+	pos.x = escenario.getOffsetVista() + escenario.getAnchoVista();
 }
 
 Enemigo::~Enemigo() {
-
-}
-
-bool Enemigo::esEnemigo() {
-	return true;
 }
 
 PickUp* Enemigo::spawnPickUp() {
+
+	PickUp* nuevoPickup = nullptr;
+
 	int valor = rand() % 100;
-	PickUp* nuevoPickup = NULL;
-	if (valor < 30) {				//30% dropear bonus al morir 
-		nuevoPickup = new PickUp(++contador);
-		nuevoPickup->setPos(this->pos);
+
+	if (valor < 30) { //30% dropear bonus al morir
+		if (valor < 5) //16%
+			nuevoPickup = new PickUpKillAll(contador++, getPos());
+		else if (valor < 15) //33% vida
+			nuevoPickup = new PickUpVida(contador++, getPos());
+		else if (valor < 21) //20% H
+			nuevoPickup = new PickUpArma(contador++, getPos(), Tipo::GunH);
+		else if (valor < 25)  // 13% S
+			nuevoPickup = new PickUpArma(contador++, getPos(), Tipo::GunS);
+		else if (valor < 28)  // 10% R
+			nuevoPickup = new PickUpArma(contador++, getPos(), Tipo::GunR);
+		else // 6% C
+			nuevoPickup = new PickUpArma(contador++, getPos(), Tipo::GunC);
 	}
 	return nuevoPickup;
 }
 
-int Enemigo::getPuntos() {
-	return puntosQueDaAlMorir;
-}
-
-int Enemigo::getDistanciaPiso() {
-	return distanciaPiso;
-}
-
-void Enemigo::setDistanciaPiso(int distancia) {
-	this->distanciaPiso = distancia;
-}
 
 void Enemigo::caminar(Direccion direccion) {
 	std::unique_lock<std::mutex> lock(mutex);
@@ -75,54 +68,44 @@ void Enemigo::saltar() {
 	cambios = true;
 }
 
-Proyectil * Enemigo::disparar(){
-	Proyectil* nuevoProyectil = NULL;
-	if (arma != NULL) {
-		nuevoProyectil = arma->disparar();
-	}
-	if (nuevoProyectil != NULL) {
-		Punto pos;
-		pos.x = getPos().x + (getOrientacion() ? 0 : getTamanio().x);
-		pos.y = getPos().y - getTamanio().y * 0.6;
-		nuevoProyectil->setPos(pos);
-		nuevoProyectil->setSiElDisparadorEstaSaltando(tiempoSalto != 0);
-		nuevoProyectil->setOrientacionX(orientacion);
-		nuevoProyectil->setOrientacionY(apunta);
-		nuevoProyectil->aumentarDanio(aumentoDeDanio);
-	}
-	return nuevoProyectil;
+bool Enemigo::tieneCambios(Juego* juego) {
+	bool cambios = Soldado::tieneCambios(juego);
+	cambios |= comportamiento(juego);
+	return cambios;
 }
 
-void Enemigo::comportamiento(micros tiempoActual, std::vector<Proyectil*>* proyectilesEnemigos, std::vector<Enemigo*>* enemigos) {
-	srand(time(NULL));
-	if ((tiempoActual - tiempoCreacion) > ((rand() % 700) * 1000)) {
-		this->detenerse();
-	}
-	if (velocCaminar == 0) {
-		if ((tiempoActual - tiempoUltimoDisparo) > (6 * (rand() % 500) * 1000)) {
-			Proyectil* nuevoProyectil = this->disparar();
-			if(nuevoProyectil != NULL)
-				proyectilesEnemigos->push_back(nuevoProyectil);
-			tiempoUltimoDisparo = tiempo();
-		}
-	}
-	srand(tiempoCreacion);
 
-	if (velocCaminar != 0) {
-		if ((tiempoActual - tiempoCreacion) > (2 * (rand() % 500) * 1000)) {
+bool Enemigo::comportamiento(Juego* juego) {
+	if (rand() % 23 != 0)
+		return false;
+
+	if ( tiempoCaminando > 0) {
+		int millisCreacion = (tiempo() - tiempoCreacion) / 1000;
+		int millis = 1000 * (rand() % 8 + 2);
+
+		if (millisCreacion > millis) {
+			this->detenerse();
+			return true;
+		}
+
+		millis = 1000 * (rand() % 3 + 1);
+		if (millisCreacion > millis) {
 			this->saltar();
+			return true;
+		}
+	} else {
+		int millisDisparo = (tiempo() - tiempoUltimoDisparo) / 1000;
+		int millis = 1000 * (rand() % 5) + 1;
+		if (millisDisparo > millis) {
+			tiempoUltimoDisparo = tiempo();
+			return this->disparar(juego);
 		}
 	}
+
+	return false;
 }
 
 void Enemigo::setTiempoCreacion(micros tiempoCreacion){
 	this->tiempoCreacion = tiempoCreacion;
 }
 
-void Enemigo::aumentarEnergia(){
-	energia += 500;
-}
-
-void Enemigo::aumentarDanio(){
-	aumentoDeDanio = 50;
-}

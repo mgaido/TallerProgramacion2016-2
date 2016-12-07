@@ -8,16 +8,14 @@
 #include "GunR.h"
 #include "GunS.h"
 
-enum class Bonus {GunH, GunS, GunR, Vida, KillAll, GunC};
+class Juego;
+
 class PickUp : public Objeto {
 public:
-	PickUp(int id);
-	void setPos(Punto pos);
-	int getEnergiaACurar();
-	Bonus getBonus();
-private:
-	Bonus bonus;
-	int energiaACurar;
+	PickUp(int id, Punto pos);
+
+	virtual bool tieneCambios(Juego* juego);
+	virtual void aplicar(Juego* juego, Jugador* jugador) = 0;
 };
 
 #endif // PICKUP_H

@@ -9,45 +9,11 @@
 #define OBJETO_H_
 
 #include "Utils.h"
+#include "Estado.h"
+#include "Escenario.h"
 
-enum class Tipo {  GunH, GunC, GunS, GunR, GunF, BalaEnemigo, //Proyectiles
-					Jugador, Enemigo, Boss1, Boss2, Boss3, //Personajes
-					BonusVida, BonusKill, BonusArma, //PickUps
-					Plataforma, Bomba,
-					ImpactoH, ImpactoS, ImpactoF, ImpactoExp, EnemigoMuriendo //Efectos
-			};
-
-enum class Estado { Quieto, Caminando, Saltando, Desconectado, ProyectilEnMovimiento, ProyectilHaciaAbajo, ProyectilHaciaArriba, Bonus, MirarArriba, MirarAbajo};
-
-
-class Punto {
-public:
-	int x;
-	int y;
-	Punto(){
-		x=0;
-		y=0;
-	}
-};
-
-
-class Escenario {
-public:
-	Escenario();
-	Escenario(int longitud, int anchoVista, int nivelPiso);
-
-	int getLongitud() const;
-	int getAnchoVista() const;
-	int getNivelPiso() const;
-	int getOffsetVista() const;
-	void setOffsetVista(int offsetVista);
-	int getFrame();
-private:
-	int longitud;
-	int anchoVista;
-	int nivelPiso;
-	int offsetVista;
-};
+class Juego;
+class Efecto;
 
 class Objeto {
 public:
@@ -60,13 +26,22 @@ public:
 	Estado getEstado();
 	Tipo getTipo();
 	void setTipo(Tipo tipo);
+
 	int getFrame();
 	bool getOrientacion();
 
-	virtual bool tieneCambios();
+	virtual bool tieneCambios(Juego* juego);
+	virtual bool esVisible();
 
+	virtual Efecto* efectoAlDesaparecer();
+
+	virtual EstadoObj getEstadoObj(Escenario& escenario);
+
+	virtual std::string getNombre();
 
 protected:
+	bool colisionaCon(Objeto* otro);
+
 	int id;
 	Punto pos;
 	Punto tamanio;
@@ -74,6 +49,7 @@ protected:
 	Tipo tipo;
 	int frame;
 	bool orientacion;
+	bool visible;
 };
 
 #endif /* OBJETO_H_ */

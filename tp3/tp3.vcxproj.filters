@@ -75,9 +75,6 @@
     <ClCompile Include="src\GunS.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\GunF.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\GunR.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -90,16 +87,10 @@
     <ClCompile Include="src\Proyectil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Pesonaje.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Plataforma.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Efecto.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\EnemigoMuriendo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ImpactoBala.cpp">
@@ -115,6 +106,33 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Bomba.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EnemigoFactory.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Escenario.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Misil.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Personaje.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PersonajeMuriendo.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PickUpArma.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PickUpKillAll.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PickUpVida.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EnemigoFuerte.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -194,9 +212,6 @@
     <ClInclude Include="src\GunR.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\GunF.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\GunS.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -215,9 +230,6 @@
     <ClInclude Include="src\Efecto.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\EnemigoMuriendo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\ImpactoBala.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -231,6 +243,33 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Bomba.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EnemigoFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Enums.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Escenario.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Misil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PersonajeMuriendo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PickUpArma.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PickUpKillAll.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PickUpVida.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EnemigoFuerte.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

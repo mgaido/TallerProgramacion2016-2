@@ -7,7 +7,8 @@
 //Misiles que siguen al Jugador
 class GunC : public Proyectil {
 public:
-	GunC(int id, int idJugador);
+	GunC(int id);
+	/*
 	GunC(int id, int idJugador, Objeto* enemigoMasCercano);
 	virtual Proyectil* dispararEspecial(Objeto *enemigoMasCercano);
 	virtual void trayectoria(std::vector<Plataforma*>& plataformas);
@@ -18,7 +19,7 @@ private:
 protected:
 	virtual Proyectil* crearProyectil();
 	virtual Proyectil* crearProyectil(Objeto* enemigoMasCercano);
-	Objeto* enemigoMasCercano;
+	Objeto* enemigoMasCercano;*/
 };
 
 #endif /* GUNC_H_ */

@@ -7,12 +7,7 @@
 //Lanzamisiles
 class GunR : public Proyectil {
 public:
-	GunR(int id, int idJugador);
-private:
-protected:
-	virtual Proyectil* crearProyectil();
-
-
+	GunR(int id);
 };
 
 #endif /* GUNR_H_ */

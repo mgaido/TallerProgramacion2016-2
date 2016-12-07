@@ -97,43 +97,7 @@ void Config::parsearXML(std::string archivo) {
 			estado = Estado::Bonus;
 
 		valor = nodo.hijo("elemento").valor();
-		Tipo tipo;
-		if (valor == "Jugador")
-			tipo = Tipo::Jugador;
-
-		if (valor == "Enemigo")
-			tipo = Tipo::Enemigo;
-
-		if (valor == "Boss1")
-			tipo = Tipo::Boss1;
-
-		if (valor == "Boss2")
-			tipo = Tipo::Boss2;
-
-		if (valor == "Boss3")
-			tipo = Tipo::Boss3;
-
-		if (valor == "BonusKill")
-			tipo = Tipo::BonusKill;
-
-		if (valor == "BonusVida")
-			tipo = Tipo::BonusVida;
-
-		if (valor == "BonusArma")
-			tipo = Tipo::BonusArma;
-
-		if (valor == "GunH")
-			tipo = Tipo::GunH;
-
-		if (valor == "GunS")
-			tipo = Tipo::GunS;
-
-		if (valor == "GunR")
-			tipo = Tipo::GunR;
-
-		if (valor == "GunC")
-			tipo = Tipo::GunC;
-
+		Tipo tipo = tipoPorNombre(valor);
 
 		sprite.estado = estado;
 		sprite.tipo = tipo;
@@ -307,6 +271,33 @@ void Config::defaultConfig() {
 
 	sprite = ConfigSprite();
 	sprite.estado = Estado::Caminando;
+	sprite.tipo = Tipo::EnemigoFuerte;
+	setCharArray("img/EnemigoCaminando.png", sprite.imagen);
+	sprite.frames = 16;
+	sprite.tiempo = 1000;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
+	sprite = ConfigSprite();
+	sprite.estado = Estado::Saltando;
+	sprite.tipo = Tipo::EnemigoFuerte;
+	setCharArray("img/EnemigoSaltando.png", sprite.imagen);
+	sprite.frames = 1;
+	sprite.tiempo = 1000;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
+	sprite = ConfigSprite();
+	sprite.estado = Estado::Quieto;
+	setCharArray("img/EnemigoDisparando.png", sprite.imagen);
+	sprite.tipo = Tipo::EnemigoFuerte;
+	sprite.frames = 1;
+	sprite.tiempo = 1000;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
+	sprite = ConfigSprite();
+	sprite.estado = Estado::Caminando;
 	sprite.tipo = Tipo::Boss1;
 	setCharArray("img/Enemigo HiDo.png", sprite.imagen);
 	sprite.frames = 1;
@@ -397,9 +388,18 @@ void Config::defaultConfig() {
 
 	sprite = ConfigSprite();
 	sprite.estado = Estado::ProyectilEnMovimiento;
-	setCharArray("img/bala5.png", sprite.imagen);
-	sprite.tipo = Tipo::BalaEnemigo;
+	setCharArray("img/misil.png", sprite.imagen);
+	sprite.tipo = Tipo::Misil;
 	sprite.frames = 1;
+	sprite.tiempo = 1000;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
+	sprite = ConfigSprite();
+	sprite.estado = Estado::ProyectilEnMovimiento;
+	setCharArray("img/bomba.png", sprite.imagen);
+	sprite.tipo = Tipo::Bomba;
+	sprite.frames = 7;
 	sprite.tiempo = 1000;
 	sprite.zIndex = 10;
 	this->configSprites.push_back(sprite);
@@ -425,52 +425,52 @@ void Config::defaultConfig() {
 	sprite = ConfigSprite();
 	sprite.estado = Estado::Bonus;
 	setCharArray("img/Armas.png", sprite.imagen);
-	sprite.tipo = Tipo::BonusArma;
+	sprite.tipo = Tipo::BonusArmaH;
 	sprite.frames = 1;
 	sprite.tiempo = 1000;
 	sprite.zIndex = 10;
 	this->configSprites.push_back(sprite);
 
 	sprite = ConfigSprite();
-	sprite.estado = Estado::Quieto;
+	sprite.estado = Estado::Efecto;
 	setCharArray("img/impactoBala.png", sprite.imagen);
-	sprite.tipo = Tipo::ImpactoH;
+	sprite.tipo = Tipo::GunH;
 	sprite.frames = 10;
 	sprite.tiempo = 500;
 	sprite.zIndex = 10;
 	this->configSprites.push_back(sprite);
 
 	sprite = ConfigSprite();
-	sprite.estado = Estado::Quieto;
+	sprite.estado = Estado::Efecto;
 	setCharArray("img/impactoShot.png", sprite.imagen);
-	sprite.tipo = Tipo::ImpactoS;
+	sprite.tipo = Tipo::GunS;
 	sprite.frames = 10;
 	sprite.tiempo = 500;
 	sprite.zIndex = 10;
 	this->configSprites.push_back(sprite);
 
 	sprite = ConfigSprite();
-	sprite.estado = Estado::Quieto;
-	setCharArray("img/impactoFuego.png", sprite.imagen);
-	sprite.tipo = Tipo::ImpactoF;
-	sprite.frames = 10;
-	sprite.tiempo = 500;
-	sprite.zIndex = 10;
-	this->configSprites.push_back(sprite);
-
-	sprite = ConfigSprite();
-	sprite.estado = Estado::Quieto;
+	sprite.estado = Estado::Efecto;
 	setCharArray("img/impactoExplosion.png", sprite.imagen);
-	sprite.tipo = Tipo::ImpactoExp;
+	sprite.tipo = Tipo::GunR;
 	sprite.frames = 10;
 	sprite.tiempo = 500;
 	sprite.zIndex = 10;
 	this->configSprites.push_back(sprite);
 
 	sprite = ConfigSprite();
-	sprite.estado = Estado::Quieto;
+	sprite.estado = Estado::Efecto;
+	setCharArray("img/impactoExplosion.png", sprite.imagen);
+	sprite.tipo = Tipo::GunC;
+	sprite.frames = 10;
+	sprite.tiempo = 500;
+	sprite.zIndex = 10;
+	this->configSprites.push_back(sprite);
+
+	sprite = ConfigSprite();
+	sprite.estado = Estado::Efecto;
 	setCharArray("img/EnemigoMuriendo.png", sprite.imagen);
-	sprite.tipo = Tipo::EnemigoMuriendo;
+	sprite.tipo = Tipo::Enemigo;
 	sprite.frames = 12;
 	sprite.tiempo = 1000;
 	sprite.zIndex = 10;

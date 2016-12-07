@@ -8,7 +8,7 @@
 #ifndef ESTADO_H_
 #define ESTADO_H_
 
-#include "Objeto.h"
+#include "Enums.h"
 
 class EstadoObj {
 public:
@@ -101,65 +101,7 @@ public:
 				estado = "???";
 			}
 
-			std::string tipo;
-			switch (getTipo()) {
-			case Tipo::GunH:
-				tipo = "GunH";
-				break;
-			case Tipo::GunC:
-				tipo = "GunC";
-				break;
-			case Tipo::GunS:
-				tipo = "GunS";
-				break;
-			case Tipo::GunR:
-				tipo = "GunR";
-				break;
-			case Tipo::GunF:
-				tipo = "GunF";
-				break;
-			case Tipo::Jugador:
-				tipo = "Jugador";
-				break;
-			case Tipo::Enemigo:
-				tipo = "Enemigo";
-				break;
-			case Tipo::Boss1:
-				tipo = "Boss1";
-				break;
-			case Tipo::Boss2:
-				tipo = "Boss2";
-				break;
-			case Tipo::Boss3:
-				tipo = "Boss3";
-				break;
-			case Tipo::BonusVida:
-				tipo = "BonusVida";
-				break;
-			case Tipo::BonusKill:
-				tipo = "BonusKill";
-				break;
-			case Tipo::BonusArma:
-				tipo = "BonusArma";
-				break;
-			case Tipo::ImpactoH:
-				tipo = "ImpactoH";
-				break;
-			case Tipo::ImpactoS:
-				tipo = "ImpactoS";
-				break;
-			case Tipo::ImpactoF:
-				tipo = "ImpactoF";
-				break;
-			case Tipo::ImpactoExp:
-				tipo = "ImpactoExp";
-				break;
-			case Tipo::EnemigoMuriendo:
-				tipo = "EnemigoMuriendo";
-				break;
-			default:
-				tipo = "????";
-			}
+			std::string tipo = nombreTipo(getTipo());
 
 			std::stringstream ss;
 			ss << tipo << " " << getId() << " " << getNombre() << " " << estado << " en (" << getPos().x << ", " << getPos().y << ")" << " Tamanio (" << getTamanio().x << ", " << getTamanio().y << ")";

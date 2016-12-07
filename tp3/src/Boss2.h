@@ -8,8 +8,8 @@ const double VELOCIDAD_BOSS = 0.0001;
 class Boss2 : public Boss {
 public:
 	Boss2(int id, Config& _configuracion);
-	virtual void comportamiento(micros tiempoActual, std::vector<Proyectil*>* proyectilesEnemigos, std::vector<Enemigo*>* enemigos);
-	virtual void caminar(Direccion direccion);
+	virtual bool tieneCambios(Juego* juego);
+
 protected:
 	char numeroDeBoss;
 };

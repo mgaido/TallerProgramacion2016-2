@@ -1,9 +1,7 @@
 #include "GunC.h"
 
-GunC::GunC(int id, int idJugador) : Proyectil(id, idJugador) {
+GunC::GunC(int id) : Proyectil(id) {
 	this->danio = 150;
-	this->cantidad = 40;
-	this->cantidadRepuesto = 15;
 	this->puntosOtorgados = 100;
 	this->tipo = Tipo::GunC;
 	this->estado = Estado::ProyectilEnMovimiento;
@@ -11,9 +9,9 @@ GunC::GunC(int id, int idJugador) : Proyectil(id, idJugador) {
 	this->tamanio.y = 30;
 	this->orientacion = false;
 	this->frame = 0;
-	this->enemigoMasCercano = NULL;
+	//this->enemigoMasCercano = NULL;
 }
-
+/*
 GunC::GunC(int id, int idJugador, Objeto * enemigoMasCercano) : Proyectil(id, idJugador) {
 	this->danio = 150;
 	this->cantidad = 40;
@@ -29,7 +27,7 @@ GunC::GunC(int id, int idJugador, Objeto * enemigoMasCercano) : Proyectil(id, id
 }
 
 void GunC::trayectoria(std::vector<Plataforma*>& plataformas){
-/*		micros t = 0;
+		micros t = 0;
 		double velocidad = 0;
 
 		if (tiempoEnMovimiento > 0) {
@@ -81,7 +79,7 @@ void GunC::trayectoria(std::vector<Plataforma*>& plataformas){
 			pos.y = nuevaPosY;
 		} else
 			visible = false;
-			*/
+
 }
 
 
@@ -116,3 +114,4 @@ Proyectil* GunC::dispararEspecial(Objeto* enemigoMasCercano) {
 	}
 	return nuevoProyectil;
 }
+*/
