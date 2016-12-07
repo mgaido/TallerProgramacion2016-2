@@ -16,7 +16,7 @@ Jugador::Jugador(int id, std::string nombre, Config& _configuracion) : Soldado(i
 	cambios = false;
 	inmortal = configuracion.esInmortal();
 
-	arma.setTipo(Tipo::GunH);
+	//arma.setTipo(Tipo::GunH);
 }
 
 bool Jugador::recibirDanio(int danio) {
