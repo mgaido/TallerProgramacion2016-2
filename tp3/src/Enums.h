@@ -60,6 +60,9 @@ inline std::string nombreTipo(Tipo tipo) {
 	case Tipo::Enemigo:
 		str = "Enemigo";
 		break;
+	case Tipo::EnemigoFuerte:
+		str = "EnemigoFuerte";
+		break;
 	case Tipo::Boss1:
 		str = "Boss1";
 		break;
@@ -128,6 +131,9 @@ inline Tipo tipoPorNombre(std::string nombre) {
 
 	if (nombre == "Enemigo")
 		tipo = Tipo::Enemigo;
+
+	if (nombre == "EnemigoFuerte")
+		tipo = Tipo::EnemigoFuerte;
 
 	if (nombre == "Boss1")
 		tipo = Tipo::Boss1;
