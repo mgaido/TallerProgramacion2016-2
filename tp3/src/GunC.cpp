@@ -37,8 +37,8 @@ bool GunC::tieneCambios(Juego* juego) {
 			double angle = acos(cosAngle);
 
 			if (angle > 0.35) {
-				cosAngle = cos(sign*0.35);
-				double sinAngle = sin(sign*0.35);
+				cosAngle = cos(0.35);
+				double sinAngle = sin(0.35);
 				parteX = x * cosAngle - y * sinAngle;
 				parteY = x * sinAngle + y * cosAngle;
 			}
