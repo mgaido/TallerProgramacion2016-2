@@ -22,7 +22,6 @@ public:
 	void setPos(Punto nuevaPosicion);
 	void setTirador(Personaje* tirador);
 
-
 	void setSiElDisparadorEstaSaltando(bool saltando);
 	virtual void setOrientacionX(bool orientacion);
 	virtual void setOrientacionY(char orientacion);

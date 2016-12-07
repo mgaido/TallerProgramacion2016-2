@@ -220,7 +220,7 @@ void Vista::actualizar() {
 				if (! encontrado)
 					error("Falta sprite " + it->toString(), true);
 
-				info(it->toString(), true);
+				info(it->toString());
 
 				estadoObjs.erase(it);
 			}
@@ -279,6 +279,26 @@ void Vista::mostrarHud() {
 		}
 		texto = arma + ": " + std::to_string(it->balas);
 		escribirLineaHud(1, i, hudInfo.size(), texto, color);
+
+		int puntos = 0;
+
+		if (configuracion.getModoJuego() == MODO_COOP || configuracion.getModoJuego() == MODO_GRUPAL) {
+			auto it2 = hudInfo.begin();
+			int j = 0;
+			while (it2 != hudInfo.end()) {
+				if (configuracion.getModoJuego() == MODO_COOP) {
+					if (j % 2 != i % 2)
+						continue;
+				}
+				puntos += it2->puntos;
+				j++;
+				it2++;
+			}
+		} else
+			puntos = it->puntos;
+
+		texto = "Puntos: " + std::to_string(puntos);
+		escribirLineaHud(2, i, hudInfo.size(), texto, color);
 
 		it++;
 		i++;

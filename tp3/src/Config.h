@@ -63,12 +63,15 @@ public:
 	char getModoJuego();
 	void setModoJuego(char modoJuego);
 
-	std::string toString();
+	int getNivelBoss();
+	void setNivelBoss(int nivelBoss);
 
+	std::string toString();
 
 private:
 	bool inmortal;
 	char modoJuego;
+	int nivelBoss;
 
 	Punto tamanioVentana;
 	Punto tamanioJugador;

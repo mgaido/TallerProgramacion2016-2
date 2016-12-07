@@ -3,7 +3,8 @@
 Config::Config() {
 
 	inmortal = false;
-	modoJuego = MODO_INDIVIDUAL;
+	modoJuego = MODO_GRUPAL;
+	nivelBoss = 0;
 }
 
 void Config::parsearXML(std::string archivo) {
@@ -662,4 +663,12 @@ void Config::setInmortal(bool inmortal) {
 
 void Config::setModoJuego(char modoJuego) {
 	this->modoJuego = modoJuego;
+}
+
+int Config::getNivelBoss() {
+	return nivelBoss;
+}
+
+void Config::setNivelBoss(int nivelBoss) {
+	this->nivelBoss = nivelBoss;
 }

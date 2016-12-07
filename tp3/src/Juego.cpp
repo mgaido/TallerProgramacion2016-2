@@ -28,7 +28,7 @@ Juego::Juego(Config& _configuracion) : configuracion(_configuracion) {
 	escenario = Escenario(configuracion.getLongitud(), configuracion.getTamanioVentana().x, configuracion.getTamanioVentana().y, configuracion.getNivelPiso());
 	maxOffsetDelta = round(configuracion.getVelocidadX() * 2 * 1000000.0 / configuracion.getFrameRate());
 
-	enemigoFactory = new EnemigoFactory(6, -1, [&](Juego* juego){ return new Enemigo(++contador, configuracion, escenario); });
+	enemigoFactory = new EnemigoFactory(1, -1, [&](Juego* juego){ return new Enemigo(++contador, configuracion, escenario); });
 }
 
 void Juego::crearPlataformas() {
@@ -300,7 +300,7 @@ bool Juego::getEstado(Bytes& bytes) {
 }
 
 void Juego::spawnBoss() {
-	int nivel = 0;
+	int nivel = configuracion.getNivelBoss();
 	Boss* boss = nullptr;
 
 	if (nivel == 0 )

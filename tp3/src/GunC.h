@@ -4,22 +4,21 @@
 
 #include "Proyectil.h"
 
+#define PI 3.14159265
+
+
 //Misiles que siguen al Jugador
 class GunC : public Proyectil {
 public:
 	GunC(int id);
-	/*
-	GunC(int id, int idJugador, Objeto* enemigoMasCercano);
-	virtual Proyectil* dispararEspecial(Objeto *enemigoMasCercano);
-	virtual void trayectoria(std::vector<Plataforma*>& plataformas);
-	
+	virtual bool tieneCambios(Juego* juego);
+	virtual void setOrientacionX(bool orientacion);
+	virtual EstadoObj getEstadoObj(Escenario& escenario);
 private:
-	int modulo(int numero);
-	int mismoSignoQueEnemigoMasCercano(int velocidad, int pos);
-protected:
-	virtual Proyectil* crearProyectil();
-	virtual Proyectil* crearProyectil(Objeto* enemigoMasCercano);
-	Objeto* enemigoMasCercano;*/
+	Punto posEnemigoMasCercano(Juego* juego);
+	double distancia(Punto pos1, Punto pos2);
+	micros tiempoCreacion;
+
 };
 
 #endif /* GUNC_H_ */

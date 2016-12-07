@@ -40,7 +40,8 @@ bool Proyectil::tieneCambios(Juego* juego) {
 	auto it = juego->getPlataformas().begin();
 	while (it != juego->getPlataformas().end() && !colisionan) {
 		colisionan = colisionaCon(*it);
-		puntosOtorgados = 0;
+		if (colisionan)
+			puntosOtorgados = 0;
 		it++;
 	}
 
@@ -53,6 +54,10 @@ bool Proyectil::tieneCambios(Juego* juego) {
 				colisionan = colisionaCon(objeto);
 				if (colisionan) {
 					Enemigo* unEnemigo = (Enemigo*) objeto;
+
+					std::cout << puntosOtorgados << std::endl;
+
+
 					tirador->recibirPuntos(puntosOtorgados);
 					bool estaMuerto = unEnemigo->recibirDanio(danio);
 					if (estaMuerto) {
@@ -68,7 +73,6 @@ bool Proyectil::tieneCambios(Juego* juego) {
 				if (colisionan) {
 					Jugador* impactado = (Jugador*) objeto;
 					impactado->recibirDanio(danio);
-
 				}
 			}
 
