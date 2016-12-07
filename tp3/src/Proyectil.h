@@ -27,12 +27,21 @@ public:
 	virtual void setOrientacionY(char orientacion);
 	virtual void setVelocidadY(double velocidadProyectilY);
 
+
+
 	virtual EstadoObj getEstadoObj(Escenario& escenario);
 
 
 	int getDanio();
 	int getPuntos();
 
+	double getVelocidadProyectilY() const {
+		return velocidadProyectilY;
+	}
+
+	void setVelocidadProyectilX(double velocidadProyectilX) {
+		this->velocidadProyectilX = velocidadProyectilX;
+	}
 
 protected:
 	int idTirador;

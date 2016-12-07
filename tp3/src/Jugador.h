@@ -22,6 +22,8 @@ public:
 	virtual bool recibirDanio(int a);
 	void restablecerEnergia();
 
+	virtual Proyectil* disparar(Juego* juego);
+
 	int getPuntos();
 	void recibirPuntos(int puntosObtenidos);
 
