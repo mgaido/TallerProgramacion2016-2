@@ -2,9 +2,10 @@
 
 double tickDelay;
 
-Servidor::Servidor(int puerto, std::string archivo) {
+Servidor::Servidor(int puerto, std::string archivos) {
 	this->puerto = puerto;
-	this->archivo = archivo;
+	this->archivos = split(archivos, ',');
+	archivo = this->archivos.begin();
 	juego = nullptr;
 	detenido = false;
 	socketD = INVALID_SOCKET;
@@ -28,9 +29,9 @@ void Servidor::crearJuego() {
 	config = Config();
 
 	try {
-		config.parsearXML(archivo);
+		config.parsearXML(*archivo);
 	} catch (...) {
-		warn("Ocurrio un problema leyendo " + archivo, true);
+		warn("Ocurrio un problema leyendo " + *archivo, true);
 		config.defaultConfig();
 	}
 	tickDelay = 1000000.0 / config.getFrameRate();
@@ -49,6 +50,9 @@ void Servidor::avanzarJuego() {
 		lockJuego.unlock();
 
 		if (juego->estaGanado()) {
+			archivo++;
+			if (archivo == archivos.end())
+				archivo = archivos.begin();
 			recargar();
 			continue;
 		} else if (juego->estaPerdido()){

@@ -11,7 +11,7 @@ Logger* logger;
 int both() {
 	std::string host = "127.0.0.1";
 	std::string usuario = "Jugador 1";
-	std::string archivo = "menu.xml";
+	std::string archivo = "nivel1.xml,nivel2.xml";
 	int puerto = 10000;
 
 	initSockets();

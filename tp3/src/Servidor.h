@@ -27,7 +27,8 @@ public:
 private:
 	SOCKET socketD;
 	int puerto;
-	std::string archivo;
+	std::vector<std::string> archivos;
+	std::vector<std::string>::iterator archivo;
 	Config config;
 	bool detenido;
 
