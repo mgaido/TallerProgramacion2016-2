@@ -63,7 +63,7 @@ void Jugador::setConectado(bool conectado) {
 Proyectil* Jugador::disparar(Juego* juego) {
 	Proyectil* p = Soldado::disparar(juego);
 
-	if (p != nullptr && velocCaminar != 0 && p->getVelocidadProyectilY() > 0)
+	if (p != nullptr && p->getTipo() == Tipo::GunH && velocCaminar != 0 && p->getVelocidadProyectilY() > 0)
 		p->setVelocidadProyectilX((orientacion ? -1 : 1) * 0.0005);
 
 	return p;

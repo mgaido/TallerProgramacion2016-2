@@ -124,6 +124,9 @@ void Config::parsearXML(std::string archivo) {
 }
 
 void Config::toBytes(Bytes & bytes) {
+	bytes.put(modoJuego);
+	bytes.put(inmortal);
+
 	bytes.put(tamanioVentana);
 	bytes.put(framerate);
 
@@ -143,6 +146,9 @@ void Config::toBytes(Bytes & bytes) {
 }
 
 void Config::fromBytes(Bytes & bytes) {
+	bytes.get(modoJuego);
+	bytes.get(inmortal);
+
 	bytes.get(tamanioVentana);
 	bytes.get(framerate);
 

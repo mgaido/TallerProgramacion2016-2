@@ -25,10 +25,11 @@ Juego::Juego(Config& _configuracion) : configuracion(_configuracion) {
 	cambios = true;
 	crearPlataformas();
 
+
 	escenario = Escenario(configuracion.getLongitud(), configuracion.getTamanioVentana().x, configuracion.getTamanioVentana().y, configuracion.getNivelPiso());
 	maxOffsetDelta = round(configuracion.getVelocidadX() * 2 * 1000000.0 / configuracion.getFrameRate());
 
-	enemigoFactory = new EnemigoFactory(1, -1, [&](Juego* juego){ return new Enemigo(++contador, configuracion, escenario); });
+	enemigoFactory = new EnemigoFactory(6, -1, [&](Juego* juego){ return new Enemigo(++contador, configuracion, escenario); });
 }
 
 void Juego::crearPlataformas() {
@@ -45,7 +46,7 @@ Juego::~Juego() {
 	auto it = objetos.begin();
 	while (it != objetos.end()) {
 		Objeto* obj = *it;
-		if (obj->getTipo() != Tipo::Jugador)
+		if (obj->getTipo() != Tipo::Jugador && obj != BossFinal)
 			delete obj;
 		objetos.erase(it);
 	}    
@@ -124,6 +125,10 @@ Jugador* Juego::nuevoJugador(std::string nombre) {
 }
 
 bool Juego::getEstado(Bytes& bytes) {
+
+	if (estado == EstadoJuego::NoIniciado)
+		return false;
+
 	bool rv = false;;
 	std::vector<EstadoObj> estadoObjs;
 	std::vector<InfoJugador> hudInfo;
@@ -182,7 +187,7 @@ bool Juego::getEstado(Bytes& bytes) {
 			if (dynamic_cast<Enemigo*>(objeto))
 				enemigoFactory->decrementarCantidadEnemigos();
 			objetos.erase(it);
-			if (objeto->getTipo() != Tipo::Jugador)
+			if (objeto->getTipo() != Tipo::Jugador && objeto != BossFinal)
 				delete objeto;
 		} else {
 			//Actualizar posiciones de jugadores para que no se salgan de pantalla

@@ -11,6 +11,9 @@ Servidor::Servidor(int puerto, std::string archivos, bool inmortal, char modo) {
 	juego = nullptr;
 	detenido = false;
 	socketD = INVALID_SOCKET;
+
+	std::cout << "Modo " << (int) modo << std::endl;
+
 }
 
 Servidor::~Servidor() {
