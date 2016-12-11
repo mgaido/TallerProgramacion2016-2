@@ -109,7 +109,7 @@ int main(int argc, char *argv[]) {
 						server = true;
 						if (i + 1 < argc) {
 							std::string valor = std::string(argv[++i]);
-							char cvalor = valor[0];
+							char cvalor = valor[0] - 48 ;
 							if (cvalor == MODO_COOP || cvalor == MODO_GRUPAL || cvalor == MODO_INDIVIDUAL)
 								modo = cvalor;
 						}

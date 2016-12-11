@@ -28,6 +28,7 @@
     <ClCompile Include="src\ImpactoBala.cpp" />
     <ClCompile Include="src\Juego.cpp" />
     <ClCompile Include="src\Jugador.cpp" />
+    <ClCompile Include="src\Laser.cpp" />
     <ClCompile Include="src\Logger.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Misil.cpp" />
@@ -46,6 +47,7 @@
     <ClCompile Include="src\GunC.cpp" />
     <ClCompile Include="src\Soldado.cpp" />
     <ClCompile Include="src\Teclas.cpp" />
+    <ClCompile Include="src\Torreta.cpp" />
     <ClCompile Include="src\Vista.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -73,6 +75,7 @@
     <ClInclude Include="src\GunC.h" />
     <ClInclude Include="src\Boss.h" />
     <ClInclude Include="src\ImpactoBala.h" />
+    <ClInclude Include="src\Laser.h" />
     <ClInclude Include="src\Misil.h" />
     <ClInclude Include="src\PersonajeMuriendo.h" />
     <ClInclude Include="src\PickUpArma.h" />
@@ -92,6 +95,7 @@
     <ClInclude Include="src\Sockets.h" />
     <ClInclude Include="src\Soldado.h" />
     <ClInclude Include="src\Teclas.h" />
+    <ClInclude Include="src\Torreta.h" />
     <ClInclude Include="src\Utils.h" />
     <ClInclude Include="src\Vista.h" />
   </ItemGroup>
