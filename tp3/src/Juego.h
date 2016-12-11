@@ -50,6 +50,8 @@ public:
 
 	bool estaPerdido();
 	bool estaGanado();
+	bool estaElNivelGanado();
+	void setEstado(EstadoJuego estado);
 
 private:
 	void crearPlataformas();

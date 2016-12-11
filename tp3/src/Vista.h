@@ -135,6 +135,7 @@ private:
 	void cicloPrincipal();
 	void enviarEventos();
 	void actualizar();
+	void generarPantallaDePuntos();
 
 	void mostrarHud();
 	void escribirLineaHud(int linea, int jugador, int jugadores, std::string texto, SDL_Color color);
@@ -159,6 +160,7 @@ private:
 	HashMap<Tipo, HashMap<Estado, std::shared_ptr<Sprite>>> spritess;
 	Pantalla* espera;
 	Pantalla* gameOver;
+	Pantalla* ganado;
 
 	std::vector<Renderer*> renderers;
 

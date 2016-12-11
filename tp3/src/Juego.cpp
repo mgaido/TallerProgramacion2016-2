@@ -341,6 +341,13 @@ bool Juego::estaPerdido() {
 }
 
 bool Juego::estaGanado() {
+	return estado == EstadoJuego::JuegoGanado;
+}
+
+bool Juego::estaElNivelGanado() {
 	return estado == EstadoJuego::Ganado;
 }
 
+void Juego::setEstado(EstadoJuego estado){
+	this->estado = estado;
+}

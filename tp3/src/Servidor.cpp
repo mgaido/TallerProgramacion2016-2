@@ -55,11 +55,20 @@ void Servidor::avanzarJuego() {
 		bool cambios = juego->getEstado(bytes);
 		lockJuego.unlock();
 
-		if (juego->estaGanado()) {
+		if (juego->estaElNivelGanado()) {
+			auto it = sesiones.begin();
+			while (it != sesiones.end()) {
+				(*it)->cambioDeEstado(bytes);
+				it++;
+			}
+			std::this_thread::sleep_for(std::chrono::milliseconds(5 * 1000));
 			archivo++;
-			if (archivo == archivos.end())
-				archivo = archivos.begin();
-			recargar();
+			if (archivo == archivos.end()) {
+				juego->setEstado(EstadoJuego::JuegoGanado);
+				detener();
+			} else {
+				recargar();
+			}
 			continue;
 		} else if (juego->estaPerdido()){
 			detenido = true;

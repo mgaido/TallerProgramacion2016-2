@@ -20,7 +20,7 @@ enum class Tipo {  GunH, GunC, GunS, GunR, //Proyectiles jugador
 
 enum class Estado { Normal, Caminando, Saltando, Desconectado, Efecto };
 
-enum class EstadoJuego { NoIniciado, EnJuego, Perdido, Ganado };
+enum class EstadoJuego { NoIniciado, EnJuego, Perdido, Ganado, JuegoGanado};
 
 
 inline bool esEnemigo(Tipo tipo){

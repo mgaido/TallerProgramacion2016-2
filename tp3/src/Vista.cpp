@@ -21,6 +21,7 @@ Vista::Vista(ColaBloqueante<int>& _eventosTeclado, std::string nombreJugador, in
 
 	espera = nullptr;
 	gameOver = nullptr;
+	ganado = nullptr;
 
 	initSDL();
 }
@@ -37,6 +38,9 @@ Vista::~Vista() {
 
 	if (gameOver != nullptr)
 		delete gameOver;
+
+	if (ganado != nullptr)
+		delete ganado;
 
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(ventana);
@@ -55,6 +59,52 @@ void Vista::initSDL() {
 
 	if (TTF_Init() < 0)
 		error( "SDL_ttf could not initialize! SDL_ttf Error: " + std::string(TTF_GetError()));
+}
+
+void Vista::generarPantallaDePuntos() {
+
+	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+	SDL_RenderClear(renderer);
+	auto it = hudInfo.begin();
+	int i = 0;
+	while (it != hudInfo.end()) {
+		std::string nombre = std::string(it->nombre.data());
+
+		SDL_Color color = { 180, 180, 180, 255 };
+		
+		std::string texto = nombre;
+		escribirLineaHud(0, i, hudInfo.size(), texto, color);
+
+		texto = "- - - - - - - - - - - - - - - - - - ";
+		escribirLineaHud(1, i, hudInfo.size(), texto, color);
+
+		int puntos = 0;
+
+		if (configuracion.getModoJuego() == MODO_COOP || configuracion.getModoJuego() == MODO_GRUPAL) {
+			auto it2 = hudInfo.begin();
+			int j = 0;
+			while (it2 != hudInfo.end()) {
+				if (configuracion.getModoJuego() == MODO_COOP) {
+					if (j % 2 != i % 2)
+						continue;
+				}
+				puntos += it2->puntos;
+				j++;
+				it2++;
+			}
+		}
+		else
+			puntos = it->puntos;
+
+		texto = "Puntos: " + std::to_string(puntos);
+		escribirLineaHud(2, i, hudInfo.size(), texto, color);
+
+		texto = "- - - - - - - - - - - - - - - - - - ";
+		escribirLineaHud(3, i, hudInfo.size(), texto, color);
+
+		it++;
+		i++;
+	}
 }
 
 void Vista::iniciar() {
@@ -77,7 +127,7 @@ void Vista::iniciar() {
 
 		gameOver = new Pantalla("img/gameOver.jpg", configuracion.getTamanioVentana());
 		gameOver->cargar(renderer);
-
+		
 		auto capaIt = configuracion.getConfigCapas().begin();
 		while (capaIt != configuracion.getConfigCapas().end()) {
 			std::shared_ptr<Capa> capa = std::make_shared<Capa>(configuracion.getTamanioVentana(),
@@ -177,11 +227,24 @@ void Vista::enviarEventos() {
 
 void Vista::actualizar() {
 	lockEstado.lock();
+	bool noMostrarHud = false;
 
 	if (estado == EstadoJuego::NoIniciado)
 		RendererPantalla(espera).aplicar(renderer, fuente);
 	if (estado == EstadoJuego::Perdido) {
 		RendererPantalla(gameOver).aplicar(renderer, fuente);
+	}
+
+	if (estado == EstadoJuego::Ganado) {
+		noMostrarHud = true;
+		generarPantallaDePuntos();
+	}
+
+	if (estado == EstadoJuego::JuegoGanado) {
+		noMostrarHud = true;
+		generarPantallaDePuntos();
+		std::this_thread::sleep_for(std::chrono::milliseconds(5 * 1000));
+		detener();
 	}
 
 	if (estado != EstadoJuego::EnJuego || estadoObjs.size() > 0) {
@@ -237,7 +300,8 @@ void Vista::actualizar() {
 		}
 	}
 
-	mostrarHud();
+	if(!noMostrarHud)
+		mostrarHud();
 
 	SDL_RenderPresent(renderer);
 

@@ -45,8 +45,8 @@ int main(int argc, char *argv[]) {
 	//if (argc == 1)
 	//	return both();
 
-	bool server = true;
-	bool client = false;
+	bool server = false;
+	bool client = true;
 
 	std::string host = "127.0.0.1";
 	std::string usuario = "player1";
