@@ -4,6 +4,10 @@
 
 double velocidad = 0.0005;
 
+double maxAngle = 0.157;
+double cosMaxAngle = cos(maxAngle);
+double senMaxAngle = sin(maxAngle);
+
 GunC::GunC(int id) : Proyectil(id) {
 	this->danio = 150;
 	this->puntosOtorgados = 100;
@@ -13,6 +17,8 @@ GunC::GunC(int id) : Proyectil(id) {
 	this->tamanio.y = 30;
 	this->orientacion = false;
 	this->tiempoCreacion = tiempo();
+
+	_angle = 0;
 }
 
 bool GunC::tieneCambios(Juego* juego) {
@@ -33,15 +39,24 @@ bool GunC::tieneCambios(Juego* juego) {
 			x = velocidadProyectilX / velocidad;
 			y = velocidadProyectilY / velocidad;
 
-			double cosAngle = x * parteX + y * parteY;
-			double angle = acos(cosAngle);
+			double anguloActualHoriz = acos(x) * (y < 0 ? -1 : 1);
+			double anguloDestHoriz = acos(parteX) * (parteY < 0 ? -1 : 1);
+			double anguloEntreVectores = abs(anguloActualHoriz - anguloDestHoriz);
 
-			if (angle > 0.35) {
-				cosAngle = cos(0.35);
-				double sinAngle = sin(0.35);
-				parteX = x * cosAngle - y * sinAngle;
-				parteY = x * sinAngle + y * cosAngle;
-			}
+			if (anguloDestHoriz < -(PI/2))
+				anguloDestHoriz += 2*PI;
+
+			if (anguloEntreVectores > maxAngle) {
+				int signo = 1;
+				if (anguloActualHoriz < 0 && anguloDestHoriz < 0 && anguloDestHoriz < anguloActualHoriz)
+					signo = -1;
+				if (anguloActualHoriz >= 0 && (anguloDestHoriz < 0 || anguloDestHoriz < anguloActualHoriz))
+					signo = -1;
+
+				parteX = x * cosMaxAngle - y * senMaxAngle * signo;
+				parteY = x * senMaxAngle * signo + y * cosMaxAngle;
+ 			}
+
 			velocidadProyectilX = velocidad * parteX;
 			velocidadProyectilY = velocidad * parteY;
 		}
@@ -76,28 +91,18 @@ Punto GunC::posEnemigoMasCercano(Juego* juego) {
 	return posCercana;
 }
 
-double GunC::distancia(Punto pos1, Punto pos2) {
-	double distanciaX = 0;
-	double distanciaY = 0;
-
-	distanciaX = pos1.x - pos2.x;
-	distanciaY = pos1.y - pos2.y;
-
-	return sqrt(distanciaX*distanciaX + distanciaY*distanciaY);
-}
-
 void GunC::setOrientacionX(bool orientacion) {
 	velocidadProyectilX = orientacion ? -velocidad : velocidad;
 }
-
 
 EstadoObj GunC::getEstadoObj(Escenario& escenario) {
 	EstadoObj estado = Proyectil::getEstadoObj(escenario);
 
 	double angle = acos(velocidadProyectilX / velocidad) * 180 / PI;
+	if (velocidadProyectilY > 0)
+		angle *= -1;
 
 	estado.setRotacion(angle);
-	//std::cout << angle << std::endl;
 
 	return estado;
 }

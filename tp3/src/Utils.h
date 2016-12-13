@@ -20,6 +20,26 @@ using micros = double;
 extern 	int contador;
 enum class Direccion { IZQUIERDA, DERECHA };
 
+class Punto {
+public:
+	int x;
+	int y;
+	Punto(){
+		x=0;
+		y=0;
+	}
+};
+
+inline double distancia(Punto pos1, Punto pos2) {
+	double distanciaX = 0;
+	double distanciaY = 0;
+
+	distanciaX = pos1.x - pos2.x;
+	distanciaY = pos1.y - pos2.y;
+
+	return sqrt(distanciaX*distanciaX + distanciaY*distanciaY);
+}
+
 inline std::vector<std::string> split(std::string s, char delim) {
 	std::vector<std::string> parts;
 

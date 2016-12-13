@@ -16,8 +16,9 @@ public:
 	virtual EstadoObj getEstadoObj(Escenario& escenario);
 private:
 	Punto posEnemigoMasCercano(Juego* juego);
-	double distancia(Punto pos1, Punto pos2);
 	micros tiempoCreacion;
+
+	int _angle;
 
 };
 

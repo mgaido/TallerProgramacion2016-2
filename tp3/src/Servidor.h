@@ -1,6 +1,9 @@
 #ifndef SERVIDOR_H
 #define SERVIDOR_H
 
+#define ESPERA_PUNTOS 10
+
+
 #include "Config.h"
 #include "Handshake.h"
 #include "Sesion.h"
@@ -36,7 +39,6 @@ private:
 
 	std::thread t_aceptarConexiones;
 	std::vector<Sesion*> sesiones;
-	std::thread t_juego;
 	Juego* juego;
 	std::mutex lockJuego;
 

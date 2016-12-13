@@ -8,7 +8,7 @@ Boss2::Boss2(int id, Config & _configuracion) : Boss(id, _configuracion) {
 	tamanio.y = 175;
 	pos.y = 0;
 
-	energia = 2000;
+	energia = 1000;
 	tipo = Tipo::Boss3;
 }
 

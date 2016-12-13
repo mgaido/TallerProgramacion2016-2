@@ -339,7 +339,7 @@ void Vista::mostrarHud() {
 			arma = "Chaser";
 			break;
 		default:
-			arma = "WTF?";
+			arma = "";
 		}
 		texto = arma + ": " + std::to_string(it->balas);
 		escribirLineaHud(1, i, hudInfo.size(), texto, color);

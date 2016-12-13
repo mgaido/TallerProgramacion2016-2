@@ -9,7 +9,7 @@
 #include "Boss1.h"
 
 EnemigoFuerte::EnemigoFuerte(int id, Config& _configuracion, Boss1* boss) : Enemigo(id, _configuracion) {
-	energia = 400;
+	energia = 250;
 	tipo = Tipo::EnemigoFuerte;
 	arma.setTipo(Tipo::GunS);
 

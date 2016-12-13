@@ -149,8 +149,9 @@ bool Soldado::actualizar(Juego* juego) {
 Proyectil* Soldado::disparar(Juego* juego) {
 	Proyectil* proyectil = Personaje::disparar(juego);
 	if (proyectil != nullptr) {
-		proyectil->setSiElDisparadorEstaSaltando(tiempoSalto != 0);
-		proyectil->setOrientacionY(apunta);
+		if ((apunta == DISPARAR_ABAJO && pos.y > 0) || apunta == DISPARAR_ARRIBA)
+			proyectil->setOrientacionY(apunta);
 	}
+
 	return proyectil;
 }

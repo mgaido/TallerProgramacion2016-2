@@ -7,7 +7,7 @@ Boss1::Boss1(int id, Config & _configuracion) : Boss(id, _configuracion) {
 	tamanio.y = 180;
 	pos.y = configuracion.getTamanioVentana().y - tamanio.y * 1.25;
 
-	energia = 2000;
+	energia = 1000;
 	tipo = Tipo::Boss2;
 
 	arma.setTipo(Tipo::Void);

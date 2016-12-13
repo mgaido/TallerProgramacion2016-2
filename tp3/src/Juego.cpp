@@ -25,11 +25,10 @@ Juego::Juego(Config& _configuracion) : configuracion(_configuracion) {
 	cambios = true;
 	crearPlataformas();
 
-
 	escenario = Escenario(configuracion.getLongitud(), configuracion.getTamanioVentana().x, configuracion.getTamanioVentana().y, configuracion.getNivelPiso());
 	maxOffsetDelta = round(configuracion.getVelocidadX() * 2 * 1000000.0 / configuracion.getFrameRate());
 
-	enemigoFactory = new EnemigoFactory(6, -1, [&](Juego* juego){ return new Enemigo(++contador, configuracion, escenario); });
+	enemigoFactory = new EnemigoFactory(5, -1, [&](Juego* juego){ return new Enemigo(++contador, configuracion, escenario); });
 }
 
 void Juego::crearPlataformas() {
@@ -242,7 +241,6 @@ bool Juego::getEstado(Bytes& bytes) {
 			if (fin >= escenario.getOffsetVista() && inicio <= escenario.getOffsetVista() + escenario.getAnchoVista()) {
 				inicio = inicio - escenario.getOffsetVista();
 				fin = std::max<int>(fin - escenario.getOffsetVista(), 0);
-				fin = std::min<int>(escenario.getAnchoVista(), fin);
 
 				EstadoObj estadoObj;
 				estadoObj.setId(obj->getId());
@@ -318,7 +316,7 @@ void Juego::spawnBoss() {
 		boss = new Boss2(++contador, configuracion);
 
 	if (boss != nullptr) {
-		info("Boss creado", true);
+		info("Boss creado");
 		boss->getPos().x = escenario.getLongitud() + escenario.getAnchoVista();
 		agregarObjeto(boss);
 		BossFinal = boss;

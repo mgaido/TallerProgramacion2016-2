@@ -36,7 +36,7 @@ bool Proyectil::tieneCambios(Juego* juego) {
 	pos.y = pos.y + (int)round(velocidadProyectilY*t);
 
 	bool colisionan = false;
-
+/*
 	auto it = juego->getPlataformas().begin();
 	while (it != juego->getPlataformas().end() && !colisionan) {
 		colisionan = colisionaCon(*it);
@@ -44,7 +44,7 @@ bool Proyectil::tieneCambios(Juego* juego) {
 			puntosOtorgados = 0;
 		it++;
 	}
-
+*/
 	if (! colisionan) {
 		auto it2 = juego->getObjetos().begin();
 		while (it2 != juego->getObjetos().end() && !colisionan) {
@@ -68,6 +68,7 @@ bool Proyectil::tieneCambios(Juego* juego) {
 			if (esEnemigo(tipoTirador) && objeto->getTipo() == Tipo::Jugador) {
 				colisionan = colisionaCon(objeto);
 				if (colisionan) {
+					puntosOtorgados  = 0;
 					Jugador* impactado = (Jugador*) objeto;
 					impactado->recibirDanio(danio);
 				}
@@ -84,11 +85,6 @@ bool Proyectil::tieneCambios(Juego* juego) {
 int Proyectil::getPuntos() {
 	return puntosOtorgados;
 }
-
-void Proyectil::setSiElDisparadorEstaSaltando(bool disparadorSaltando) {
-	this->disparadorSaltando = disparadorSaltando;
-}
-
 void Proyectil::setOrientacionX(bool nuevaOrientacion) {
 	orientacion = nuevaOrientacion;
 	if (orientacion)
@@ -102,17 +98,10 @@ void Proyectil::setOrientacionY(char nuevaOrientacion) {
 	if (orientacionEjeY == DISPARAR_ARRIBA) {
 		velocidadProyectilY = 0.0007;
 		velocidadProyectilX = 0;
-		//estado = Estado::ProyectilHaciaArriba;
 	}
 	else if (orientacionEjeY == DISPARAR_ABAJO) {
-		if (disparadorSaltando) {
-			velocidadProyectilY = -0.0007;
-			velocidadProyectilX = 0;
-		//	estado = Estado::ProyectilHaciaAbajo;
-		} else {
-			velocidadProyectilY = 0;
-			pos.y -= 40; //por estar agachado
-		}
+		velocidadProyectilY = -0.0007;
+		velocidadProyectilX = 0;
 	} else
 		velocidadProyectilY = 0;
 }

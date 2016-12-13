@@ -12,11 +12,11 @@ Jugador::Jugador(int id, std::string nombre, Config& _configuracion) : Soldado(i
 	puntos = 0;
 	estado = Estado::Desconectado;
 	tipo = Tipo::Jugador;
-	energia = 1000;
+	energia = 500;
 	cambios = false;
 	inmortal = configuracion.esInmortal();
 
-	//arma.setTipo(Tipo::GunH);
+	//arma.setTipo(Tipo::GunC);
 }
 
 bool Jugador::recibirDanio(int danio) {
@@ -34,7 +34,7 @@ std::string Jugador::getNombre() {
 }
 
 void Jugador::restablecerEnergia() {
-	energia = 1000;
+	energia = 500;
 }
 
 void Jugador::recibirPuntos(int puntosObtenidos){

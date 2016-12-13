@@ -168,15 +168,4 @@ inline Tipo tipoPorNombre(std::string nombre) {
 	return tipo;
 }
 
-class Punto {
-public:
-	int x;
-	int y;
-	Punto(){
-		x=0;
-		y=0;
-	}
-};
-
-
 #endif /* ENUMS_H_ */

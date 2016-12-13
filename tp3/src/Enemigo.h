@@ -24,6 +24,8 @@ public:
 protected:
 	micros tiempoCreacion;
 	micros tiempoUltimoDisparo;
+
+	Punto posJugadorMasCercano(Juego* juego);
 };
 
 #endif /* ENEMIGO_H_ */

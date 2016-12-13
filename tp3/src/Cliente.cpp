@@ -57,6 +57,8 @@ void Cliente::iniciar() {
 			error("Error de conexion durante el handshake");
 		}
 	} while (reconectar);
+
+	desconectar();
 }
 
 void Cliente::enviarEventos() {

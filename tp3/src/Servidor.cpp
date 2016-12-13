@@ -11,9 +11,6 @@ Servidor::Servidor(int puerto, std::string archivos, bool inmortal, char modo) {
 	juego = nullptr;
 	detenido = false;
 	socketD = INVALID_SOCKET;
-
-	std::cout << "Modo " << (int) modo << std::endl;
-
 }
 
 Servidor::~Servidor() {
@@ -26,7 +23,10 @@ void Servidor::iniciar() {
 	} else {
 		crearJuego();
 		t_aceptarConexiones = std::thread(&Servidor::aceptarConexiones, this);
-		t_juego = std::thread(&Servidor::avanzarJuego, this);
+
+		avanzarJuego();
+
+		detener();
 	}
 }
 
@@ -40,6 +40,7 @@ void Servidor::crearJuego() {
 		warn("Ocurrio un problema leyendo " + *archivo, true);
 		config.defaultConfig();
 	}
+
 	tickDelay = 1000000.0 / config.getFrameRate();
 	juego = new Juego(config);
 	info("Juego creado");
@@ -55,24 +56,7 @@ void Servidor::avanzarJuego() {
 		bool cambios = juego->getEstado(bytes);
 		lockJuego.unlock();
 
-		if (juego->estaElNivelGanado()) {
-			auto it = sesiones.begin();
-			while (it != sesiones.end()) {
-				(*it)->cambioDeEstado(bytes);
-				it++;
-			}
-			std::this_thread::sleep_for(std::chrono::milliseconds(5 * 1000));
-			archivo++;
-			if (archivo == archivos.end()) {
-				juego->setEstado(EstadoJuego::JuegoGanado);
-				detener();
-			} else {
-				recargar();
-			}
-			continue;
-		} else if (juego->estaPerdido()){
-			detenido = true;
-		}
+		cambios |= juego->estaElNivelGanado();
 
 		if (cambios) {
 			auto it = sesiones.begin();
@@ -81,6 +65,22 @@ void Servidor::avanzarJuego() {
 				it++;
 			}
 		}
+
+		if (juego->estaPerdido() || juego->estaElNivelGanado()) {
+			std::this_thread::sleep_for(std::chrono::milliseconds(ESPERA_PUNTOS * 1000));
+
+			if (juego->estaElNivelGanado())
+				archivo++;
+
+			if (archivo == archivos.end()) {
+				juego->setEstado(EstadoJuego::JuegoGanado);
+				info("Saliendo", true);
+				detener();
+			} else {
+				recargar();
+			}
+		}
+
 		t = (micros) (tickDelay - (tiempo() - t));
 		if (t > 0)
 			std::this_thread::sleep_for(std::chrono::milliseconds((long) t/1000));
@@ -199,8 +199,10 @@ void Servidor::recargar() {
 		it++;
 	}
 
-	if (juego != nullptr)
+	if (juego != nullptr) {
 		delete juego;
+		juego = nullptr;
+	}
 
 	crearJuego();
 
@@ -208,35 +210,31 @@ void Servidor::recargar() {
 }
 
 void Servidor::detener() {
-	if (!detenido) {
-		detenido = true;
+	detenido = true;
+	if (socketD != INVALID_SOCKET) {
+		closesocket(socketD);
+		debug("Socket cerrado");
 
-		if (socketD != INVALID_SOCKET) {
-
-			closesocket(socketD);
-			debug("Socket cerrado");
-
+		if (t_aceptarConexiones.joinable() && t_aceptarConexiones.get_id() != std::this_thread::get_id()) {
 			debug("Esperando que termine thread aceptarConexiones");
 			t_aceptarConexiones.join();
 			debug("Thread aceptarConexiones termino");
-
-			debug("Esperando que termine thread juego");
-			t_juego.join();
-			debug("Thread juego termino");
-
-			auto it = sesiones.begin();
-			while (it != sesiones.end()) {
-				(*it)->desconectar();
-				delete (*it);
-				sesiones.erase(it);;
-			}
-			sesiones.clear();
-			if (juego != nullptr) {
-				delete juego;
-			}
 		}
-		info("Servidor detenido");
+
+		auto it = sesiones.begin();
+		while (it != sesiones.end()) {
+			(*it)->desconectar();
+			delete (*it);
+			sesiones.erase(it);
+		}
+		sesiones.clear();
+
+		if (juego != nullptr) {
+			delete juego;
+			juego = nullptr;
+		}
 	}
+	info("Servidor detenido");
 }
 
 Config& Servidor::getConfiguracion() {
