@@ -9,67 +9,50 @@
 
 
 Equipo::Equipo() {
+	cantJugadores = 0;
 }
 
-Equipo::~Equipo() {/*
-	auto it = puntajes.begin();
-	while (it != puntajes.end()) {
-		Puntaje* puntaje = it->second;
-		delete puntaje;
-		it++;
-	}
-	puntajes.clear();*/
+Equipo::~Equipo() {
 }
-
 
 bool Equipo::tieneJugador(std::string nombre) {
-	return puntajes.find(nombre) != puntajes.end();
+	std::array<char, 100> c = toCharArray<100>(nombre);
+	for (int i = 0; i < cantJugadores; i++) {
+		if (fromCharArray(c) == fromCharArray(nombres[i]))
+			return true;
+	}
+	return false;
 }
 
 void Equipo::agregarJugador(std::string nombre) {
-	puntajes[nombre] = Puntaje();
+	std::array<char, 100> c = toCharArray<100>(nombre);
+	nombres[cantJugadores] = c;
+	puntajes[cantJugadores] = Puntaje();
+	cantJugadores++;
 }
 
 int Equipo::cantidadDeJugadores() {
-	return puntajes.size();
+	return cantJugadores;
 }
 
 Puntaje& Equipo::getPuntaje(std::string nombre) {
-	return puntajes[nombre];
-}
+	std::array<char, 100> c = toCharArray<100>(nombre);
 
-HashMap<std::string, Puntaje>& Equipo::getPuntajes() {
-	return puntajes;
-}
-
-void Equipo::toBytes(Bytes &bytes) {
-	std::vector<std::array<char, 100>> nombres;
-	std::vector<Puntaje> puntos;
-
-	for (auto it = puntajes.begin(); it != puntajes.end(); it++) {
-		std::string nombre = it->first;
-		std::array<char, 100> n;
-		nombre.copy(n.data(), n.size());
-		n[std::min<int>(nombre.size(), n.size()-1)] = '\0';
-		nombres.push_back(n);
-		puntos.push_back(it->second);
+	for (int i = 0; i < cantJugadores; i++) {
+		if (fromCharArray(c) == fromCharArray(nombres[i]))
+			return puntajes[i];
 	}
 
-	bytes.putAll(nombres);
-	bytes.putAll(puntos);
+	throw "No existe jugador en equipo";
 }
 
-void Equipo::fromBytes(Bytes &bytes) {
-	std::vector<std::array<char, 100>> nombres;
-	std::vector<Puntaje> puntos;
-
-	bytes.getAll(nombres);
-	bytes.getAll(puntos);
-
-	for (int i = 0; i < nombres.size(); i++) {
-		std::string nombre = std::string(nombres[i].data());
-		puntajes[nombre] = puntos[i];
+HashMap<std::string, Puntaje> Equipo::getPuntajes() {
+	HashMap<std::string, Puntaje> m;
+	for (int i = 0; i < cantJugadores; i++) {
+		std::string s = fromCharArray(nombres[i]);
+		m[s] = puntajes[i];
 	}
-}
 
+	return m;
+}
 

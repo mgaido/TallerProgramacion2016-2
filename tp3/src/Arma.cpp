@@ -17,8 +17,10 @@
 
 Arma::Arma() {
 	tipo = Tipo::Void;
-	setTipo(Tipo::GunH);
 	ultimoDisparo = 0;
+	balas = 1;
+	cooldown = 0;
+	setTipo(Tipo::GunH);
 }
 
 void Arma::setTipo(Tipo tipo) {

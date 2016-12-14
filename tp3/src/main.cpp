@@ -8,8 +8,8 @@ Logger* logger;
 #undef main
 
 int main(int argc, char *argv[]) {
-	bool server = false;
-	bool client = argc == 1;
+	bool server = argc == 1;
+	bool client = false;
 
 	std::string host = "127.0.0.1";
 	std::string usuario = "player1";

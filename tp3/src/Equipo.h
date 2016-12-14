@@ -12,7 +12,7 @@
 #include "Bytes.h"
 #include "Puntaje.h"
 
-class Equipo : public Serializable{
+class Equipo {
 public:
 	Equipo();
 	~Equipo();
@@ -21,14 +21,13 @@ public:
 	void agregarJugador(std::string nombre);
 	int cantidadDeJugadores();
 	Puntaje& getPuntaje(std::string nombre);
-	HashMap<std::string, Puntaje>& getPuntajes();
 
-	virtual void toBytes(Bytes &bytes);
-	virtual void fromBytes(Bytes &bytes);
-
+	HashMap<std::string, Puntaje> getPuntajes();
 
 private:
-	HashMap<std::string, Puntaje> puntajes;
+	std::array<std::array<char, 100>, 4> nombres;
+	std::array<Puntaje, 4> puntajes;
+	int cantJugadores;
 };
 
 #endif /* EQUIPO_H_ */

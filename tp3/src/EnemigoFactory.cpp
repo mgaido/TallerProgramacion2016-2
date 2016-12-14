@@ -31,8 +31,6 @@ bool EnemigoFactory::spawnEnemigo(Juego* juego) {
 	if (millisUltimo < millis)
 		return false;
 
-	Escenario escenario = juego->getEscenario();
-
 	Enemigo* nuevoEnemigo = factory(juego);
 	cantidadEnemigos++;
 	totalSpawneados++;

@@ -9,8 +9,7 @@
 
 double frameDelay;
 
-Vista::Vista(ColaBloqueante<int>& _eventosTeclado, std::string nombreJugador, int idJugador, Config configuracion)
-															: eventosTeclado(_eventosTeclado) {
+Vista::Vista(ColaBloqueante<int>& _eventosTeclado, std::string nombreJugador, int idJugador, Config configuracion) : eventosTeclado(_eventosTeclado) {
 	ventana = nullptr;
 	renderer = nullptr;
 	detenido = false;
@@ -101,7 +100,7 @@ void Vista::iniciar() {
 			spriteIt++;
 		}
 
-		fuente = TTF_OpenFont("img/arcade_r.ttf", 20);
+		fuente = TTF_OpenFont("img/arcade_r.ttf", 18);
 		if (! fuente) {
 			error( "No se pudo cargar la fuente. Error: " + std::string(TTF_GetError()), true);
 			detener();
@@ -116,23 +115,24 @@ void Vista::detener() {
 }
 
 void Vista::cicloPrincipal() {
-	while (! detenido) {
+	micros tPuntos = -1;
 
+	while (! detenido) {
 		micros t = tiempo();
 		enviarEventos();
-		actualizar();
+
+		if (tPuntos < 0) {
+			actualizar();
+			if (estado == EstadoJuego::Ganado || estado == EstadoJuego::Perdido || estado == EstadoJuego::JuegoGanado)
+				tPuntos = t;
+		} else {
+			int segundos = ESPERA_PUNTOS - (int) ((t - tPuntos)/1000000);
+			generarPantallaDePuntos(segundos);
+		}
+
 		t = (micros) frameDelay - (tiempo() - t);
 		if (t > 0)
 			std::this_thread::sleep_for(std::chrono::milliseconds((long) t/1000));
-
-		int segundos = ESPERA_PUNTOS;
-		if (estado == EstadoJuego::Ganado || estado == EstadoJuego::Perdido || estado == EstadoJuego::JuegoGanado) {
-			while (segundos > 0) {
-				generarPantallaDePuntos(segundos--);
-				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-				enviarEventos();
-			}
-		}
 	}
 }
 
@@ -229,9 +229,9 @@ void Vista::actualizar() {
 					}
 				}
 				if (! encontrado)
-					error("Falta sprite " + it->toString(), true);
+					error("Falta sprite " + it->toString());
 
-				//info(it->toString());
+				//debug(it->toString());
 
 				estadoObjs.erase(it);
 			}
@@ -305,23 +305,36 @@ void Vista::generarPantallaDePuntos(int espera) {
 
 	SDL_Color color = { 180, 180, 180, 255 };
 
+	std::string texto;
+
 	if (estado == EstadoJuego::Perdido) {
 		RendererPantalla(gameOver).aplicar(renderer, fuente);
-		escribirLineaHud(0, 0, 1, "Game over", color);
+		texto = "Game over. ";
 	}
 
 	if (estado == EstadoJuego::Ganado || estado == EstadoJuego::JuegoGanado) {
 		RendererPantalla(ganado).aplicar(renderer, fuente);
-		escribirLineaHud(0, 0, 1, "Mision terminada", color);
+		texto = "Mision terminada. ";
 	}
 
-	std::string texto = "- - - - - - - - - - - - - - - - - - ";
+	texto += "Modo ";
+	if (configuracion.getModoJuego() == MODO_INDIVIDUAL)
+		texto += "individual";
+	if (configuracion.getModoJuego() == MODO_COOP)
+		texto += "por equipos";
+	if (configuracion.getModoJuego() == MODO_GRUPAL)
+		texto += "cooperativo";
+	escribirLineaHud(0, 0, 1, texto, color);
+
+	texto = "- - - - - - - - - - - - - - - - - - ";
 	escribirLineaHud(1, 0, 1, texto, color);
 
-	auto it = equipos.begin();
-	bool vistaEquipos = configuracion.getModoJuego() != MODO_INDIVIDUAL && equipos.size() > 1;
-	int i = 0;
 	int maxLinea = 0;
+
+	auto it = equipos.begin();
+	bool vistaEquipos = configuracion.getModoJuego() != MODO_INDIVIDUAL
+			&& (configuracion.getModoJuego() == MODO_GRUPAL || equipos.size() > 1);
+	int i = 0;
 	while (it != equipos.end()) {
 		int linea = 3;
 
@@ -337,7 +350,9 @@ void Vista::generarPantallaDePuntos(int espera) {
 		int totalJuego = 0;
 
 		Equipo equipo = *it;
-		for (auto itJug = equipo.getPuntajes().begin(); itJug != equipo.getPuntajes().end(); itJug++) {
+
+		HashMap<std::string, Puntaje> puntajes = equipo.getPuntajes();
+		for (auto itJug = puntajes.begin(); itJug != puntajes.end(); itJug++) {
 			std::string nombre = itJug->first;
 
 			escribirLineaHud(linea++, i, equipos.size(), "Jugador " + nombre, color);
@@ -367,6 +382,7 @@ void Vista::generarPantallaDePuntos(int espera) {
 		if (linea > maxLinea)
 			maxLinea = linea;
 	}
+
 	maxLinea++;
 
 	if (estado == EstadoJuego::Perdido)
@@ -400,7 +416,7 @@ void Vista::escribirLineaHud(int linea, int jugador, int jugadores, std::string 
 	SDL_DestroyTexture(texture);
 }
 
-Imagen::Imagen(){
+Imagen::Imagen() {
 	img = nullptr;
 }
 

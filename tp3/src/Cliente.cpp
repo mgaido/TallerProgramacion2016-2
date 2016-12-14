@@ -3,6 +3,7 @@
 Cliente::Cliente(std::string cHost, int cPuerto, std::string usuario) {
 	cerrado = false;
 	conectado = false;
+	reconectar = false;
 	puerto = cPuerto;
 	host = cHost;
 	this->usuario = usuario;
@@ -97,16 +98,11 @@ void Cliente::recibirEstado() {
 				bytes.getAll(hudInfo);
 				EstadoJuego estado;
 				bytes.get(estado);
-
-				int cantEquipos;
 				std::vector<Equipo> equipos;
-
-				bytes.get(cantEquipos);
-				equipos.resize(cantEquipos);
-				for (int i = 0; i < cantEquipos; i++) {
-					bytes.getSerializable(equipos[i]);
+				if (estado == EstadoJuego::Perdido || estado == EstadoJuego::Ganado
+						|| estado == EstadoJuego::JuegoGanado) {
+					bytes.getAll(equipos);
 				}
-
 				vista->nuevoEstado(estado, offsetVista, estadoObjs, hudInfo, equipos);
 			} else if (comando == RLD) {
 				info("Reiniciando vista");

@@ -85,15 +85,13 @@ void Config::parsearXML(std::string archivo) {
 		sprite.tiempo = std::stoi(valor);
 
 		valor = nodo.hijo("estado").valor();
-		Estado estado;
+		Estado estado = Estado::Normal;
 		if (valor == "Caminando")
 			estado = Estado::Caminando;
 		if (valor == "Saltando")
 			estado = Estado::Saltando;
 		if (valor == "Desconectado")
 			estado = Estado::Desconectado;
-		if (valor == "Normal")
-			estado = Estado::Normal;
 		if (valor == "Efecto")
 			estado = Estado::Efecto;
 

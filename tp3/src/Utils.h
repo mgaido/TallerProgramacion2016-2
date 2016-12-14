@@ -62,10 +62,24 @@ inline micros tiempo() {
 }
 
 template <std::size_t N>
+inline std::array<char, N> toCharArray(std::string s) {
+	std::array<char, N> t;
+	s.copy(t.data(), t.size());
+	int index = std::min<int>(s.size(), t.size()-1);
+	t[index] = '\0';
+	return t;
+}
+
+template <std::size_t N>
 inline void setCharArray(std::string s, std::array<char, N>& t) {
 	s.copy(t.data(), t.size());
 	int index = std::min<int>(s.size(), t.size()-1);
 	t[index] = '\0';
+}
+
+template <std::size_t N>
+inline std::string fromCharArray(std::array<char, N>& t) {
+	return std::string(t.data());
 }
 
 struct EnumClassHash {

@@ -8,6 +8,7 @@ Boss::Boss(int id, Config & _configuracion) : Personaje(id, _configuracion) {
 	tiempoMovimiento = tiempo();
 	tiempoUltimoDisparo = tiempo();
 	estado = Estado::Normal;
+	energia = 1000;
 }
 
 bool Boss::tieneCambios(Juego* juego) {

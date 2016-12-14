@@ -29,6 +29,8 @@ Juego::Juego(Config& _configuracion) : configuracion(_configuracion) {
 	maxOffsetDelta = round(configuracion.getVelocidadX() * 2 * 1000000.0 / configuracion.getFrameRate());
 
 	enemigoFactory = new EnemigoFactory(5, -1, [&](Juego* juego){ return new Enemigo(++contador, configuracion, escenario); });
+
+	//escenario.setOffsetVista(escenario.getLongitud());
 }
 
 void Juego::crearPlataformas() {
@@ -150,8 +152,6 @@ bool Juego::getEstadoObjetos(Bytes& bytes) {
 				minX = objeto->getPos().x + objeto->getTamanio().x / 2;
 		}
 	}
-
-	//minX = std::max<int>(minX, 6800);
 
 	//Actualizar el offset si es necesario
 	if (minX > escenario.getOffsetVista() + escenario.getAnchoVista()/2) {

@@ -16,6 +16,7 @@ Objeto::Objeto(int id) {
 	this->orientacion = false;
 	this->visible = true;
 	this->tipo = Tipo::Void;
+	this->estado = Estado::Normal;
 }
 
 Objeto::~Objeto() {
