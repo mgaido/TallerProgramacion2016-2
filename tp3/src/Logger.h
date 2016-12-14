@@ -16,7 +16,7 @@
 #define _WARN 3
 #define _ERROR 4
 
-#define NIVEL _DEBUG
+#define NIVEL _INFO
 
 using Nivel = int;
 

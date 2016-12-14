@@ -20,7 +20,7 @@ Jugador::Jugador(int id, std::string nombre, Puntaje* puntaje, Config& _configur
 }
 
 bool Jugador::recibirDanio(int danio) {
-	if (inmortal)
+	if (inmortal ||estado == Estado::Desconectado)
 		return false;
 
 	return Soldado::recibirDanio(danio);
@@ -62,7 +62,7 @@ void Jugador::setConectado(bool conectado) {
 Proyectil* Jugador::disparar(Juego* juego) {
 	Proyectil* p = Soldado::disparar(juego);
 
-	if (p != nullptr && p->getTipo() == Tipo::GunH && velocCaminar != 0 && p->getVelocidadProyectilY() > 0)
+	if (p != nullptr && p->getTipo() == Tipo::GunH && velocCaminar != 0 && p->getVelocidadProyectilY() != 0)
 		p->setVelocidadProyectilX((orientacion ? -1 : 1) * 0.0005);
 
 	return p;

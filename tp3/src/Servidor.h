@@ -38,7 +38,7 @@ private:
 	std::thread t_aceptarConexiones;
 	std::vector<Sesion*> sesiones;
 	Juego* juego;
-	std::mutex lockJuego;
+	std::recursive_mutex lockJuego;
 
 	std::vector<Equipo> equipos;
 

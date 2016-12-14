@@ -117,6 +117,7 @@ void Vista::detener() {
 
 void Vista::cicloPrincipal() {
 	while (! detenido) {
+
 		micros t = tiempo();
 		enviarEventos();
 		actualizar();
@@ -129,6 +130,7 @@ void Vista::cicloPrincipal() {
 			while (segundos > 0) {
 				generarPantallaDePuntos(segundos--);
 				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+				enviarEventos();
 			}
 		}
 	}
@@ -185,7 +187,7 @@ void Vista::enviarEventos() {
 				break;
 			}
 
-			if (cambio)
+			if (cambio && estado == EstadoJuego::EnJuego)
 				eventosTeclado.encolar(teclas.getEstado());
 		}
 	}

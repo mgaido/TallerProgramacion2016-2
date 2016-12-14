@@ -72,7 +72,8 @@ void Sesion::handshake(Bytes& bytes) {
 	nombre = req.getNombre();
 	debug("Cliente '" + nombre + "' conectado desde " + ip);
 
-	jugador = servidor->nuevaConexion(this, nombre);
+	if (jugador == nullptr)
+		jugador = servidor->nuevaConexion(this, nombre);
 
 	HandshakeResponse res;
 
@@ -163,6 +164,8 @@ void Sesion::enviarEstado() {
 }
 
 void Sesion::recargar() {
+	jugador = servidor->nuevaConexion(this, nombre);
+
 	Bytes bytes;
 	bytes.put(RLD);
 	try {
@@ -170,7 +173,6 @@ void Sesion::recargar() {
 	} catch (SocketException&) {
 		desconectar();
 	}
-	jugador->setConectado(false);
 	enJuego = false;
 }
 

@@ -170,8 +170,6 @@ Jugador* Servidor::nuevaConexion(Sesion* reqSesion, std::string nombre) {
 	bool encontrado = false;
 	Jugador* jugador = nullptr;
 
-	lockJuego.lock();
-
 	auto it = sesiones.begin();
 	while (it != sesiones.end() && !encontrado) {
 		Sesion* sesion = *it;
@@ -195,12 +193,14 @@ Jugador* Servidor::nuevaConexion(Sesion* reqSesion, std::string nombre) {
 			info("Existe jugador inactivo con nombre " + nombre, true);
 		}
 	} else {
-		if (juego->getCantdadJugadores() < config.getCantidadMaximaJugadores()) {
+		lockJuego.lock();
 
+		if (juego->getCantdadJugadores() < config.getCantidadMaximaJugadores()) {
 			Equipo* equipo = nullptr;
 			for (auto unEquipo = equipos.begin(); unEquipo != equipos.end(); unEquipo++) {
 				if (unEquipo->tieneJugador(nombre)) {
 					equipo = &(*unEquipo);
+					info("Equipo encontrado para " + nombre, true);
 					break;
 				}
 			}
@@ -220,17 +220,16 @@ Jugador* Servidor::nuevaConexion(Sesion* reqSesion, std::string nombre) {
 					equipos.push_back(Equipo());
 					equipo = &(equipos[0]);
 				}
+				info("Equipo nuevo para " + nombre, true);
 				equipo->agregarJugador(nombre);
 			}
 			jugador = juego->nuevoJugador(nombre, & (equipo->getPuntajes()[nombre]));
-
 			info("Jugador agregado con nombre " + nombre, true);
 		} else {
 			info("Ya existen demasiados jugadores, no se puede agregar a " + nombre, true);
 		}
+		lockJuego.unlock();
 	}
-
-	lockJuego.unlock();
 
 	return jugador;
 }
@@ -238,11 +237,6 @@ Jugador* Servidor::nuevaConexion(Sesion* reqSesion, std::string nombre) {
 void Servidor::recargar() {
 	info("Recargando escenario", true);
 	lockJuego.lock();
-	auto it = sesiones.begin();
-	while (it != sesiones.end()) {
-		(*it)->recargar();
-		it++;
-	}
 
 	if (juego != nullptr) {
 		delete juego;
@@ -252,6 +246,14 @@ void Servidor::recargar() {
 	crearJuego();
 
 	lockJuego.unlock();
+
+	auto it = sesiones.begin();
+	while (it != sesiones.end()) {
+		(*it)->recargar();
+		it++;
+	}
+
+
 }
 
 void Servidor::detener() {

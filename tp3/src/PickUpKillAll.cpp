@@ -18,8 +18,14 @@ void PickUpKillAll::aplicar(Juego* juego, Jugador* jugador) {
 	auto it = juego->getObjetos().begin();
 	while (it != juego->getObjetos().end()) {
 		Objeto* obj = *it;
-		if (obj->getTipo() == Tipo::Enemigo) {
-			((Enemigo*)obj)->recibirDanio(10000);
+		if (obj->getTipo() == Tipo::Enemigo || obj->getTipo() == Tipo::EnemigoFuerte) {
+			Enemigo* unEnemigo = (Enemigo*) obj;
+			bool estaMuerto = unEnemigo->recibirDanio(1000);
+			if (estaMuerto) {
+				PickUp* nuevoPickup = unEnemigo->spawnPickUp();
+				if (nuevoPickup != nullptr)
+					juego->agregarObjeto(nuevoPickup);
+			}
 		}
 		it++;
 	}

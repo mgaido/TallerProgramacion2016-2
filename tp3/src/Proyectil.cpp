@@ -66,7 +66,7 @@ bool Proyectil::tieneCambios(Juego* juego) {
 				}
 			}
 
-			if (esEnemigo(tipoTirador) && objeto->getTipo() == Tipo::Jugador) {
+			if (esEnemigo(tipoTirador) && objeto->getTipo() == Tipo::Jugador && objeto->getEstado() != Estado::Desconectado) {
 				colisionan = colisionaCon(objeto);
 				if (colisionan) {
 					puntosOtorgados  = 0;

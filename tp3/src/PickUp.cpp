@@ -14,7 +14,7 @@ bool PickUp::tieneCambios(Juego* juego) {
 
 	while (it != juego->getObjetos().end()) {
 		Objeto* obj = *it;
-		if (obj->getTipo() == Tipo::Jugador) {
+		if (obj->getTipo() == Tipo::Jugador && obj->getEstado() != Estado::Desconectado) {
 			if (colisionaCon(obj)) {
 				aplicar(juego, (Jugador*) obj);
 				visible = false;
