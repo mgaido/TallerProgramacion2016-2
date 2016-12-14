@@ -28,6 +28,11 @@ public:
 		x=0;
 		y=0;
 	}
+
+	Punto(int _x, int _y) {
+		x = _x;
+		y = _y;
+	}
 };
 
 inline double distancia(Punto pos1, Punto pos2) {

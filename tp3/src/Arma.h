@@ -23,6 +23,8 @@ public:
 private:
 	Tipo tipo;
 	int balas;
+	int cooldown;
+	micros ultimoDisparo;
 
 };
 

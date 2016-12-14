@@ -99,13 +99,15 @@ bool Juego::estaIniciado() {
 	return estado != EstadoJuego::NoIniciado;
 }
 
-Jugador* Juego::nuevoJugador(std::string nombre) {
-	Jugador* jugador = new Jugador(++contador, nombre, configuracion);
+Jugador* Juego::nuevoJugador(std::string nombre, Puntaje* puntaje) {
+	Jugador* jugador = new Jugador(++contador, nombre, puntaje, configuracion);
 	jugador->getTamanio().x = configuracion.getTamanioJugador().x;
 	jugador->getTamanio().y = configuracion.getTamanioJugador().y;
 	jugador->getPos().x = escenario.getOffsetVista();
-	lock.lock();
+
 	agregarObjeto(jugador);
+
+	lock.lock();
 	jugadores.push_back(jugador);
 	if (estado == EstadoJuego::NoIniciado && getCantdadJugadores() >= configuracion.getCantidadMinimaJugadores()) { //config
 		estado = EstadoJuego::EnJuego;
@@ -116,14 +118,15 @@ Jugador* Juego::nuevoJugador(std::string nombre) {
 			}
 		}
 	}
-	cambios = true;
 	lock.unlock();
+
+	cambios = true;
 
 	info("Jugador '" + nombre + "' creado");
 	return jugador;
 }
 
-bool Juego::getEstado(Bytes& bytes) {
+bool Juego::getEstadoObjetos(Bytes& bytes) {
 
 	if (estado == EstadoJuego::NoIniciado)
 		return false;
@@ -271,7 +274,7 @@ bool Juego::getEstado(Bytes& bytes) {
 			info.arma = jugador->getArma().getTipo();
 			info.balas = jugador->getArma().getBalas();
 			setCharArray(jugador->getNombre(), info.nombre);
-			info.puntos = jugador->getPuntos();
+			info.puntos = jugador->getPuntaje()->getPuntosNivel();
 			info.energia = jugador->getEnergia();
 			hudInfo.push_back(info);
 
@@ -281,12 +284,17 @@ bool Juego::getEstado(Bytes& bytes) {
 
 		if (estaIniciado() && jugadoresVivos == 0) {
 			estado = EstadoJuego::Perdido;
-			info("GAME OVER", true);
+			info("GAME OVER");
 		}
 
 		if (BossFinal != nullptr && ! BossFinal->esVisible()) {
 			estado = EstadoJuego::Ganado;
-			info("STAGE CLEAR", true);
+			info("STAGE CLEAR");
+
+			for (auto itJug = jugadores.begin(); itJug != jugadores.end(); itJug++) {
+				Jugador* jugador = *itJug;
+				jugador->getPuntaje()->nivelGanado();
+			}
 		}
 	}
 	rv = cambios;
@@ -294,7 +302,6 @@ bool Juego::getEstado(Bytes& bytes) {
 	lock.unlock();
 
 	if (rv) {
-		bytes.put(estado);
 		bytes.put(escenario.getOffsetVista());
 		bytes.putAll(estadoObjs);
 		bytes.putAll(hudInfo);
@@ -334,18 +341,7 @@ void Juego::setEnemigoFactory(EnemigoFactory* enemigoFactory) {
 	this->enemigoFactory = enemigoFactory;
 }
 
-bool Juego::estaPerdido() {
-	return estado == EstadoJuego::Perdido;
+EstadoJuego Juego::getEstado() {
+	return estado;
 }
 
-bool Juego::estaGanado() {
-	return estado == EstadoJuego::JuegoGanado;
-}
-
-bool Juego::estaElNivelGanado() {
-	return estado == EstadoJuego::Ganado;
-}
-
-void Juego::setEstado(EstadoJuego estado){
-	this->estado = estado;
-}

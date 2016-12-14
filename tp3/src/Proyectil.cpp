@@ -16,6 +16,7 @@ Proyectil::Proyectil(int id) : Objeto(id) {
 	tipoTirador = Tipo::Void;
 	puntosOtorgados = 0;
 	danio = 0;
+	cooldown = 500;
 	this->estado = Estado::Normal;
 }
 
@@ -85,6 +86,12 @@ bool Proyectil::tieneCambios(Juego* juego) {
 int Proyectil::getPuntos() {
 	return puntosOtorgados;
 }
+
+
+int Proyectil::getCooldown() {
+	return cooldown;
+}
+
 void Proyectil::setOrientacionX(bool nuevaOrientacion) {
 	orientacion = nuevaOrientacion;
 	if (orientacion)

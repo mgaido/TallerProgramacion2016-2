@@ -7,8 +7,6 @@
 
 #include "Efecto.h"
 
-#include <string>
-
 #include "Enums.h"
 #include "Estado.h"
 #include "Utils.h"
@@ -22,6 +20,7 @@ Efecto::Efecto(int id, Punto pos, Punto tamanio, int puntos) : Objeto(id) {
 	this->puntos = puntos;
 	this->inicio = tiempo();
 	this->duracion = 0;
+	tipoObjeto = Tipo::Void;
 }
 
 Efecto::~Efecto() {

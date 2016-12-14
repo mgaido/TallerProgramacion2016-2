@@ -20,6 +20,7 @@
     <ClCompile Include="src\Enemigo.cpp" />
     <ClCompile Include="src\EnemigoFactory.cpp" />
     <ClCompile Include="src\EnemigoFuerte.cpp" />
+    <ClCompile Include="src\Equipo.cpp" />
     <ClCompile Include="src\Escenario.cpp" />
     <ClCompile Include="src\GunH.cpp" />
     <ClCompile Include="src\GunR.cpp" />
@@ -41,6 +42,7 @@
     <ClCompile Include="src\PickUpVida.cpp" />
     <ClCompile Include="src\Plataforma.cpp" />
     <ClCompile Include="src\Proyectil.cpp" />
+    <ClCompile Include="src\Puntaje.cpp" />
     <ClCompile Include="src\Servidor.cpp" />
     <ClCompile Include="src\Sesion.cpp" />
     <ClCompile Include="src\Sockets.cpp" />
@@ -61,6 +63,7 @@
     <ClInclude Include="src\EnemigoFactory.h" />
     <ClInclude Include="src\EnemigoFuerte.h" />
     <ClInclude Include="src\Enums.h" />
+    <ClInclude Include="src\Equipo.h" />
     <ClInclude Include="src\Escenario.h" />
     <ClInclude Include="src\Estado.h" />
     <ClInclude Include="src\Bytes.h" />
@@ -90,6 +93,7 @@
     <ClInclude Include="src\Objeto.h" />
     <ClInclude Include="src\Personaje.h" />
     <ClInclude Include="src\PickUp.h" />
+    <ClInclude Include="src\Puntaje.h" />
     <ClInclude Include="src\Servidor.h" />
     <ClInclude Include="src\Sesion.h" />
     <ClInclude Include="src\Sockets.h" />

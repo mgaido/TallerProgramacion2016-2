@@ -15,30 +15,18 @@
 		<g>2000</g>
 	</velocidad>
 	<fps>30</fps>
-	<longitud>4000</longitud>
-	<piso>600</piso>
+	<longitud>11000</longitud>
+	<piso>550</piso>
 	<minimo_numero_jugadores>1</minimo_numero_jugadores>
 	<maximo_numero_jugadores>4</maximo_numero_jugadores>
 	<capas>
 		<capa>
-			<imagen>parallax/parallax1.png</imagen>
+			<imagen>img/cielo3.png</imagen>
 			<zindex>1</zindex>
 		</capa>
 		<capa>
-			<imagen>parallax/parallax2.png</imagen>
+			<imagen>img/fondo3.png</imagen>
 			<zindex>2</zindex>
-		</capa>
-		<capa>
-			<imagen>parallax/parallax3.png</imagen>
-			<zindex>3</zindex>
-		</capa>
-		<capa>
-			<imagen>parallax/parallax4.png</imagen>
-			<zindex>4</zindex>
-		</capa>
-		<capa>
-			<imagen>parallax/parallax5.png</imagen>
-			<zindex>20</zindex>
 		</capa>
 	</capas>
 	<sprites>

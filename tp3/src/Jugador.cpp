@@ -7,14 +7,14 @@
 
 #include "Jugador.h"
 
-Jugador::Jugador(int id, std::string nombre, Config& _configuracion) : Soldado(id, _configuracion) {
+Jugador::Jugador(int id, std::string nombre, Puntaje* puntaje, Config& _configuracion) : Soldado(id, _configuracion) {
 	this->nombre = nombre;
-	puntos = 0;
 	estado = Estado::Desconectado;
 	tipo = Tipo::Jugador;
 	energia = 500;
-	cambios = false;
 	inmortal = configuracion.esInmortal();
+	this->puntaje = puntaje;
+	this->puntaje->nuevoNivel();
 
 	//arma.setTipo(Tipo::GunC);
 }
@@ -38,12 +38,11 @@ void Jugador::restablecerEnergia() {
 }
 
 void Jugador::recibirPuntos(int puntosObtenidos){
-	//std::cout << puntosObtenidos << std::endl;
-	puntos += puntosObtenidos;
+	puntaje->sumarPuntos(puntosObtenidos);
 }
 
-int Jugador::getPuntos() {
-	return puntos;
+Puntaje* Jugador::getPuntaje() {
+	return puntaje;
 }
 
 void Jugador::setConectado(bool conectado) {

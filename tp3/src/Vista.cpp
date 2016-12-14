@@ -42,6 +42,8 @@ Vista::~Vista() {
 	if (ganado != nullptr)
 		delete ganado;
 
+	equipos.clear();
+
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(ventana);
 	TTF_CloseFont(fuente);
@@ -61,51 +63,6 @@ void Vista::initSDL() {
 		error( "SDL_ttf could not initialize! SDL_ttf Error: " + std::string(TTF_GetError()));
 }
 
-void Vista::generarPantallaDePuntos() {
-
-	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-	SDL_RenderClear(renderer);
-	auto it = hudInfo.begin();
-	int i = 0;
-	while (it != hudInfo.end()) {
-		std::string nombre = std::string(it->nombre.data());
-
-		SDL_Color color = { 180, 180, 180, 255 };
-		
-		std::string texto = nombre;
-		escribirLineaHud(0, i, hudInfo.size(), texto, color);
-
-		texto = "- - - - - - - - - - - - - - - - - - ";
-		escribirLineaHud(1, i, hudInfo.size(), texto, color);
-
-		int puntos = 0;
-
-		if (configuracion.getModoJuego() == MODO_COOP || configuracion.getModoJuego() == MODO_GRUPAL) {
-			auto it2 = hudInfo.begin();
-			int j = 0;
-			while (it2 != hudInfo.end()) {
-				if (configuracion.getModoJuego() == MODO_COOP) {
-					if (j % 2 != i % 2)
-						continue;
-				}
-				puntos += it2->puntos;
-				j++;
-				it2++;
-			}
-		}
-		else
-			puntos = it->puntos;
-
-		texto = "Puntos: " + std::to_string(puntos);
-		escribirLineaHud(2, i, hudInfo.size(), texto, color);
-
-		texto = "- - - - - - - - - - - - - - - - - - ";
-		escribirLineaHud(3, i, hudInfo.size(), texto, color);
-
-		it++;
-		i++;
-	}
-}
 
 void Vista::iniciar() {
 	//Create window
@@ -120,14 +77,13 @@ void Vista::iniciar() {
 	} else {
 		espera = new Pantalla("img/espera.png", configuracion.getTamanioVentana());
 		espera->cargar(renderer);
-		{
-			RendererPantalla(espera).aplicar(renderer, fuente);
-			SDL_RenderPresent(renderer);
-		}
 
 		gameOver = new Pantalla("img/gameOver.jpg", configuracion.getTamanioVentana());
 		gameOver->cargar(renderer);
 		
+		ganado = new Pantalla("img/levelWon.jpg", configuracion.getTamanioVentana());
+		ganado->cargar(renderer);
+
 		auto capaIt = configuracion.getConfigCapas().begin();
 		while (capaIt != configuracion.getConfigCapas().end()) {
 			std::shared_ptr<Capa> capa = std::make_shared<Capa>(configuracion.getTamanioVentana(),
@@ -167,10 +123,18 @@ void Vista::cicloPrincipal() {
 		t = (micros) frameDelay - (tiempo() - t);
 		if (t > 0)
 			std::this_thread::sleep_for(std::chrono::milliseconds((long) t/1000));
+
+		int segundos = ESPERA_PUNTOS;
+		if (estado == EstadoJuego::Ganado || estado == EstadoJuego::Perdido || estado == EstadoJuego::JuegoGanado) {
+			while (segundos > 0) {
+				generarPantallaDePuntos(segundos--);
+				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+			}
+		}
 	}
 }
 
-void Vista::nuevoEstado(EstadoJuego estado, int offsetVista, std::vector<EstadoObj>& estadoObjs, std::vector<InfoJugador>& hudInfo) {
+void Vista::nuevoEstado(EstadoJuego estado, int offsetVista, std::vector<EstadoObj>& estadoObjs, std::vector<InfoJugador>& hudInfo, std::vector<Equipo>& equipos) {
 	lockEstado.lock();
 	this->estado = estado;
 	this->offsetVista = offsetVista;
@@ -178,6 +142,8 @@ void Vista::nuevoEstado(EstadoJuego estado, int offsetVista, std::vector<EstadoO
 	this->estadoObjs = estadoObjs;
 	this->hudInfo.clear();
 	this->hudInfo = hudInfo;
+	this->equipos.clear();
+	this->equipos = equipos;
 	lockEstado.unlock();
 }
 
@@ -226,39 +192,20 @@ void Vista::enviarEventos() {
 }
 
 void Vista::actualizar() {
-	lockEstado.lock();
-	bool noMostrarHud = false;
+	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+	SDL_RenderClear(renderer);
 
 	if (estado == EstadoJuego::NoIniciado)
 		RendererPantalla(espera).aplicar(renderer, fuente);
-	if (estado == EstadoJuego::Perdido) {
-		RendererPantalla(gameOver).aplicar(renderer, fuente);
-	}
+	else {
+		lockEstado.lock();
 
-	if (estado == EstadoJuego::Ganado) {
-		noMostrarHud = true;
-		generarPantallaDePuntos();
-	}
-
-	if (estado == EstadoJuego::JuegoGanado) {
-		noMostrarHud = true;
-		generarPantallaDePuntos();
-		std::this_thread::sleep_for(std::chrono::milliseconds(5 * 1000));
-		detener();
-	}
-
-	if (estado != EstadoJuego::EnJuego || estadoObjs.size() > 0) {
-		auto rendererIt = renderers.begin();
-		while (rendererIt != renderers.end()) {
-			delete *rendererIt;
-			renderers.erase(rendererIt);
-		}
-	}
-
-	if (estado == EstadoJuego::EnJuego) {
 		if (estadoObjs.size() > 0) {
-			SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-			SDL_RenderClear(renderer);
+			auto rendererIt = renderers.begin();
+			while (rendererIt != renderers.end()) {
+				delete *rendererIt;
+				renderers.erase(rendererIt);
+			}
 
 			auto capa = capas.begin();
 			while (capa != capas.end()) {
@@ -268,7 +215,6 @@ void Vista::actualizar() {
 
 			auto it = estadoObjs.begin();
 			while (it != estadoObjs.end()) {
-
 				bool encontrado = false;
 				auto map = spritess.find(it->getTipo());
 				if (map != spritess.end()) {
@@ -283,7 +229,7 @@ void Vista::actualizar() {
 				if (! encontrado)
 					error("Falta sprite " + it->toString(), true);
 
-				info(it->toString());
+				//info(it->toString());
 
 				estadoObjs.erase(it);
 			}
@@ -292,20 +238,17 @@ void Vista::actualizar() {
 				return a->getZindex() < b->getZindex();
 			});
 		}
+		lockEstado.unlock();
 
 		auto rendererIt = renderers.begin();
 		while (rendererIt != renderers.end()) {
 			(*rendererIt)->aplicar(renderer, fuente);
 			rendererIt++;
 		}
+		mostrarHud();
 	}
 
-	if(!noMostrarHud)
-		mostrarHud();
-
 	SDL_RenderPresent(renderer);
-
-	lockEstado.unlock();
 }
 
 void Vista::mostrarHud() {
@@ -341,32 +284,101 @@ void Vista::mostrarHud() {
 		default:
 			arma = "";
 		}
+
 		texto = arma + ": " + std::to_string(it->balas);
 		escribirLineaHud(1, i, hudInfo.size(), texto, color);
 
-		int puntos = 0;
-
-		if (configuracion.getModoJuego() == MODO_COOP || configuracion.getModoJuego() == MODO_GRUPAL) {
-			auto it2 = hudInfo.begin();
-			int j = 0;
-			while (it2 != hudInfo.end()) {
-				if (configuracion.getModoJuego() == MODO_COOP) {
-					if (j % 2 != i % 2)
-						continue;
-				}
-				puntos += it2->puntos;
-				j++;
-				it2++;
-			}
-		} else
-			puntos = it->puntos;
-
-		texto = "Puntos: " + std::to_string(puntos);
+		texto = "Puntos: " + std::to_string(it->puntos);
 		escribirLineaHud(2, i, hudInfo.size(), texto, color);
 
 		it++;
 		i++;
 	}
+}
+
+
+void Vista::generarPantallaDePuntos(int espera) {
+	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+	SDL_RenderClear(renderer);
+
+	SDL_Color color = { 180, 180, 180, 255 };
+
+	if (estado == EstadoJuego::Perdido) {
+		RendererPantalla(gameOver).aplicar(renderer, fuente);
+		escribirLineaHud(0, 0, 1, "Game over", color);
+	}
+
+	if (estado == EstadoJuego::Ganado || estado == EstadoJuego::JuegoGanado) {
+		RendererPantalla(ganado).aplicar(renderer, fuente);
+		escribirLineaHud(0, 0, 1, "Mision terminada", color);
+	}
+
+	std::string texto = "- - - - - - - - - - - - - - - - - - ";
+	escribirLineaHud(1, 0, 1, texto, color);
+
+	auto it = equipos.begin();
+	bool vistaEquipos = configuracion.getModoJuego() != MODO_INDIVIDUAL && equipos.size() > 1;
+	int i = 0;
+	int maxLinea = 0;
+	while (it != equipos.end()) {
+		int linea = 3;
+
+		if (vistaEquipos) {
+			texto = "Equipo " + std::to_string(i+1);
+			escribirLineaHud(linea++, i, equipos.size(), texto, color);
+
+			texto = "- - - - - - - - - - - - - - - - - - ";
+			escribirLineaHud(linea++, i, equipos.size(), texto, color);
+		}
+
+		int totalNivel = 0;
+		int totalJuego = 0;
+
+		Equipo equipo = *it;
+		for (auto itJug = equipo.getPuntajes().begin(); itJug != equipo.getPuntajes().end(); itJug++) {
+			std::string nombre = itJug->first;
+
+			escribirLineaHud(linea++, i, equipos.size(), "Jugador " + nombre, color);
+
+			escribirLineaHud(linea++, i, equipos.size(), "Ptos nivel " + std::to_string(itJug->second.getPuntosNivel()), color);
+			totalNivel += itJug->second.getPuntosNivel();
+
+			escribirLineaHud(linea++, i, equipos.size(), "Ptos juego " + std::to_string(itJug->second.getPuntosJuego()), color);
+			totalJuego += itJug->second.getPuntosJuego();
+
+			texto = "- - - - - - - - - - - - - - - - - - ";
+			escribirLineaHud(linea++, i, equipos.size(), texto, color);
+		}
+
+		if (vistaEquipos) {
+			texto = "Total";
+			escribirLineaHud(linea++, i, equipos.size(), "Total", color);
+
+			escribirLineaHud(linea++, i, equipos.size(), "Ptos nivel " + std::to_string(totalNivel), color);
+
+			escribirLineaHud(linea++, i, equipos.size(), "Ptos juego " + std::to_string(totalJuego), color);
+		}
+
+		it++;
+		i++;
+
+		if (linea > maxLinea)
+			maxLinea = linea;
+	}
+	maxLinea++;
+
+	if (estado == EstadoJuego::Perdido)
+		texto = "Reiniciando nivel en ";
+	if (estado == EstadoJuego::Ganado)
+		texto = "Siguiente nivel en ";
+	if (estado == EstadoJuego::JuegoGanado)
+		texto = "Saliendo en ";
+
+	texto += std::to_string(espera);
+
+	escribirLineaHud(maxLinea, 0, 1, texto, color);
+
+	SDL_RenderPresent(renderer);
 }
 
 void Vista::escribirLineaHud(int linea, int jugador, int jugadores, std::string texto, SDL_Color color) {

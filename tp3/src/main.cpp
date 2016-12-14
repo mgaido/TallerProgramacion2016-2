@@ -8,9 +8,8 @@ Logger* logger;
 #undef main
 
 int main(int argc, char *argv[]) {
-
 	bool server = false;
-	bool client = false;
+	bool client = argc == 1;
 
 	std::string host = "127.0.0.1";
 	std::string usuario = "player1";
@@ -18,7 +17,7 @@ int main(int argc, char *argv[]) {
 	int puerto = 10000;
 
 	bool inmortal = false;
-	char modo = MODO_INDIVIDUAL;
+	char modo = MODO_COOP;
 
 	for (int i = 1; i < argc; ++i) {
 		auto param = std::string(argv[i]);
@@ -93,7 +92,7 @@ int main(int argc, char *argv[]) {
 
 	if (server) {
 		logger = new Logger("servidor.log");
-		info("Iniciado servidor en puerto " + std::to_string(puerto) + (archivos.size() == 0 ? "" : " y leyendo configuracion de " + archivos), true);
+		info("Iniciado servidor en puerto " + std::to_string(puerto) + (archivos.size() == 0 ? "" : " con niveles " + archivos), true);
 
 		Servidor servidor(puerto, archivos, inmortal, modo);
 		servidor.iniciar();

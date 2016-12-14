@@ -89,23 +89,35 @@ void Cliente::recibirEstado() {
 			int comando;
 			bytes.get(comando);
 			if (comando == UPD) {
-				EstadoJuego estado;
-				bytes.get(estado);
 				int offsetVista;
 				bytes.get(offsetVista);
 				std::vector<EstadoObj> estadoObjs;
 				bytes.getAll(estadoObjs);
 				std::vector<InfoJugador> hudInfo;
 				bytes.getAll(hudInfo);
-				vista->nuevoEstado(estado, offsetVista, estadoObjs, hudInfo);
+				EstadoJuego estado;
+				bytes.get(estado);
+
+				int cantEquipos;
+				std::vector<Equipo> equipos;
+
+				bytes.get(cantEquipos);
+				equipos.resize(cantEquipos);
+				for (int i = 0; i < cantEquipos; i++) {
+					bytes.getSerializable(equipos[i]);
+				}
+
+				vista->nuevoEstado(estado, offsetVista, estadoObjs, hudInfo, equipos);
 			} else if (comando == RLD) {
 				info("Reiniciando vista");
 				reconectar = true;
-				vista->detener();
+				if (vista != nullptr)
+					vista->detener();
 			} else if (comando == BYE) {
 				info("Cerrando vista");
 				conectado = false;
-				vista->detener();
+				if (vista != nullptr)
+					vista->detener();
 			} else {
 				warn("Comando invalido: " + std::to_string(comando));
 			}

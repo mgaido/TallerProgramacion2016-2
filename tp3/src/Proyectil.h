@@ -34,6 +34,7 @@ public:
 
 	int getDanio();
 	int getPuntos();
+	int getCooldown();
 
 	double getVelocidadProyectilY() const {
 		return velocidadProyectilY;
@@ -56,6 +57,7 @@ protected:
 
 	int puntosOtorgados;
 	int danio;
+	int cooldown;
 };
 
 #endif /* PROYECTIL_H_ */

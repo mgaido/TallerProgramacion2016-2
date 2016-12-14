@@ -10,13 +10,12 @@
 
 #include "Logger.h"
 #include "Soldado.h"
-#include "PickUp.h"
-
 #include "Juego.h"
+#include "Puntaje.h"
 
 class Jugador : public Soldado {
 public:
-	Jugador(int id, std::string nombre, Config& configuracion);
+	Jugador(int id, std::string nombre, Puntaje* puntaje, Config& configuracion);
 	~Jugador();
 
 	virtual bool recibirDanio(int a);
@@ -24,7 +23,7 @@ public:
 
 	virtual Proyectil* disparar(Juego* juego);
 
-	int getPuntos();
+	Puntaje* getPuntaje();
 	void recibirPuntos(int puntosObtenidos);
 
 	virtual std::string getNombre();
@@ -32,7 +31,7 @@ public:
 	void setConectado(bool conectado);
 private:
 	std::string nombre;
-	int puntos;
+	Puntaje* puntaje;
 	bool inmortal;
 };
 

@@ -1,14 +1,12 @@
 #ifndef SERVIDOR_H
 #define SERVIDOR_H
 
-#define ESPERA_PUNTOS 10
-
-
 #include "Config.h"
 #include "Handshake.h"
 #include "Sesion.h"
 #include "Sockets.h"
 #include "Logger.h"
+#include "Equipo.h"
 #include "Utils.h"
 
 class Sesion;
@@ -41,6 +39,8 @@ private:
 	std::vector<Sesion*> sesiones;
 	Juego* juego;
 	std::mutex lockJuego;
+
+	std::vector<Equipo> equipos;
 
 	int crearSocket();
 	void crearJuego();

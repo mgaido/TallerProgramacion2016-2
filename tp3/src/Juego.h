@@ -15,6 +15,7 @@
 #include "Bytes.h"
 #include "Estado.h"
 #include "Logger.h"
+#include "Puntaje.h"
 #include "Utils.h"
 
 #include "Objeto.h"
@@ -30,8 +31,8 @@ public:
 	Juego(Config& configuracion);
 	~Juego();
 
-	Jugador* nuevoJugador(std::string nombre);
-	bool getEstado(Bytes& bytes);
+	Jugador* nuevoJugador(std::string nombre, Puntaje* puntaje);
+	bool getEstadoObjetos(Bytes& bytes);
 	bool estaIniciado();
 
 	Config& getConfiguracion();
@@ -48,10 +49,7 @@ public:
 	EnemigoFactory* getEnemigoFactory();
 	void setEnemigoFactory(EnemigoFactory* enemigoFactory);
 
-	bool estaPerdido();
-	bool estaGanado();
-	bool estaElNivelGanado();
-	void setEstado(EstadoJuego estado);
+	EstadoJuego getEstado();
 
 private:
 	void crearPlataformas();

@@ -18,6 +18,7 @@
 Arma::Arma() {
 	tipo = Tipo::Void;
 	setTipo(Tipo::GunH);
+	ultimoDisparo = 0;
 }
 
 void Arma::setTipo(Tipo tipo) {
@@ -57,7 +58,7 @@ int Arma::getBalas() {
 Proyectil* Arma::disparar() {
 	Proyectil* proyectil = nullptr;
 
-	if (balas > 0) {
+	if (balas > 0 && (tiempo() - ultimoDisparo) / 1000 > cooldown) {
 		switch (this->tipo) {
 		case Tipo::GunH:
 			balas--;
@@ -90,6 +91,11 @@ Proyectil* Arma::disparar() {
 		default:
 			break;
 		}
+	}
+
+	if (proyectil != nullptr) {
+		ultimoDisparo = tiempo();
+		cooldown = proyectil->getCooldown();
 	}
 
 	return proyectil;

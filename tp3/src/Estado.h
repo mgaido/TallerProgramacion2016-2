@@ -8,6 +8,8 @@
 #ifndef ESTADO_H_
 #define ESTADO_H_
 
+#define ESPERA_PUNTOS 10
+
 #include "Enums.h"
 
 class EstadoObj {

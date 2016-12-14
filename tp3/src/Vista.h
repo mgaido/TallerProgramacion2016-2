@@ -11,6 +11,7 @@
 #include "Conexion.h"
 #include "Config.h"
 #include "Estado.h"
+#include "Equipo.h"
 #include "Teclas.h"
 #include "Logger.h"
 #include "Utils.h"
@@ -129,13 +130,13 @@ public:
 
 	void iniciar();
 	void detener();
-	void nuevoEstado(EstadoJuego estado, int offsetVista, std::vector<EstadoObj>& estadoObjs, std::vector<InfoJugador>& hudInfo);
+	void nuevoEstado(EstadoJuego estado, int offsetVista, std::vector<EstadoObj>& estadoObjs, std::vector<InfoJugador>& hudInfo, std::vector<Equipo>& equipos);
 
 private:
 	void cicloPrincipal();
 	void enviarEventos();
 	void actualizar();
-	void generarPantallaDePuntos();
+	void generarPantallaDePuntos(int espera);
 
 	void mostrarHud();
 	void escribirLineaHud(int linea, int jugador, int jugadores, std::string texto, SDL_Color color);
@@ -153,6 +154,7 @@ private:
 	int offsetVista;
 	std::vector<EstadoObj> estadoObjs;
 	std::vector<InfoJugador> hudInfo;
+	std::vector<Equipo> equipos;
 
 	SDL_Window* ventana;
 	SDL_Renderer* renderer;

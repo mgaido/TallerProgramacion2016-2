@@ -15,8 +15,8 @@
 		<g>2000</g>
 	</velocidad>
 	<fps>30</fps>
-	<longitud>6000</longitud>
-	<piso>500</piso>
+	<longitud>7000</longitud>
+	<piso>540</piso>
 	<minimo_numero_jugadores>1</minimo_numero_jugadores>
 	<maximo_numero_jugadores>4</maximo_numero_jugadores>
 	<capas>
@@ -25,7 +25,7 @@
 			<zindex>1</zindex>
 		</capa>
 		<capa>
-			<imagen>img/fondo3.png</imagen>
+			<imagen>img/fondo2.png</imagen>
 			<zindex>2</zindex>
 		</capa>
 	</capas>

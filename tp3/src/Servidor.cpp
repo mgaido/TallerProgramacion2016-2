@@ -14,6 +14,7 @@ Servidor::Servidor(int puerto, std::string archivos, bool inmortal, char modo) {
 }
 
 Servidor::~Servidor() {
+	equipos.clear();
 }
 
 void Servidor::iniciar() {
@@ -53,10 +54,31 @@ void Servidor::avanzarJuego() {
 		bytes.put(UPD);
 
 		lockJuego.lock();
-		bool cambios = juego->getEstado(bytes);
+		bool cambios = juego->getEstadoObjetos(bytes);
 		lockJuego.unlock();
 
-		cambios |= juego->estaElNivelGanado();
+		EstadoJuego estado = juego->getEstado();
+
+		if (estado == EstadoJuego::Ganado|| estado == EstadoJuego::Perdido) {
+			cambios = true;
+
+			if (estado == EstadoJuego::Ganado) {
+				archivo++;
+				if (archivo == archivos.end())
+					estado = EstadoJuego::JuegoGanado;
+			}
+
+			bytes.put(estado);
+
+			int cantEquipos = equipos.size();
+			bytes.put(cantEquipos);
+			for (int i = 0; i < cantEquipos; i++)
+				bytes.putSerializable(equipos[i]);
+		} else {
+			bytes.put(estado);
+			int aux = 0;
+			bytes.put(aux);
+		}
 
 		if (cambios) {
 			auto it = sesiones.begin();
@@ -66,14 +88,10 @@ void Servidor::avanzarJuego() {
 			}
 		}
 
-		if (juego->estaPerdido() || juego->estaElNivelGanado()) {
+		if (estado == EstadoJuego::Ganado|| estado == EstadoJuego::Perdido || estado == EstadoJuego::JuegoGanado) {
 			std::this_thread::sleep_for(std::chrono::milliseconds(ESPERA_PUNTOS * 1000));
 
-			if (juego->estaElNivelGanado())
-				archivo++;
-
 			if (archivo == archivos.end()) {
-				juego->setEstado(EstadoJuego::JuegoGanado);
 				info("Saliendo", true);
 				detener();
 			} else {
@@ -178,8 +196,35 @@ Jugador* Servidor::nuevaConexion(Sesion* reqSesion, std::string nombre) {
 		}
 	} else {
 		if (juego->getCantdadJugadores() < config.getCantidadMaximaJugadores()) {
-			info("Creando jugador con nombre " + nombre, true);
-			jugador = juego->nuevoJugador(nombre);
+
+			Equipo* equipo = nullptr;
+			for (auto unEquipo = equipos.begin(); unEquipo != equipos.end(); unEquipo++) {
+				if (unEquipo->tieneJugador(nombre)) {
+					equipo = &(*unEquipo);
+					break;
+				}
+			}
+
+			if (equipo == nullptr) {
+				if (modo == MODO_GRUPAL) {
+					if (equipos.size() == 0)
+						equipos.push_back(Equipo());
+					equipo = &(equipos[0]);
+				} else if (modo == MODO_COOP) {
+					if (equipos.size() <= 1)
+						equipos.push_back(Equipo());
+
+					int index = equipos.size() == 1 ? 0 : (equipos[0].cantidadDeJugadores() > equipos[1].cantidadDeJugadores() ? 1 : 0);
+					equipo = &(equipos[index]);
+				} else {
+					equipos.push_back(Equipo());
+					equipo = &(equipos[0]);
+				}
+				equipo->agregarJugador(nombre);
+			}
+			jugador = juego->nuevoJugador(nombre, & (equipo->getPuntajes()[nombre]));
+
+			info("Jugador agregado con nombre " + nombre, true);
 		} else {
 			info("Ya existen demasiados jugadores, no se puede agregar a " + nombre, true);
 		}

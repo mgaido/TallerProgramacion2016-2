@@ -65,9 +65,9 @@
 		<sprite>
 			<tipo>Jugador</tipo>
 			<estado>Efecto</estado>
-			<imagen>img/PersonajeDesconectado.png</imagen>
+			<imagen>img/PersonajeMuriendo.png</imagen>
 			<zindex>10</zindex>
-			<frames>1</frames>
+			<frames>10</frames>
 			<tiempo>1000</tiempo>
 		</sprite>
 		
@@ -168,7 +168,7 @@
 			<tipo>GunH</tipo>
 			<estado>Normal</estado>
 			<imagen>img/bala.png</imagen>
-			<zindex>10</zindex>
+			<zindex>12</zindex>
 			<frames>1</frames>
 			<tiempo>1000</tiempo>
 		</sprite>
@@ -176,7 +176,7 @@
 			<tipo>GunS</tipo>
 			<estado>Normal</estado>
 			<imagen>img/bala2.png</imagen>
-			<zindex>10</zindex>
+			<zindex>12</zindex>
 			<frames>1</frames>
 			<tiempo>1000</tiempo>
 		</sprite>
@@ -184,7 +184,7 @@
 			<tipo>GunR</tipo>
 			<estado>Normal</estado>
 			<imagen>img/bala3.png</imagen>
-			<zindex>10</zindex>
+			<zindex>12</zindex>
 			<frames>1</frames>
 			<tiempo>1000</tiempo>
 		</sprite>
@@ -192,7 +192,7 @@
 			<tipo>GunC</tipo>
 			<estado>Normal</estado>
 			<imagen>img/bala4.png</imagen>
-			<zindex>10</zindex>
+			<zindex>12</zindex>
 			<frames>1</frames>
 			<tiempo>1000</tiempo>
 		</sprite>
@@ -200,8 +200,8 @@
 		<sprite>
 			<tipo>Misil</tipo>
 			<estado>Normal</estado>
-			<imagen>img/bala3.png</imagen>
-			<zindex>10</zindex>
+			<imagen>img/misil.png</imagen>
+			<zindex>12</zindex>
 			<frames>1</frames>
 			<tiempo>1000</tiempo>
 		</sprite>
@@ -209,7 +209,7 @@
 			<tipo>Bomba</tipo>
 			<estado>Normal</estado>
 			<imagen>img/bomba.png</imagen>
-			<zindex>10</zindex>
+			<zindex>12</zindex>
 			<frames>1</frames>
 			<tiempo>1000</tiempo>
 		</sprite>
@@ -217,15 +217,15 @@
 			<tipo>Laser</tipo>
 			<estado>Normal</estado>
 			<imagen>img/laser.png</imagen>
-			<zindex>10</zindex>
-			<frames>1</frames>
-			<tiempo>1000</tiempo>
+			<zindex>12</zindex>
+			<frames>3</frames>
+			<tiempo>500</tiempo>
 		</sprite>
 		<sprite>
 			<tipo>Torreta</tipo>
 			<estado>Normal</estado>
 			<imagen>img/bala5.png</imagen>
-			<zindex>10</zindex>
+			<zindex>12</zindex>
 			<frames>1</frames>
 			<tiempo>1000</tiempo>
 		</sprite>
@@ -234,66 +234,66 @@
 			<tipo>GunH</tipo>
 			<estado>Efecto</estado>
 			<imagen>img/impactoBala.png</imagen>
-			<zindex>10</zindex>
+			<zindex>12</zindex>
 			<frames>10</frames>
-			<tiempo>1000</tiempo>
+			<tiempo>500</tiempo>
 		</sprite>
 		<sprite>
 			<tipo>GunS</tipo>
 			<estado>Efecto</estado>
 			<imagen>img/impactoShot.png</imagen>
-			<zindex>10</zindex>
+			<zindex>12</zindex>
 			<frames>16</frames>
-			<tiempo>1000</tiempo>
+			<tiempo>500</tiempo>
 		</sprite>
 		<sprite>
 			<tipo>GunR</tipo>
 			<estado>Efecto</estado>
 			<imagen>img/impactoExplosion.png</imagen>
-			<zindex>10</zindex>
+			<zindex>12</zindex>
 			<frames>14</frames>
-			<tiempo>1000</tiempo>
+			<tiempo>500</tiempo>
 		</sprite>
 		<sprite>
 			<tipo>GunC</tipo>
 			<estado>Efecto</estado>
 			<imagen>img/impactoExplosion.png</imagen>
-			<zindex>10</zindex>
+			<zindex>12</zindex>
 			<frames>14</frames>
-			<tiempo>1000</tiempo>
+			<tiempo>500</tiempo>
 		</sprite>
 		
 		<sprite>
 			<tipo>Misil</tipo>
 			<estado>Efecto</estado>
 			<imagen>img/impactoExplosion.png</imagen>
-			<zindex>10</zindex>
+			<zindex>12</zindex>
 			<frames>14</frames>
-			<tiempo>1000</tiempo>
+			<tiempo>500</tiempo>
 		</sprite>
 		<sprite>
 			<tipo>Bomba</tipo>
 			<estado>Efecto</estado>
 			<imagen>img/impactoExplosion.png</imagen>
-			<zindex>10</zindex>
+			<zindex>12</zindex>
 			<frames>14</frames>
-			<tiempo>1000</tiempo>
+			<tiempo>500</tiempo>
 		</sprite>
 		<sprite>
 			<tipo>Laser</tipo>
 			<estado>Efecto</estado>
 			<imagen>img/impactoShot.png</imagen>
-			<zindex>10</zindex>
+			<zindex>12</zindex>
 			<frames>16</frames>
-			<tiempo>1000</tiempo>
+			<tiempo>500</tiempo>
 		</sprite>
 		<sprite>
 			<tipo>Torreta</tipo>
 			<estado>Efecto</estado>
 			<imagen>img/impactoBala.png</imagen>
-			<zindex>10</zindex>
+			<zindex>12</zindex>
 			<frames>12</frames>
-			<tiempo>1000</tiempo>
+			<tiempo>500</tiempo>
 		</sprite>
 		
 		<sprite>
@@ -304,7 +304,6 @@
 			<frames>1</frames>
 			<tiempo>1000</tiempo>
 		</sprite>
-		
 		<sprite>
 			<tipo>BonusKill</tipo>
 			<estado>Normal</estado>
@@ -322,7 +321,6 @@
 			<frames>1</frames>
 			<tiempo>1000</tiempo>
 		</sprite>
-		
 		<sprite>
 			<tipo>BonusArmaS</tipo>
 			<estado>Normal</estado>
@@ -331,7 +329,6 @@
 			<frames>1</frames>
 			<tiempo>1000</tiempo>
 		</sprite>
-		
 		<sprite>
 			<tipo>BonusArmaR</tipo>
 			<estado>Normal</estado>
@@ -340,7 +337,6 @@
 			<frames>1</frames>
 			<tiempo>1000</tiempo>
 		</sprite>
-		
 		<sprite>
 			<tipo>BonusArmaC</tipo>
 			<estado>Normal</estado>
@@ -354,7 +350,7 @@
 			<tipo>Plataforma</tipo>
 			<estado>Normal</estado>
 			<imagen>img/plataforma.png</imagen>
-			<zindex>10</zindex>
+			<zindex>11</zindex>
 			<frames>1</frames>
 			<tiempo>1000</tiempo>
 		</sprite>	

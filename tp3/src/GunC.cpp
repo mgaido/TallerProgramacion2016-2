@@ -17,6 +17,7 @@ GunC::GunC(int id) : Proyectil(id) {
 	this->tamanio.y = 30;
 	this->orientacion = false;
 	this->tiempoCreacion = tiempo();
+	this->cooldown = 500;
 
 	_angle = 0;
 }
